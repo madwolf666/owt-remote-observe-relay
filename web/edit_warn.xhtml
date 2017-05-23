@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      lang="ja">
+
+    <f:view>
+        <h:head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta http-equiv="Content-Style-Type" content="text/css" />
+            <meta http-equiv="Content-Script-Type" content="text/javascript" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta name="format-detection" content="telephone=no" />
+            <meta name="GENERATOR" content="JustSystems Homepage Builder Version 19.0.7.0 for Windows" />
+            <link rel="stylesheet" href="css/hpbparts.css" type="text/css" id="hpbparts" />
+            <link rel="stylesheet" href="css/container_10Aa_2c_top.css" type="text/css" id="hpbcontainer" />
+            <link rel="stylesheet" href="css/main_10Aa_2c.css" type="text/css" id="hpbmain" />
+            <link rel="stylesheet" href="css/user.css" type="text/css" id="hpbuser" />
+            <link rel="stylesheet" href="css/custom.css" type="text/css" id="hpcustom" />
+            <script type="text/javascript" src="js/jquery.min.js"><!-- hpbiptitle jQuery library --></script>
+            <script type="text/javascript" src="js/move-mainnav.js">hpb-move-mainnav-js</script>
+            <!-- link type="text/css" href="css/jquery-ui.css" rel="stylesheet" / -->
+            <script type="text/javascript" src="js/jquery.blockUI.js"></script>
+            <script type="text/javascript" src="js/custom.js"></script>
+  <!-- -->
+           <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+            <script type="text/javascript" src="js/jquery.ui.datepicker-ja.min.js"></script>
+<!-- -->
+<!--
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-ja.min.js"></script>
+-->
+<!--
+<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
+-->
+            <link type="text/css" href="css/ui-lightness.jquery-ui.css" rel="stylesheet" />
+            <script type="text/javascript" src="js/jquery.datetimepicker.js"></script>
+            <link type="text/css" href="css/jquery.datetimepicker.css" rel="stylesheet" />
+            <title><ui:insert name="title">リモート監視中継</ui:insert></title>
+            <style>
+                li.errorStyle {
+                    color : red;
+                }
+            </style>
+        </h:head>
+
+        <h:body id="hpb-template-10-01a-01" class="hpb-layoutset-02 hpb-responsive">
+            <h:form>
+            <div id="hpb-skip"><a href="#hpb-title">本文へスキップ</a></div>
+            <!-- container -->
+            <div id="hpb-container" style="z-index:101;position:fixed;left:5px;background-color:#ffffff;height:130px;">
+              <!-- header -->
+              <div id="hpb-header">
+              </div>
+              <!-- header end --><!-- inner -->
+              <div id="hpb-inner">
+                <!-- wrapper -->
+                <div id="hpb-wrapper" style="width:100%;">
+                  <!-- page title -->
+                    <div id="hpb-title">
+                        <h2 id="my-title"><span class="ja"><ui:insert name="title">警告情報編集</ui:insert></span><span class="en"></span></h2>
+                    </div>
+                  <!-- page title end -->
+                  <!-- main -->
+                  <div id="hpb-main" style="text-align:left;">
+                    <ui:insert name="box">
+                        <table border="0">
+                            <tr>
+                                <td rowspan="1" valign="top"><input id="change_submit" type="button" value="　発報試験　" onclick="document.location='./edit_warn.xhtml';" /></td>
+                                <td rowspan="1" valign="top"><input id="change_submit" type="button" value="　編集終了　" onclick="document.location='./schedule.xhtml';" /></td>
+                            </tr>
+                        </table>
+                    </ui:insert>
+                  </div>
+                  <!-- main end -->
+                </div>
+                <!-- wrapper end -->
+                <!-- navi -->
+                <div id="hpb-nav">
+                    <h3 class="hpb-c-index">ナビゲーション</h3>
+                    <ul id="ul-nav">
+                    </ul>
+                </div>
+                <!-- navi end -->
+              </div>
+              <!-- inner end --><!-- footer -->
+              <!-- footer end -->
+            </div>
+            <!-- container end -->
+            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:160px;left:5px;background-color:#ffffff;width:99%;">
+            </div>
+            <script type="text/javascript" src="js/navigation.js">hpb-navigation-js</script>
+            
+            <h:messages errorClass="errorStyle"/>
+            </h:form>
+        </h:body>
+    </f:view>
+<script type="text/javascript">
+    //--------------------------------------------------------------------------
+    var url   = location.href;
+    var params    = url.split("?");
+    //alert(params[1]);
+    
+    var myMain = '<ui:insert name="box">';
+    myMain += '  <table border="0">';
+    myMain += '    <tr>';
+    
+    if (params[1] == 'ACT=n'){
+        //alert('新規');
+        $("#hpb-title").empty().append('<h2><span class="ja"><ui:insert name="title">警告情報新規登録</ui:insert></span><span class="en"></span></h2>');
+        myMain += '    <td rowspan="1" valign="top"><input id="change_submit" type="button" value="　登録終了　" onclick="return check_WarnInput();" /></td>';
+    }else{
+        //alert('編集');
+        $("#hpb-title").empty().append('<h2><span class="ja"><ui:insert name="title">警告情報編集</ui:insert></span><span class="en"></span></h2>');
+        myMain += '    <td rowspan="1" valign="top"><input id="change_submit" type="button" value="　削除　" onclick="delete_Warn();" /></td>';
+        myMain += '    <td rowspan="1" valign="top"><input id="change_submit" type="button" value="　発報試験　" onclick="return test_Alarm();" /></td>';
+        myMain += '    <td rowspan="1" valign="top"><input id="change_submit" type="button" value="　編集終了　" onclick="return check_WarnInput();" /></td>';
+    }
+
+    myMain += '    <td rowspan="1" valign="top"><input id="change_submit" type="button" value="　戻　る　" onclick="document.location=\'./schedule.xhtml\';" /></td>';
+    myMain += '    </tr>';
+    myMain += '  </table>';
+    myMain += '</ui:insert>';
+
+    $("#hpb-main").empty().append(myMain);
+    //--------------------------------------------------------------------------
+
+    //init_edit_warn();
+    make_menu();
+    make_edit_warn_list();
+    $(window).resize(function(){
+        resize_tbl_list();
+    });
+    chek_WarnStEd();    //[2016.05.17]bug-fixed.
+</script>
+</html>
+
+

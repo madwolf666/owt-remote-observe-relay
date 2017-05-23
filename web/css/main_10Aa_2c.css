@@ -1,0 +1,866 @@
+@charset "UTF-8";
+
+/*--------------------------------------------------------
+  共通レイアウトパーツ設定
+--------------------------------------------------------*/
+/* ヘッダー内パーツ */
+#hpb-headerMain{
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+}
+
+#hpb-headerMain h1{
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 5px;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 17px;
+    text-align: left;
+    font-weight: normal;
+    line-height: 12px;
+    font-size: 11px;
+}
+
+#hpb-headerLogo{
+    width: 500px;
+    float: left;
+}
+
+#hpb-headerLogo a{
+    display: block;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 17px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    text-indent: -9999px;
+    overflow: hidden;
+    height: 54px;
+    background-image : url(../img/logo_10Aa.png);
+    background-position: center left;
+    background-repeat: no-repeat;
+}
+
+#hpb-headerExtra1{
+    width: 330px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 8px;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    float: right;
+}
+
+#hpb-headerExtra1 p.tel{
+    /* 電話番号の文字設定 */
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 17px;
+    padding-bottom: 0;
+    padding-left: 0;
+    font-size: 1.2em;
+    line-height: 20px;
+    text-align: right;
+}
+
+#hpb-headerExtra1 p.tel span
+{
+    /* 電話番号の「TEL」文字設定 */
+}
+
+#hpb-headerExtra1 p.address{
+    /* 住所文字設定 */
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 17px;
+    padding-bottom: 0;
+    padding-left: 0;
+    line-height: 20px;
+    text-align: right;
+    font-size: 1.2em;
+}
+
+#hpb-headerExtra2
+{
+}
+
+/* フッター内パーツ */
+#hpb-footerMain{
+    width: 100%;	/*[2015.07.08]*/
+    /*width: 875px;*/	/*[2015.07.08]*/
+    background-color: #A7AFCB;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#hpb-footerMain p{
+    /* コピーライト文字設定 */
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    font-size: 0.9em;
+    text-align: center;
+    color: #ffffff;
+}
+
+#hpb-footerLogo
+{
+}
+
+#hpb-footerExtra1
+{
+}
+
+#hpb-footerExtra2
+{
+}
+
+/* サイドブロック内パーツ */
+
+/* バナー */
+#banner{
+    width: 190px;
+    margin-right: auto;
+}
+
+#banner ul{
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+#banner li{
+    display: block;
+    width: 190px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 5px;
+}
+
+#banner li a{
+    display: block;
+    height: 69px;
+    text-indent: -9999px;
+    overflow: hidden;
+}
+
+#banner a#banner-access{
+    /* アクセスバナー */
+    background-image : url(../img/top_banner_10Aa_01.png);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+
+/* 店舗情報 */
+#shopinfo{
+    padding-right: 17px;
+}
+
+#shopinfo h3{
+    margin-top: 0;
+    margin-bottom: 3px;
+    text-align: left;
+    color: #E8619E;
+    font-weight: normal;
+}
+
+#shopinfo h3 span.en{
+    text-transform: capitalize;
+    font-size: 1.5em;
+}
+
+#shopinfo h4{
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0;
+    font-weight: normal;
+    font-size: 0.95em;
+    padding-top: 0;
+    color: #723918;
+    font-weight: normal;
+}
+
+#shopinfo p{
+    margin-top: 0.1em;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+}
+
+/*--------------------------------------------------------
+  ナビゲーションデザイン設定
+--------------------------------------------------------*/
+
+#hpb-nav li a
+{
+    /* ナビゲーション文字設定 */
+}
+
+
+/*--------------------------------------------------------
+  基本パーツデザイン設定
+--------------------------------------------------------*/
+
+/* リンク文字色 */
+a:link{
+    color: #e69100;
+    text-decoration: underline;
+}
+a:visited{
+    color: #e69100;
+    text-decoration: underline;
+}
+a:hover{
+    color: #F39700;
+    text-decoration: none;
+}
+a:active{
+    color: #F39700;
+    text-decoration: none;
+}
+
+#hpb-skip{
+    /* ヘッダースキップの非表示 */
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-indent: -9999px;
+}
+
+p{
+    margin-top: 0.5em;
+    margin-bottom: 1.5em;
+    padding-right: 0.1em;
+    padding-left: 0.1em;
+    line-height: 1.4;
+    text-align: left;
+}
+
+p.large{
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-bottom: 0.4em;
+}
+p.indent{
+    padding-left: 15px;
+}
+
+.left{
+    float: left;
+}
+.right{
+    float: right;
+}
+
+hr{
+    width: 100%;
+    height: 1px;
+    margin-top: 10px;
+    margin-right: auto;
+    margin-bottom: 20px;
+    margin-left: auto;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    clear: both;
+    border-top-width: 1px;
+    border-top-style: none;
+    border-right-width: 1px;
+    border-right-style: none;
+    border-left-width: 1px;
+    border-left-style: none;
+    color: #ffffff;
+    border-bottom-width: 1px;
+    border-bottom-style: none;
+}
+
+.hpb-layoutset-02 h2{
+    background-image : url(../img/titleBg_10Aa.png);
+    background-position: top left;
+    background-repeat: no-repeat;
+    margin-top: -12px;
+    margin-bottom: 0;
+    width: 640px;
+    height: 76px;
+    text-align: left;
+    overflow: hidden;
+    line-height: 80px;
+}
+
+.hpb-layoutset-02 h2 span.ja{
+    font-size: 1.2em;
+    color: #ffffff;
+    padding-left: 50px;
+    padding-right: 15px;
+    font-weight: normal;
+}
+
+.hpb-layoutset-02 h2 span.en{
+    color: #1C2F90;
+    font-size: 0.9em;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+#hpb-wrapper h3{
+    margin-top: 20px;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    text-align: left;
+    background-image : url(../img/indexBg_10Aa.png);
+    background-position: bottom right;
+    background-repeat: repeat-x;
+    color: #E8619E;
+    font-size: 1.5em;
+    font-weight: normal;
+    text-align: left;
+}
+
+h3.hpb-c-index{
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-indent: -9999px;
+    background: none;
+}
+
+h4{
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-bottom: 0;
+    padding-left: 2px;
+    text-align: left;
+    font-size: 1.1em;
+    line-height: 1.2;
+    font-weight: bold;
+    color: #fbc421;
+}
+
+h5{
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 5px;
+    text-align: left;
+    font-size: 1.1em;
+    line-height: 1.5;
+    font-weight: bold;
+}
+
+table{
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    border-collapse: collapse;
+    border-top-width: 1px;
+    /*[2015.08.24]*/
+    /*
+    border-top-style: solid;
+    */
+    border-top-color: #723918;
+}
+
+table th{
+    padding-top: 5px;
+    padding-right: 20px;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    text-align: left;
+    background-color: #fddb7f;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #723918;
+}
+
+table td{
+    /*[2015.08.24]*/
+    padding-top: 2px;
+    padding-right: 10px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    /*
+    padding-top: 5px;
+    padding-right: 20px;
+    padding-bottom: 5px;
+    padding-left: 20px;
+    */
+    text-align: left;
+    border-bottom-width: 1px;
+    /*[2015.08.24]*/
+    /*
+    border-bottom-style: solid;
+    */
+    border-bottom-color: #723918;
+}
+
+/* フォームパーツ設定 */
+input.button{
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+textarea{
+    width: 380px;
+    height: 200px;
+}
+
+input.l{
+    width: 380px;
+}
+input.m{
+    width: 250px;
+}
+input.s{
+    width: 50px;
+}
+
+
+/* メインコンテンツ内基本パーツ */
+
+#hpb-main ul{
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+#hpb-main ul li{
+    text-align: left;
+    line-height: 1.4;
+    padding-top: 5px;
+    padding-right: 15px;
+    padding-bottom: 5px;
+    padding-left: 2px;
+    border-bottom-width: 1px;
+    border-bottom-style: dashed;
+    border-bottom-color: #f7ba05;
+}
+
+#hpb-main dl{
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+#hpb-main dt{
+    float: left;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    text-align: left;
+    line-height: 19px;
+    min-height: 19px;
+    font-weight: normal;
+    width: 170px !important;
+    padding-top: 5px;
+    padding-right: 0;
+    padding-bottom: 5px;
+    padding-left: 2px;
+    color: #fbc421;
+    font-weight: bold;
+}
+
+#hpb-main dd{
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 5px;
+    padding-right: 0;
+    padding-bottom: 5px;
+    text-align: left;
+    line-height: 19px;
+    min-height: 19px;
+    padding-left: 172px;
+    border-bottom-width: 1px;
+    border-bottom-style: dashed;
+    border-bottom-color: #f7ba05;
+}
+
+*:first-child + html #hpb-main dd{
+    /* for IE7 */
+    padding-left: 10px;
+    min-height: 20px;
+}
+
+* html #hpb-main dd{
+    /* for IE6 */
+    height: 20px;
+    padding-left: 0px;
+}
+
+#hpb-main dl::after{
+    content: ".";
+    clear: both;
+    height: 0;
+    display: block;
+    visibility: hidden;
+}
+
+#hpb-main img{
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+#hpb-main img.left{
+    margin-top: 5px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    float: left;
+}
+
+#hpb-main img.right{
+    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    float: right;
+}
+
+#pagetop{
+    margin-top: 10px;
+    margin-right: auto;
+    margin-bottom: 0;
+    margin-left: auto;
+    text-align: left;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#pagetop a{
+    /* ページの先頭へのリンク設定 */
+    display: block;
+    width: 124px;
+    height: 16px;
+    background-image : url(../img/returnTop_10Aa.png);
+    background-position: center left;
+    background-repeat: no-repeat;
+    text-indent: -9999px;
+    overflow: hidden;
+}
+
+
+/* トップページ デザイン定義 */
+
+/* メニューページ デザイン定義 */
+#hpb-wrapper #toppage-news h3{
+    margin-bottom: 10px;
+    line-height: 16px;
+    padding-bottom: 0;
+    padding-left: 0;
+    font-size: 1.2em;
+}
+
+#hpb-wrapper #toppage-news h3 span.en{
+    padding-right: 15px;
+    padding-left: 5px;
+    text-transform: capitalize;
+    background-color: #ffffff;
+    font-size: 1.5em;
+}
+
+#hpb-wrapper #toppage-news h3 span.ja{
+    padding-right: 20px;
+    padding-left: 5px;
+    background-color: #ffffff;
+}
+
+//sf-link
+#hpb-wrapper #nav-sf-link h3{
+    margin-bottom: 10px;
+    line-height: 16px;
+    padding-bottom: 0;
+    padding-left: 0;
+    font-size: 1.2em;
+}
+
+#hpb-wrapper #nav-sf-link h3 span.en{
+    padding-right: 15px;
+    padding-left: 5px;
+    text-transform: capitalize;
+    background-color: #ffffff;
+    font-size: 1.5em;
+}
+
+#hpb-wrapper #nav-sf-link h3 span.ja{
+    padding-right: 20px;
+    padding-left: 5px;
+    background-color: #ffffff;
+}
+
+/* =======================================================
+  レスポンシブル設定
+======================================================= */
+@media screen and (max-width: 568px) {
+
+	/*--------------------------------------------------------
+		共通レイアウトパーツ設定
+	--------------------------------------------------------*/
+	/* ヘッダー内パーツ */
+	#hpb-headerMain h1{
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    line-height: 1.4;
+	}
+
+	#hpb-headerLogo{
+    width: 98%;
+    float: none;
+		margin-top: 10px;
+		margin-right: auto;
+		margin-bottom: 10px;
+		margin-left: auto;
+	}
+
+	#hpb-headerLogo a{
+    margin-left: 0px;
+    background-position: top center;
+		background-size: contain;
+	}
+
+	#hpb-headerExtra1{
+    width: 98%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: 0px;
+    float: none;
+	}
+
+	#hpb-headerExtra1 p.tel{
+    /* 電話番号の文字設定 */
+    padding-right: 0px;
+    line-height: 1.4;
+	}
+	
+	#hpb-headerExtra1 p.tel span{
+    /* 電話番号の「TEL」文字設定 */
+		display: block;
+	}
+	
+	#hpb-headerExtra1 p.address{
+    /* 住所文字設定 */
+    padding-right: 0px;
+    line-height: 1.4;
+	}
+	
+	/* フッター内パーツ */
+	#hpb-footerMain{
+    width: 100%;
+		border-bottom-color: #FFFFFF;
+		border-bottom-style: solid;
+		border-bottom-width: 10px;
+	}
+
+	#hpb-footerMain p{
+    /* コピーライト文字設定 */
+    padding-top: 3px;
+    padding-bottom: 3px;
+		padding-right: 5px;
+		padding-left: 5px;
+		word-break: break-all;
+	}
+	
+	/* サイドブロック内パーツ */
+
+	/* バナー */
+	#banner{
+		margin-left: auto;
+		max-width: 100%;
+	}
+	
+	#banner li{
+		max-width: 100%;
+	}
+	
+	#banner a#banner-access{
+    /* アクセスバナー */
+    background-position: top center;
+    background-size: contain;
+	}
+	
+	/* 店舗情報 */
+	#shopinfo{
+    padding-right: 0px;
+		max-width: 100%;
+	}
+	
+	/*--------------------------------------------------------
+	  ナビゲーションデザイン設定
+	--------------------------------------------------------*/
+	#hpb-nav h3.hpb-c-index{
+		width: 27px;
+		height: 20px;
+		background-image : url(../img/btn_menu.png);
+		background-position: top left;
+		background-repeat: no-repeat;
+		margin-left: 10px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		overflow: hidden;
+		text-indent: -9999px;
+		cursor: pointer;
+	}
+
+	/*--------------------------------------------------------
+		基本パーツデザイン設定
+	--------------------------------------------------------*/
+	p{
+    padding-right: 0px;
+    padding-left: 0px;
+	}
+
+	.hpb-layoutset-02 h2{
+    background-image : none;
+    margin-top: 0px;
+    width: 100%;
+    height: auto;
+    line-height: 1.4;
+		background-color: #9EB4F1;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		word-break: break-all;
+	}
+
+	.hpb-layoutset-02 h2 span.ja{
+    padding-left: 15px;
+    padding-right: 0px;
+		display: inline-block;
+	}
+	
+	.hpb-layoutset-02 h2 span.en{
+    padding-left: 15px;
+		display: inline-block;
+	}
+	
+	#hpb-wrapper h3{
+    padding-right: 3px;
+	}
+
+	h4{
+    padding-right: 2px;
+	}
+	
+	h5{
+    padding-right: 5px;
+	}
+
+	table{
+		margin-right: auto;
+		margin-left: auto;
+		width: 96%;
+	}
+
+	/* フォームパーツ設定 */
+	textarea{
+    width: 96%;
+	}
+	
+	input.l{
+    width: 96%;
+	}
+	input.m{
+    width: 60%;
+	}
+	input.s{
+    width: 30%;
+	}
+
+	/* メインコンテンツ内基本パーツ */
+	#hpb-main ul li{
+    padding-right: 2px;
+	}
+	
+	#hpb-main dt{
+    float: none;
+		padding-bottom: 0px;
+    padding-left: 0px;
+		max-width: 100%;
+	}
+	
+	#hpb-main dd{
+    padding-left: 0px;
+	}
+
+	#hpb-main img.left{
+    margin-right: 0px;
+    float: none;
+	}
+	
+	#hpb-main img.right{
+    margin-left: 0px;
+    float: none;
+	}
+
+
+	/* トップページ デザイン定義 */
+	
+	/* メニューページ デザイン定義 */
+	#hpb-wrapper #toppage-news h3 span.en{
+    padding-right: 5px;
+	}
+
+	#hpb-wrapper #toppage-news h3 span.ja{
+    padding-right: 5px;
+	}
+	
+	/* 入所のご案内 デザイン定義 */
+	#hpb-wrapper #entrance{
+		text-align: center;
+	}
+	
+	/* 会社案内 デザイン定義 */
+	#hpb-wrapper #company{
+		text-align: center;
+	}
+
+}
+

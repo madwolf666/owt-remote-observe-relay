@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      lang="ja">
+
+    <f:view>
+        <h:head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta http-equiv="Content-Style-Type" content="text/css" />
+            <meta http-equiv="Content-Script-Type" content="text/javascript" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta name="format-detection" content="telephone=no" />
+            <meta name="GENERATOR" content="JustSystems Homepage Builder Version 19.0.7.0 for Windows" />
+            <link rel="stylesheet" href="css/hpbparts.css" type="text/css" id="hpbparts" />
+            <link rel="stylesheet" href="css/container_10Aa_2c_top.css" type="text/css" id="hpbcontainer" />
+            <link rel="stylesheet" href="css/main_10Aa_2c.css" type="text/css" id="hpbmain" />
+            <link rel="stylesheet" href="css/user.css" type="text/css" id="hpbuser" />
+            <link rel="stylesheet" href="css/custom.css" type="text/css" id="hpcustom" />
+            <script type="text/javascript" src="js/jquery.min.js"><!-- hpbiptitle jQuery library --></script>
+            <script type="text/javascript" src="js/move-mainnav.js">hpb-move-mainnav-js</script>
+            <link type="text/css" href="css/jquery-ui.css" rel="stylesheet" />
+            <script type="text/javascript" src="js/jquery.blockUI.js"></script>
+            <script type="text/javascript" src="js/custom.js"></script>
+            <script type="text/javascript" src="js/jquery.datetimepicker.js"></script>
+            <link type="text/css" href="css/jquery.datetimepicker.css" rel="stylesheet" />
+            <title><ui:insert name="title">リモート監視中継</ui:insert></title>
+            <style>
+                li.errorStyle {
+                    color : red;
+                }
+            </style>
+        </h:head>
+
+        <h:body id="hpb-template-10-01a-01" class="hpb-layoutset-02 hpb-responsive">
+            <h:form>
+            <div id="hpb-skip"><a href="#hpb-title">本文へスキップ</a></div>
+            <!-- container -->
+            <div id="hpb-container" style="z-index:101;position:fixed;left:5px;background-color:#ffffff;height:210px;">
+              <!-- header -->
+              <div id="hpb-header">
+              </div>
+              <!-- header end --><!-- inner -->
+              <div id="hpb-inner">
+                <!-- wrapper -->
+                <div id="hpb-wrapper" style="width:100%;">
+                  <!-- page title -->
+                    <div id="hpb-title">
+                        <h2><span class="ja"><ui:insert name="title">リモート発報障害検索</ui:insert></span><span class="en"></span></h2>
+                    </div>
+                  <!-- page title end -->
+                  <!-- main -->
+                  <div id="hpb-main" style="text-align:left;" >
+                    <ui:insert name="box">
+                        <table border="0" style="width:640px;">
+                            <!-- [2016.06.09]USERCODEでのリレーションは現状ない
+                            <tr>
+                                <td width="60px">ﾕｰｻﾞｺｰﾄﾞ:</td><td width="80px"><input id="txt_UserCode" type="text" /></td>
+                                <td></td><td></td>
+                            </tr>
+                            -->
+                            <tr>
+                                <td width="40px">SET-NO:</td><td width="80px"><input id="txt_SetNo" type="text" size="10" /></td>
+                                <td width="40px">REC番号:</td><td width="80px"><input id="txt_RecNo" type="text" size="10" /></td>
+                                <td rowspan="1" valign="top"><input id="change_submit" type="button" value="　検索開始　" onclick="find_remote_trouble_first(1);"/></td>
+                            </tr>
+                            <tr>
+                                <td width="40px">ユーザ名:</td>
+                                <td colspan="3"><input id="txt_UserName" type="text" style="width:360px;" /></td>
+                                <td ><input id="find_customer" type="button" value="　ﾕｰｻﾞ選択　" onclick="select_user(1);"/></td>
+                            </tr>
+                            <tr>
+                                <td width="40px">開始日時:</td><td width="80px"><input id="entry_timeS" type="text" size="10" value="" style="width:110px;" /></td>
+                                <td width="40px">終了日時:</td><td width="80px"><input id="entry_timeE" type="text" size="10" value="" style="width:110px;" /></td>
+                                <td rowspan="4"></td>
+                            </tr>
+                            <tr>
+                                <td width="70px">障害ﾒｯｾｰｼﾞ:</td>
+                                <td colspan="3"><input id="txt_TroubleMsg" type="text" style="width:360px;" /></td>
+                            </tr>
+                            <tr>
+                                <td width="40px">障害種別:</td><td colspan="3"><input id="chk_TroubleKind_MJ" type="checkbox" />MJ&nbsp;<input id="chk_TroubleKind_MN" type="checkbox" />MN&nbsp;<input id="chk_TroubleKind_GN" type="checkbox" />一般</td>
+                            </tr>
+                            <tr>
+                                <td width="40px">連絡済み:</td><td colspan="3"><input id="chk_Contact" type="checkbox" /></td>
+                            </tr>
+                        </table>
+                        <div id="my-pager">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                    </ui:insert>
+                  </div>
+                  <!-- main end -->
+                </div>
+                <!-- wrapper end -->
+                <!-- navi -->
+                <div id="hpb-nav">
+                    <h3 class="hpb-c-index">ナビゲーション</h3>
+                    <ul id="ul-nav">
+                    </ul>
+                </div>
+                <!-- navi end -->
+              </div>
+              <!-- inner end --><!-- footer -->
+              <!-- footer end -->
+            </div>
+            <!-- container end -->
+            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:298px;left:5px;background-color:#ffffff;width:99%;">
+            </div>
+            <!-- -->
+            <div id="popup1" class="popup">
+                <div id="select-user" class="popup_inner" style=""></div>
+            </div>
+            <!-- div id="overlay"></div -->
+            <!-- -->
+            <script type="text/javascript" src="js/navigation.js">hpb-navigation-js</script>
+            
+            <h:messages errorClass="errorStyle"/>
+            </h:form>
+        </h:body>
+    </f:view>
+<script type="text/javascript">
+    make_menu();
+    //make_pager(2,1);  //[2016.02.25]
+    make_remote_trouble_list(1);
+    $(function () {
+        $('#entry_timeS').datetimepicker({lang:'ja', step:1});
+        $('#entry_timeE').datetimepicker({lang:'ja', step:1});
+    });
+    $(window).resize(function(){
+        resize_tbl_list();
+    });
+</script>
+</html>
+
+

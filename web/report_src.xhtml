@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="./template2.xhtml">
+            <ui:define name="title">レポート出力</ui:define>
+            <ui:define name="box">
+                <h:commandButton value="Excel出力" action="#{ReportMonthly.makeReport('chappy')}">
+                </h:commandButton>
+
+                <h:commandButton value="SalesForce" action="#{SalesForceApi.getKeyFromSalesForce}">
+                </h:commandButton>
+                
+                <h:commandButton value="検索条件" onclick="input_findData();">
+                    <f:ajax>
+                    </f:ajax>
+                </h:commandButton>
+
+                <div id="popup1" class="popup">
+                        <div id="edit_MzData" class="popup_inner" style="">
+                            <h:inputText id="userNumber" size="2" maxlength="2" value="aaaaaaaaaaaaaa" label="chappy">
+                            </h:inputText>
+                        </div>
+                </div>
+                <div id="overlay"></div>
+
+                <!-- company -->
+                <div id="company">
+                  <h3>○○○</h3>
+                  <hr />
+                  <div id="pagetop"><a href="#hpb-container">このページの先頭へ</a></div>
+                </div>
+                <!-- company end -->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+
