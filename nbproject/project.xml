@@ -10,27 +10,6 @@
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <web-module-libraries>
                 <library dirs="200">
-                    <file>${file.reference.poi-3.12-20150511.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.poi-examples-3.12-20150511.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.poi-excelant-3.12-20150511.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.poi-ooxml-3.12-20150511.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.poi-ooxml-schemas-3.12-20150511.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.poi-scratchpad-3.12-20150511.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.postgresql-9.4.1208.jre7.jar}</file>
-                </library>
-                <library dirs="200">
                     <file>${file.reference.poi-3.12-20150511.jar-1}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
