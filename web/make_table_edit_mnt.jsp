@@ -63,7 +63,7 @@
     ArrayList<String> a_arrayList = null;
     out.print("<input type='hidden' id='txt_idx' name='txt_idx' value='");
     if (a_ACT.equals("e") == true){
-        a_arrayList = SetDB.GetMnt(a_Mnt_Table, a_columns, a_IDX);
+        a_arrayList = SetDB.GetMnt(a_Mnt_Table, a_columns, a_coldefs, a_IDX);
         out.print(a_IDX);
     }else{
     }

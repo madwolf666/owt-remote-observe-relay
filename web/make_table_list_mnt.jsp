@@ -4,18 +4,52 @@
     Author     : Chappy
 --%>
 
-<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.ArrayList,java.io.*,java.util.*,java.text.SimpleDateFormat"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ include file="/common.jsp" %>
+<jsp:useBean id="Environ" scope="page" class="common.Environ" />
 <jsp:useBean id="SetDB" scope="page" class="maintenance.SetDB" />
 <%
     //パスを取得
     String SCRIPT_NAME = request.getServletPath();
     String a_mainPath = GetMainPath(SCRIPT_NAME);
     String a_realPath = application.getRealPath(a_mainPath);
+    String a_envPath = "";
+
+    Environ.SetRealPath(a_realPath);
+    a_envPath = Environ.GetEnvironValue("mnt_env_path");
 
     //セッション変数
     String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
+    String[] a_table_split = null;
+    String[] a_column_split = null;
+    ArrayList<String> a_coldefs = new ArrayList<String>();
+    if (a_Mnt_Table != ""){
+        a_table_split = a_Mnt_Table.split("\t");
+        a_column_split = a_table_split[1].split(",");
+        
+        //該当テーブルの定義情報を読み込む
+        try{
+            FileInputStream a_fs = new FileInputStream(a_envPath + a_table_split[0] + ".txt");
+            InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
+            BufferedReader a_br = new BufferedReader(a_isr);
+            String a_line = "";
+            int a_rec = 0;
+            while ((a_line = a_br.readLine())!=null){
+                //1行目はタイトル
+                if (a_rec > 0){
+                    a_coldefs.add(a_line);
+                }
+                a_rec++;
+            }
+            a_br.close();
+            a_isr.close();
+            a_fs.close();
+
+        }catch(Exception e){
+
+        }
+    }
 
     //POSTデータを取得
     int a_PageNo = Integer.valueOf(request.getParameter("PageNo"));
@@ -46,7 +80,7 @@
     session.setAttribute("Mnt_Columns", a_columns);   //[2017.07.28]
     
     //一覧データを取得
-    ArrayList<String> a_arrayList = SetDB.FindMnt(a_Mnt_Table, a_PageNo, a_columns);
+    ArrayList<String> a_arrayList = SetDB.FindMnt(a_Mnt_Table, a_PageNo, a_columns, a_coldefs);
     if (a_arrayList != null){
         out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
         //ヘッダ部

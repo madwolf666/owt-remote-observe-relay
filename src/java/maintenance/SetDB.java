@@ -469,7 +469,7 @@ public class SetDB implements Serializable {
         return a_arrayRet;
     }
         
-    public  ArrayList<String> FindMnt(String h_table, int h_pageNo, ArrayList<String> h_columns) throws Exception{
+    public  ArrayList<String> FindMnt(String h_table, int h_pageNo, ArrayList<String> h_columns, ArrayList<String> h_coldefs) throws Exception{
         String[] a_table_split = null;
         String[] a_column_split = null;
         String[] a_any_split = null;
@@ -528,6 +528,24 @@ public class SetDB implements Serializable {
                     for (int a_iCnt=0; a_iCnt<h_columns.size(); a_iCnt++){
                         String[] a_split2 = h_columns.get(a_iCnt).split("\t");
                         a_sVal = _Environ.ExistDBString(a_rs,a_split2[1]);
+
+                        if (a_sVal != ""){
+                            if ((a_split2[2].indexOf("time") >= 0) || (a_split2[2].indexOf("date") >= 0)){
+                                //日付
+                                a_sVal = a_sVal.replace("-", "/");
+                                for (int a_iCnt2=0; a_iCnt2<h_coldefs.size(); a_iCnt2++){
+                                    String[] a_split3 = h_coldefs.get(a_iCnt2).split(":");
+                                    if (a_split3[0].equals(a_split2[1]) == true){
+                                        //カラム一致
+                                        if (a_split3[2].equals("n")){
+                                            //時刻指定なし
+                                            a_sVal = a_sVal.substring(0, 10);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
                         String a_sTmp1 = a_sVal;
                         if (a_split2[1].equals(a_key[0]) == true){
                             a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
@@ -565,7 +583,7 @@ public class SetDB implements Serializable {
         return a_arrayRet;
     }
     
-    public  ArrayList<String> GetMnt(String h_table, ArrayList<String> h_columns, String h_idx) throws Exception{
+    public  ArrayList<String> GetMnt(String h_table, ArrayList<String> h_columns, ArrayList<String> h_coldefs, String h_idx) throws Exception{
         String[] a_table_split = null;
         String[] a_column_split = null;
         String[] a_any_split = null;
@@ -620,6 +638,24 @@ public class SetDB implements Serializable {
                 for (int a_iCnt=0; a_iCnt<h_columns.size(); a_iCnt++){
                     String[] a_split2 = h_columns.get(a_iCnt).split("\t");
                     a_sVal = _Environ.ExistDBString(a_rs,a_split2[1]);
+                    
+                    if (a_sVal != ""){
+                        if ((a_split2[2].indexOf("time") >= 0) || (a_split2[2].indexOf("date") >= 0)){
+                            //日付
+                            a_sVal = a_sVal.replace("-", "/");
+                            for (int a_iCnt2=0; a_iCnt2<h_coldefs.size(); a_iCnt2++){
+                                String[] a_split3 = h_coldefs.get(a_iCnt2).split(":");
+                                if (a_split3[0].equals(a_split2[1]) == true){
+                                    //カラム一致
+                                    if (a_split3[2].equals("n")){
+                                        //時刻指定なし
+                                        a_sVal = a_sVal.substring(0, 10);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
                     a_arrayRet.add(a_sVal);
                 }
             }
