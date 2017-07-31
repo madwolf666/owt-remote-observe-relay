@@ -9,6 +9,7 @@
 <jsp:useBean id="RemoteTrouble" scope="page" class="remote.RemoteTrouble" />
 <jsp:useBean id="ReportMonthly" scope="page" class="report.ReportMonthly" />
 <jsp:useBean id="WarnSchedule" scope="page" class="warn.WarnSchedule" />
+<jsp:useBean id="SetDB" scope="page" class="maintenance.SetDB" />
 <%
     //パスを取得
     String SCRIPT_NAME = request.getServletPath();
@@ -31,6 +32,9 @@
     String TroubleKind_GN = "";
     String Contact = "";
 
+    String Mnt_Table = "";  //[2017.07.27]
+    int Mnt_pageNo = -1;    //[2017.07.27]
+    
     String a_sOut = "";
     //int a_list_sum = 0;
     //Beansへの値引渡し
@@ -124,6 +128,18 @@
             RemoteTrouble.putUserName(UserName);
 
             a_sOut = RemoteTrouble.MakePagerUser(a_Kind, a_PageNo);
+            break;
+        case 7: //リモートDB設定[2017.07.27]
+            Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
+            //[2017.07.28]
+            if (a_PageNo < 0){
+                if (GetSessionValue(session.getAttribute("Mnt_pageNo")) != ""){
+                    a_PageNo = Integer.valueOf(GetSessionValue(session.getAttribute("Mnt_pageNo")));
+                }
+            }
+            SetDB.SetRealPath(a_realPath);
+            a_sOut = SetDB.MakePagerMnt(Mnt_Table, a_PageNo);
+            session.setAttribute("Mnt_pageNo", a_PageNo);   //[2017.07.28]
             break;
     }
 

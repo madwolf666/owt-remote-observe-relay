@@ -21,9 +21,23 @@
             <link rel="stylesheet" href="css/custom.css" type="text/css" id="hpcustom" />
             <script type="text/javascript" src="js/jquery.min.js"><!-- hpbiptitle jQuery library --></script>
             <script type="text/javascript" src="js/move-mainnav.js">hpb-move-mainnav-js</script>
-            <link type="text/css" href="css/jquery-ui.css" rel="stylesheet" />
+            <!-- link type="text/css" href="css/jquery-ui.css" rel="stylesheet" / -->
             <script type="text/javascript" src="js/jquery.blockUI.js"></script>
             <script type="text/javascript" src="js/custom.js"></script>
+            <script type="text/javascript" src="js/custom-mnt.js"></script>
+  <!-- -->
+           <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+            <script type="text/javascript" src="js/jquery.ui.datepicker-ja.min.js"></script>
+<!-- -->
+<!--
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-ja.min.js"></script>
+-->
+<!--
+<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
+-->
+            <link type="text/css" href="css/ui-lightness.jquery-ui.css" rel="stylesheet" />
             <script type="text/javascript" src="js/jquery.datetimepicker.js"></script>
             <link type="text/css" href="css/jquery.datetimepicker.css" rel="stylesheet" />
             <title><ui:insert name="title">リモート監視中継</ui:insert></title>
@@ -38,7 +52,7 @@
             <h:form>
             <div id="hpb-skip"><a href="#hpb-title">本文へスキップ</a></div>
             <!-- container -->
-            <div id="hpb-container" style="z-index:101;position:fixed;left:5px;background-color:#ffffff;height:210px;">
+            <div id="hpb-container" style="z-index:101;position:fixed;left:5px;background-color:#ffffff;height:130px;">
               <!-- header -->
               <div id="hpb-header">
               </div>
@@ -48,43 +62,23 @@
                 <div id="hpb-wrapper" style="width:100%;">
                   <!-- page title -->
                     <div id="hpb-title">
-                        <h2><span class="ja"><ui:insert name="title">リモート発報障害検索</ui:insert></span><span class="en"></span></h2>
+                        <h2 id="my-title"><span class="ja"><ui:insert name="title">リモートDB設定</ui:insert></span><span class="en"></span></h2>
                     </div>
                   <!-- page title end -->
                   <!-- main -->
-                  <div id="hpb-main" style="text-align:left;" >
+                  <div id="hpb-main" style="text-align:left;">
                     <ui:insert name="box">
-                        <table border="0" style="width:640px;">
-                            <!-- [2016.06.09]USERCODEでのリレーションは現状ない
+                        <table border="0">
                             <tr>
-                                <td width="60px">ﾕｰｻﾞｺｰﾄﾞ:</td><td width="80px"><input id="txt_UserCode" type="text" /></td>
-                                <td></td><td></td>
+                                <td rowspan="1" valign="top"><div id="my-table-select" /></td>
                             </tr>
-                            -->
+                        </table>
+                        <table border="0">
                             <tr>
-                                <td width="40px">SET-NO:</td><td width="80px"><input id="txt_SetNo" type="text" size="10" /></td>
-                                <td width="40px">REC番号:</td><td width="80px"><input id="txt_RecNo" type="text" size="10" /></td>
-                                <td rowspan="1" valign="top"><input id="change_submit" type="button" value="　検索開始　" onclick="find_remote_trouble_first(1);"/></td>
-                            </tr>
-                            <tr>
-                                <td width="40px">ユーザ名:</td>
-                                <td colspan="3"><input id="txt_UserName" type="text" style="width:360px;" /></td>
-                                <td ><input id="find_customer" type="button" value="　ﾕｰｻﾞ選択　" onclick="select_user(1);"/></td>
-                            </tr>
-                            <tr>
-                                <td width="40px">開始日時:</td><td width="80px"><input id="entry_timeS" type="text" size="10" value="" style="width:110px;" /></td>
-                                <td width="40px">終了日時:</td><td width="80px"><input id="entry_timeE" type="text" size="10" value="" style="width:110px;" /></td>
-                                <td rowspan="4"></td>
-                            </tr>
-                            <tr>
-                                <td width="70px">障害ﾒｯｾｰｼﾞ:</td>
-                                <td colspan="3"><input id="txt_TroubleMsg" type="text" style="width:360px;" /></td>
-                            </tr>
-                            <tr>
-                                <td width="40px">障害種別:</td><td colspan="3"><input id="chk_TroubleKind_MJ" type="checkbox" />MJ&nbsp;<input id="chk_TroubleKind_MN" type="checkbox" />MN&nbsp;<input id="chk_TroubleKind_GN" type="checkbox" />一般</td>
-                            </tr>
-                            <tr>
-                                <td width="40px">連絡済み:</td><td colspan="3"><input id="chk_Contact" type="checkbox" /></td>
+                                <td rowspan="1" valign="top"><div id="new-mnt"><input id="change_submit" type="button" value="　新規登録　" onclick="make_table_edit_mnt('n','');" /></div></td>
+                                <td rowspan="1" valign="top"><div id="reset-mnt"><input id="change_submit" type="button" value="　リセット　" onclick="reset_table_edit_mnt();" /></div></td>
+                                <td rowspan="1" valign="top"><div id="entry-mnt"><input id="change_submit" type="button" value="　登録終了　" onclick="entry_table_mnt();" /></div></td>
+                                <td rowspan="1" valign="top"><div id="back-mnt"><input id="change_submit" type="button" value="　戻る　" onclick="make_table_list_mnt(-1);" /></div></td>
                             </tr>
                         </table>
                         <div id="my-pager">&nbsp;&nbsp;&nbsp;&nbsp;</div>
@@ -105,14 +99,8 @@
               <!-- footer end -->
             </div>
             <!-- container end -->
-            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:304px;left:5px;background-color:#ffffff;width:99%;">
+            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:212px;left:5px;background-color:#ffffff;width:99%;">
             </div>
-            <!-- -->
-            <div id="popup1" class="popup">
-                <div id="select-user" class="popup_inner" style=""></div>
-            </div>
-            <!-- div id="overlay"></div -->
-            <!-- -->
             <script type="text/javascript" src="js/navigation.js">hpb-navigation-js</script>
             
             <h:messages errorClass="errorStyle"/>
@@ -121,12 +109,8 @@
     </f:view>
 <script type="text/javascript">
     make_menu();
-    //make_pager(2,1);  //[2016.02.25]
-    make_remote_trouble_list(1);
-    $(function () {
-        $('#entry_timeS').datetimepicker({lang:'ja', step:1});
-        $('#entry_timeE').datetimepicker({lang:'ja', step:1});
-    });
+    make_table_select_mnt();
+    make_table_list_mnt(1);
     $(window).resize(function(){
         resize_tbl_list();
     });

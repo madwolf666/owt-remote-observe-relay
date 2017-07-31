@@ -107,6 +107,7 @@ function make_pager(h_kind,h_pageNo){
     //4：作業・停電スケジュール
     //5：LOG_CHECK
     //6：ユーザ選択
+    //7：リモートDB設定[2017.07.27]
     
     //h_kind：3,4,5
     var a_data = {
@@ -128,6 +129,12 @@ function make_pager(h_kind,h_pageNo){
                 'txt_UserName': $('#txt_UserName').val()
             };
             break;
+        case 7: //リモートDB設定[2017.07.27]
+            a_data = {
+                'Kind': h_kind,
+                'PageNo': h_pageNo,
+            };
+            break;
         default:
             break;
     }
@@ -139,8 +146,19 @@ function make_pager(h_kind,h_pageNo){
         async: false,
         data: a_data,
         success: function(data, dataType){
+            var a_result = data.trim();
             if (h_kind != 6){   //[2016.03.03]bug-fixed.
-                $("#my-pager").empty().append(data);
+                $("#my-pager").empty().append(a_result);
+                //[2017.07.28]
+                if (h_kind == 7){
+                    //alert(a_result.length);
+                    //alert("'" + a_result + "'");
+                    if (a_result == ''){
+                        $("#new-mnt").hide();
+                    }else{
+                        $("#new-mnt").show();
+                    }
+                }
             }else{
                 $("#my-pager-user").empty().append(data);
             }

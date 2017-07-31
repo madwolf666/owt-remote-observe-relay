@@ -1,0 +1,4 @@
+カラム名：必須有無（a/n/y）：時刻指定（n/y）
+lastdiag:n:n
+remotecancel:n:n
+nextlivemailtime:n:y

@@ -1,0 +1,5 @@
+カラム名：必須有無（a/n/y）：時刻指定（n/y）
+remotecancel:n:n
+diaglastdate:n:n
+lastelogdatetime:n:y
+lastelogdatetime:n:n

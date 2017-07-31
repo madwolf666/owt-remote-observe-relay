@@ -104,6 +104,8 @@
                 <li id="nav-find"><a href="./find.xhtml"><span class="ja">リモート発報障害検索</span><span class="en"></span></a></li>
                 <li id="nav-report"><a href="./report.xhtml"><span class="ja">リモート月報作成</span><span class="en"></span></a></li>
                 <li id="nav-schedule"><a href="./schedule.xhtml"><span class="ja">作業・停電スケジュール</span><span class="en"></span></a></li>
+                <li id="nav-schedule"><a href="./set-db.xhtml"><span class="ja">リモートDB設定</span><span class="en"></span></a></li>
+                <li id="nav-schedule"><a href="./mainte.xhtml"><span class="ja">保全</span><span class="en"></span></a></li>
 <!--
 </ul>
 -->

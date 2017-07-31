@@ -130,6 +130,9 @@ public class Environ {
         case 6: //ユーザ選択
             a_sFunc = "select_user";
             break;
+        case 7: //リモートDB設定[2017.07.27]
+            a_sFunc = "make_table_list_mnt";
+            break;
         }
         
         try{
@@ -176,9 +179,36 @@ public class Environ {
                     //a_sRet += "&nbsp;&nbsp;<a href='#' onclick='make_schedule_list(" + (a_start_page+1) + ");'>次へ</a>";
                 }
 
+            }else if (h_iSum < 0){  //[2017.07.27]
+                a_sRet = "";
             }else{
                 a_sRet = "<font color='#ff0000'>現在、登録データはありません。</font>";
             }
+            /*
+            if (a_sRet != ""){
+                if (h_kind == 7){
+                    a_sRet = 
+                        "<table border=\"0\">"
+                        + "<tr>"
+                        + "<td rowspan=\"1\" valign=\"top\">"
+                        + "<div id=\"new-mnt\"><input id=\"change_submit\" type=\"button\" value=\"　新規登録　\" onclick=\"make_table_edit_mnt('n'," + h_pageNo + ");\" /></div>"
+                        + "</td>"
+                        + "<td rowspan=\"1\" valign=\"top\">"
+                        + "<div id=\"reset-mnt\"><input id=\"change_submit\" type=\"button\" value=\"　リセット　\" onclick=\"reset_table_edit_mnt();\" /></div>"
+                        + "</td>"
+                        + "<td rowspan=\"1\" valign=\"top\">"
+                        + "<div id=\"entry-mnt\"><input id=\"change_submit\" type=\"button\" value=\"　登録終了　\" onclick=\"entry_table_mnt();\" /></div>"
+                        + "</td>"
+                        + "<td rowspan=\"1\" valign=\"top\">"
+                        + "<div id=\"back-mnt\"><input id=\"change_submit\" type=\"button\" value=\"　戻る　\" onclick=\"make_table_list_mnt(" + h_pageNo + ");\" /></div>"
+                        + "</td>"
+                        + "</tr>"
+                        + "</table>"
+                        + "<p>"
+                        + a_sRet;
+                }
+            }
+            */
         } catch (Exception e){
             _MyLogger.severe("[MakePager]" + e.getMessage());
         }

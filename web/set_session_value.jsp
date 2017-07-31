@@ -14,8 +14,11 @@
     String a_mainPath = GetMainPath(SCRIPT_NAME);
     String a_realPath = application.getRealPath(a_mainPath);
 
-   //POSTデータを取得
-    int a_Kind = Integer.valueOf(request.getParameter("Kind"));
+   //POSTデータを取得[2017.07.27]
+    int a_Kind = -1;
+    if (request.getParameter("Kind") != null)
+        a_Kind = Integer.valueOf(request.getParameter("Kind"));
+    
     String UserCode = request.getParameter("txt_UserCode"); //[2016.06.09]USERCODEでのリレーションは現状ない
     String SetNo = request.getParameter("txt_SetNo");
     String RecNo = request.getParameter("txt_RecNo");
@@ -27,6 +30,8 @@
     String TroubleKind_MN = request.getParameter("chk_TroubleKind_MN");
     String TroubleKind_GN = request.getParameter("chk_TroubleKind_GN");
     String Contact = request.getParameter("chk_Contact");
+        
+    String Mnt_Table = request.getParameter("Mnt_Table");   //[2017.07.27]
     
     //セッション変数を設定
     session.setAttribute("txt_UserCode", UserCode);
@@ -41,6 +46,7 @@
     session.setAttribute("chk_TroubleKind_GN", TroubleKind_GN);
     session.setAttribute("chk_Contact", Contact);
 
+    session.setAttribute("Mnt_Table", Mnt_Table);   //[2017.07.27]
 %>
 
     
