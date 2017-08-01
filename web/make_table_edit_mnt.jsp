@@ -25,7 +25,7 @@
     String[] a_table_split = null;
     String[] a_column_split = null;
     ArrayList<String> a_coldefs = new ArrayList<String>();
-    if (a_Mnt_Table != ""){
+    if (a_Mnt_Table.length() > 0){
         a_table_split = a_Mnt_Table.split("\t");
         a_column_split = a_table_split[1].split(",");
         
@@ -70,6 +70,15 @@
     out.print("'>");
     out.print("<input type='hidden' id='txt_act' name='txt_act' value='" + a_ACT + "'>");
     
+    //out.print("<div id='my-result' style='font-color:#ff0000;'></div>");
+    
+    g_JScript_Val_Auto = "";
+    //g_JScript_Val_Ness = "";
+    g_JScript_Program = "";
+    g_JScript_IsNumeric = "";
+    g_JScript_IsRequired = "";
+    g_Post_Data = "";
+    
     out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
     //ヘッダ部
     out.print("<tr>");
@@ -102,11 +111,7 @@
     
     out.print("</table>");
 
-    out.print("<div id=\"hpb-footer\">");
-    out.print("  <div id=\"hpb-footerMain\">");
-    out.print("    <p>copyright&#169;2015&#160;OKI&#160;Wintech&#160;all&#160;rights&#160;reserved.</p>");
-    out.print("  </div>");
-    out.print("</div>");
+    out.print(OutCopyRight());
     
     //java script
     out.print("<script type='text/javascript'>");
@@ -203,6 +208,7 @@ String Make_Tag_Mnt(String h_act, String[] h_column, String[] h_key, ArrayList<S
     if (h_column[2].indexOf("num") >= 0){
         //data_precisionが整数桁、data_scaleが小数桁
         a_sRet += Make_Input_Tag_Mnt_Numeric(h_column, "width:100%;");
+        //g_JScript_IsNumeric += "    alert($(\"#" + h_column[1] + "\"));";
         g_JScript_IsNumeric += "    if (!check_IsNumeric(\"#" + h_column[1] + "\", \"" + h_column[1] + "は数値入力です！\")){return false;}";
     }else if (h_column[2].indexOf("char") >= 0){
         //data_lengthがMAX桁数
@@ -251,12 +257,12 @@ String Make_Input_Tag_Mnt_Numeric(String[] h_column, String h_style){
     
     if (h_column.length > 5){
         if (h_column[5] != null){
-            if (h_column[5] != ""){
+            if (h_column[5].length() > 0){
                 a_max_len = Integer.valueOf(h_column[5]);
             }
         }
         if (h_column[6] != null){
-            if (h_column[6] != ""){
+            if (h_column[6].length() > 0){
                 a_itmp = Integer.valueOf(h_column[6]);
                 if (a_itmp > 0){
                     a_max_len += a_itmp + 1;
@@ -288,7 +294,7 @@ String Make_Input_Tag_Mnt_String(String[] h_column, String h_style){
     
     if (h_column.length > 3){
         if (h_column[3] != null){
-            if (h_column[3] != ""){
+            if (h_column[3].length() > 0){
                 a_max_len = Integer.valueOf(h_column[3]);
             }
         }
@@ -395,8 +401,14 @@ String Make_entry_table_mnt(String h_act, String h_idx){
         
     a_sRet += "     },";
     a_sRet += "     success: function(data, dataType){";
-    a_sRet += "         alert(\"登録しました。\");";
-    a_sRet += "         make_table_list_mnt(-1);";
+    a_sRet += "         var a_result = data.trim();";
+    a_sRet += "         if (a_result != \"\"){";
+    a_sRet += "             $(\"#my-pager\").empty().append(\"<font color='#ff0000'>\" + data + \"</font>\");";
+    a_sRet += "         } else{";
+    a_sRet += "             $(\"#my-pager\").empty();";
+    a_sRet += "             alert(\"登録しました。\");";
+    a_sRet += "             make_table_list_mnt(-1);";
+    a_sRet += "         }";
     a_sRet += "     },";
     a_sRet += "     error: function (XMLHttpRequest, textStatus, errorThrown) {";
     a_sRet += "         alert(errorThrown.message);";

@@ -112,11 +112,7 @@
         out.print("</table>");
     }
 
-    out.print("<div id=\"hpb-footer\">");
-    out.print("  <div id=\"hpb-footerMain\">");
-    out.print("    <p>copyright&#169;2015&#160;OKI&#160;Wintech&#160;all&#160;rights&#160;reserved.</p>");
-    out.print("  </div>");
-    out.print("</div>");
+    out.print(OutCopyRight());
 
     //java script
     out.print("<script type='text/javascript'>");

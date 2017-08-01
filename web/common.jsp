@@ -33,6 +33,18 @@ String GetSessionValue(Object h_session){
     }
     return a_sRet;
 }
+
+//copyright
+String OutCopyRight(){
+    String a_sRet = "";
+    a_sRet += "<div id=\"hpb-footer\">";
+    a_sRet += "  <div id=\"hpb-footerMain\">";
+    a_sRet += "    <p>copyright&#169;2017&#160;OKI&#160;Wintech&#160;all&#160;rights&#160;reserved.</p>";
+    a_sRet += "  </div>";
+    a_sRet += "</div>";
+
+    return a_sRet;
+}
 %>
 
     

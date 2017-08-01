@@ -43,7 +43,8 @@
     SetDB.SetRealPath(a_realPath);
     
     //DBの更新
-    SetDB.EnteryMnt(a_table_split[0], a_columns, a_column_split, ACT, IDX, a_post_data);
+    String a_sRet = SetDB.EnteryMnt(a_table_split[0], a_columns, a_column_split, ACT, IDX, a_post_data);
+    out.print(a_sRet);
 %>
 
     

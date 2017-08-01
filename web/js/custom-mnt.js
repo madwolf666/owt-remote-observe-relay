@@ -130,6 +130,7 @@ function make_table_list_mnt(h_pageNo){
 
 //テーブル情報編集
 function make_table_edit_mnt(h_act, h_idx){
+    //alert("make_table_edit_mnt");
     $.ajax({
         url: m_parentURL + "make_table_edit_mnt.jsp",
         type: 'POST',
@@ -146,6 +147,7 @@ function make_table_edit_mnt(h_act, h_idx){
             $("#reset-mnt").show();
             $("#entry-mnt").show();
             $("#back-mnt").show();
+            //alert($("#my-list").text());
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown.message);

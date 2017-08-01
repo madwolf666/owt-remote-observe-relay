@@ -80,13 +80,15 @@ public class SetDB implements Serializable {
     }
     
     //登録
-    public void EnteryMnt(String h_table, ArrayList<String> h_columns, String[] h_column_split, String h_act, String h_idx, ArrayList<String> h_post_data) throws Exception{
+    public String EnteryMnt(String h_table, ArrayList<String> h_columns, String[] h_column_split, String h_act, String h_idx, ArrayList<String> h_post_data) throws Exception{
+        String a_sRet = "";
         Connection a_con = null;
         PreparedStatement a_ps = null;
         String a_sql = "";
         String a_sql_f = "";
         String a_sql_v = "";
         String a_sql_w = "";
+        int a_index = 0;
         try{
             Class.forName (_db_driver);
             // データベースとの接続
@@ -109,7 +111,11 @@ public class SetDB implements Serializable {
                         if (a_sql_v != ""){
                             a_sql_v += ",";
                         }
-                        a_sql_v += "(SELECT MAX(" + a_split[0] + ")+1 FROM " + h_table + ")";
+                        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                            a_sql_v += "(SELECT NVL(MAX(" + a_split[0] + "),0)+1 FROM " + h_table + ")";
+                        }else if (_db_driver.equals("org.postgresql.Driver")){
+                            a_sql_v += "(SELECT COALESCE(MAX(" + a_split[0] + "),0)+1 FROM " + h_table + ")";
+                        }
                     }
                 }
             }else{
@@ -135,6 +141,7 @@ public class SetDB implements Serializable {
             }
         
             //POSTデータからSQLを組み立て
+            a_index = 0;
             for (int a_iCnt=0; a_iCnt<h_post_data.size(); a_iCnt++){
                 String[] a_split = h_post_data.get(a_iCnt).split("\t");
                 if (a_split[1] != ""){
@@ -146,6 +153,7 @@ public class SetDB implements Serializable {
                         String[] a_split2 = h_columns.get(a_iCnt2).split("\t");
                         if (a_split2[1].equals(a_split[0]) == true){
                             //カラム検出
+                            a_index++;
                             if (a_sql_v != ""){
                                 a_sql_v += ",";
                             }
@@ -155,13 +163,8 @@ public class SetDB implements Serializable {
                                 a_sql_v += a_split[0] + "=";
                             }
                             
-                            if (a_split2[2].indexOf("num") >= 0){
-                                //数値の場合
-                                a_sql_v += a_split[1];  //値
-                            }else{
-                                //数値以外
-                                a_sql_v += "'" + a_split[1] + "'";  //値
-                            }
+                            a_sql_v += "?";
+                            break;
                         }
                     }
                 }
@@ -174,19 +177,70 @@ public class SetDB implements Serializable {
             }
             
             a_ps = a_con.prepareStatement(a_sql);
-            //a_ps.setString(1, JobId);
-            int a_i = a_ps.executeUpdate();
-            a_con.commit();
+
+            //POSTデータからSQLを組み立て
+            a_index = 0;
+            for (int a_iCnt=0; a_iCnt<h_post_data.size(); a_iCnt++){
+                String[] a_split = h_post_data.get(a_iCnt).split("\t");
+                if (a_split[1] != ""){
+                    for (int a_iCnt2=0; a_iCnt2<h_columns.size(); a_iCnt2++){
+                        String[] a_split2 = h_columns.get(a_iCnt2).split("\t");
+                        if (a_split2[1].equals(a_split[0]) == true){
+                            //カラム検出
+                            a_index++;
+                            if (a_split2[2].indexOf("num") >= 0){
+                                //数値の場合
+                                a_ps.setInt(a_index, Integer.valueOf(a_split[1]));
+                            }else if (a_split2[2].indexOf("time") >= 0){
+                                //timestamp
+                                java.sql.Timestamp a_ts = null;
+                                SimpleDateFormat a_sdf = null;
+                                if (a_split[1].indexOf(" ") >= 0){
+                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                }else{
+                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd");
+                                }
+                                a_ts = new java.sql.Timestamp(a_sdf.parse(a_split[1]).getTime());
+                                a_ps.setTimestamp(a_index, a_ts);
+                            }else if (a_split2[2].indexOf("date") >= 0){
+                                //date
+                                java.sql.Date a_dt = null;
+                                SimpleDateFormat a_sdf = null;
+                                if (a_split[1].indexOf(" ") >= 0){
+                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                }else{
+                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd");
+                                }
+                                a_dt = new java.sql.Date(a_sdf.parse(a_split[1]).getTime());
+                                a_ps.setDate(a_index, a_dt);
+                            }else{
+                                //文字列
+                                a_ps.setString(a_index, a_split[1]);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (a_index > 0){
+                int a_i = a_ps.executeUpdate();
+                a_con.commit();
+            }else{
+                a_sRet = "登録対象データがありません！";
+            }
         } catch (SQLException e) {
             if (a_con != null){
                 a_con.rollback();
             }
             _Environ._MyLogger.severe("[EnteryMnt]" + e.getMessage());
+            a_sRet = e.getMessage();
         } catch (ClassNotFoundException ex) {
             if (a_con != null){
                 a_con.rollback();
             }
             _Environ._MyLogger.severe("[EnteryMnt]" + ex.getMessage());
+            a_sRet = ex.getMessage();
         } finally{
             if (a_ps != null){
                 a_ps.close();
@@ -197,6 +251,7 @@ public class SetDB implements Serializable {
         }
 
         _Environ._MyLogger.info("*** EnteryMnt is finished. ***");
+        return a_sRet;
     }
 
     //削除
@@ -328,6 +383,7 @@ public class SetDB implements Serializable {
 "   ON" +
 "    con.constraint_name=col.constraint_name " +
 "    AND con.table_name=col.table_name" +
+"    AND con.constraint_type IN ('P', 'U')" +
 "   ORDER BY " +
 "    con.table_name) sub" +
 " ON " +
@@ -368,6 +424,7 @@ public class SetDB implements Serializable {
 "   ON" +
 "    con.constraint_name=col.constraint_name" +
 "    AND con.table_name=col.table_name" +
+"    AND con.constraint_type IN ('PRIMARY KEY', 'UNIQUE')" +
 "   ORDER BY" +
 "    con.table_name) sub" +
 "  ON" +
@@ -519,8 +576,15 @@ public class SetDB implements Serializable {
                 String a_sRet = "";
                 int a_start_idx = ((h_pageNo-1)*_max_line_page) + 1;
                 int a_end_idx = (h_pageNo*_max_line_page);
-                a_sql = "SELECT row_number() over(ORDER BY " + a_fields + "), * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
-                a_sql = "SELECT * FROM (" + a_sql + ") s1 WHERE (s1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                
+                if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                    a_sql = "SELECT * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+                    a_sql = "SELECT s1.* FROM (" + a_sql + ") s1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                }else if (_db_driver.equals("org.postgresql.Driver")){
+                    a_sql = "SELECT row_number() over(ORDER BY " + a_fields + "), * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+                    a_sql = "SELECT * FROM (" + a_sql + ") s1 WHERE (s1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                }
+
                 a_ps = a_con.prepareStatement(a_sql);
                 a_rs = a_ps.executeQuery();
                 while(a_rs.next()){
@@ -550,7 +614,7 @@ public class SetDB implements Serializable {
                         if (a_split2[1].equals(a_key[0]) == true){
                             a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
                             for (int a_iCnt2=1; a_iCnt2<a_key.length; a_iCnt2++){
-                                String a_sTmp2 = _Environ.ExistDBString(a_rs,a_key[a_iCnt]);
+                                String a_sTmp2 = _Environ.ExistDBString(a_rs,a_key[a_iCnt2]);
                                 a_sVal += "," + a_sTmp2;
                             }
                             a_sVal += "');\">" + a_sTmp1 + "</a>";
@@ -627,9 +691,9 @@ public class SetDB implements Serializable {
             String[] a_split = h_idx.split(",");
             for (int a_iCnt=0; a_iCnt<a_column_split.length; a_iCnt++){
                 if (a_type[a_iCnt].equals("n") == true){
-                    a_ps.setInt(1, Integer.valueOf(h_idx));
+                    a_ps.setInt(a_iCnt+1, Integer.valueOf(a_split[a_iCnt]));
                 } else{
-                    a_ps.setString(1, h_idx);
+                    a_ps.setString(a_iCnt+1, a_split[a_iCnt]);
                 }
             }
 
@@ -677,103 +741,5 @@ public class SetDB implements Serializable {
         _Environ._MyLogger.info("*** GetMnt is finished. ***");
 
         return a_arrayRet;
-    }
-
-    //--------------------------------------------------------------------------
-    //--------------------------------------------------------------------------
-    //登録
-    private void insert_Mnt() throws Exception{
-        /*
-        Connection a_con = null;
-        PreparedStatement a_ps = null;
-        String a_sql = "INSERT INTO JOBSCHEDULE (" +
-                "JOBID,CUSTOMERNAME,BRANCHNAME,JOBKIND,JOBCONTENTS,STARTTIME,ENDTIME,EXECDAYS,EXECKIND" + 
-                ") VALUES(" +
-                "?,?,?,?,?,?,?,?,?";
-        a_sql += ");";
-        try{
-            Class.forName (_db_driver);
-            // データベースとの接続
-            a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
-            a_con.setAutoCommit(false);
-            a_ps = a_con.prepareStatement(a_sql);
-            a_ps.setString(1, make_JobId());
-            a_ps.setString(2, CustomerName);
-            a_ps.setString(3, BranchName);
-            a_ps.setInt(4, Integer.parseInt(JobKind));
-            a_ps.setString(5, JobContents);
-            a_ps.setTimestamp(6, _TimeS);
-            a_ps.setTimestamp(7, _TimeE);
-            a_ps.setInt(8, _ExecDays);
-            a_ps.setInt(9, _ExecKind);
-            int a_i = a_ps.executeUpdate();
-            a_con.commit();
-        } catch (SQLException e) {
-            if (a_con != null){
-                a_con.rollback();
-            }
-            _Environ._MyLogger.severe("[insert_WarnSchedule]" + e.getMessage());
-        } catch (ClassNotFoundException ex) {
-            if (a_con != null){
-                a_con.rollback();
-            }
-            _Environ._MyLogger.severe("[insert_WarnSchedule]" + ex.getMessage());
-        } finally{
-            if (a_ps != null){
-                a_ps.close();
-            }
-            if (a_con != null){
-                a_con.close();
-            }
-        }
-        */
-        _Environ._MyLogger.info("*** insert_Mnt is finished. ***");
-    }
-    
-    //更新
-    private void update_Mnt() throws Exception{
-        /*
-        Connection a_con = null;
-        PreparedStatement a_ps = null;
-        String a_sql = "UPDATE JOBSCHEDULE SET " +
-                "CUSTOMERNAME=?,BRANCHNAME=?,JOBKIND=?,JOBCONTENTS=?,STARTTIME=?,ENDTIME=?,EXECDAYS=?,EXECKIND=?" + 
-                " WHERE (JOBID=?);";
-        try{
-            Class.forName (_db_driver);
-            // データベースとの接続
-            a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
-            a_con.setAutoCommit(false);
-            a_ps = a_con.prepareStatement(a_sql);
-            a_ps.setString(1, CustomerName);
-            a_ps.setString(2, BranchName);
-            a_ps.setInt(3, Integer.parseInt(JobKind));
-            a_ps.setString(4, JobContents);
-            a_ps.setTimestamp(5, _TimeS);
-            a_ps.setTimestamp(6, _TimeE);
-            a_ps.setInt(7, _ExecDays);
-            a_ps.setInt(8, _ExecKind);
-            a_ps.setString(9, JobId);
-            int a_i = a_ps.executeUpdate();
-            a_con.commit();
-        } catch (SQLException e) {
-            if (a_con != null){
-                a_con.rollback();
-            }
-            _Environ._MyLogger.severe("[update_WarnSchedule]" + e.getMessage());
-        } catch (ClassNotFoundException ex) {
-            if (a_con != null){
-                a_con.rollback();
-            }
-            _Environ._MyLogger.severe("[update_WarnSchedule]" + ex.getMessage());
-        } finally{
-            if (a_ps != null){
-                a_ps.close();
-            }
-            if (a_con != null){
-                a_con.close();
-            }
-        }
-        */
-        _Environ._MyLogger.info("*** update_Mnt is finished. ***");
     }
 }
