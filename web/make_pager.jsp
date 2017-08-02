@@ -10,6 +10,7 @@
 <jsp:useBean id="ReportMonthly" scope="page" class="report.ReportMonthly" />
 <jsp:useBean id="WarnSchedule" scope="page" class="warn.WarnSchedule" />
 <jsp:useBean id="SetDB" scope="page" class="maintenance.SetDB" />
+<jsp:useBean id="AnalyzeLog" scope="page" class="maintenance.AnalyzeLog" />
 <%
     //パスを取得
     String SCRIPT_NAME = request.getServletPath();
@@ -140,6 +141,18 @@
             SetDB.SetRealPath(a_realPath);
             a_sOut = SetDB.MakePagerMnt(Mnt_Table, a_PageNo);
             session.setAttribute("Mnt_pageNo", a_PageNo);   //[2017.07.28]
+            break;
+        case 8: //保全[2017.08.02]
+            Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Log_Analyze_Table"));
+            //[2017.07.28]
+            if (a_PageNo < 0){
+                if (GetSessionValue(session.getAttribute("Mntt_Log_Analyze_pageNo")) != ""){
+                    a_PageNo = Integer.valueOf(GetSessionValue(session.getAttribute("Mntt_Log_Analyze_pageNo")));
+                }
+            }
+            AnalyzeLog.SetRealPath(a_realPath);
+            a_sOut = AnalyzeLog.MakePagerAnalyze(Mnt_Table, a_PageNo);
+            session.setAttribute("Mntt_Log_Analyze_pageNo", a_PageNo);   //[2017.07.28]
             break;
     }
 

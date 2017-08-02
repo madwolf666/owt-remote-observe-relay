@@ -108,6 +108,7 @@ function make_pager(h_kind,h_pageNo){
     //5：LOG_CHECK
     //6：ユーザ選択
     //7：リモートDB設定[2017.07.27]
+    //8：保全[2017.08.02]
     
     //h_kind：3,4,5
     var a_data = {
@@ -135,6 +136,12 @@ function make_pager(h_kind,h_pageNo){
                 'PageNo': h_pageNo,
             };
             break;
+        case 8: //保全[2017.08.02]
+            a_data = {
+                'Kind': h_kind,
+                'PageNo': h_pageNo,
+            };
+            break;
         default:
             break;
     }
@@ -149,8 +156,8 @@ function make_pager(h_kind,h_pageNo){
             var a_result = data.trim();
             if (h_kind != 6){   //[2016.03.03]bug-fixed.
                 $("#my-pager").empty().append(a_result);
-                //[2017.07.28]
-                if (h_kind == 7){
+                //[2017.07.28][2017.08.02]
+                if ((h_kind == 7) || (h_kind == 8)){
                     //alert(a_result.length);
                     //alert("'" + a_result + "'");
                     if (a_result == ''){

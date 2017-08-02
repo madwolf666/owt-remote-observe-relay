@@ -133,6 +133,9 @@ public class Environ {
         case 7: //リモートDB設定[2017.07.27]
             a_sFunc = "make_table_list_mnt";
             break;
+        case 8: //保全[2017.08.02]
+            a_sFunc = "make_log_analyze_list_mnt";
+            break;
         }
         
         try{

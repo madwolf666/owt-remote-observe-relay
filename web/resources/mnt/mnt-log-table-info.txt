@@ -1,5 +1,0 @@
-テーブル名	説明	検索キーのカラム名：型（n/s）
-mss2operationlog	MSSV2用RAS通信ログ	rascode:s
-operationlog	オペレーションログ	rascode:s
-pbxoperationlog	PBXリモートのオペレーションログ	detail:s
-multianalyzelog	障害解析結果	detail:s

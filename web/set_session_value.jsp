@@ -32,6 +32,7 @@
     String Contact = request.getParameter("chk_Contact");
         
     String Mnt_Table = request.getParameter("Mnt_Table");   //[2017.07.27]
+    String Mnt_Log_Analyze_Table = request.getParameter("Mnt_Log_Analyze_Table");   //[2017.08.02]
     
     //セッション変数を設定
     session.setAttribute("txt_UserCode", UserCode);
@@ -47,6 +48,8 @@
     session.setAttribute("chk_Contact", Contact);
 
     session.setAttribute("Mnt_Table", Mnt_Table);   //[2017.07.27]
+    session.setAttribute("Mnt_Log_Analyze_Table", Mnt_Log_Analyze_Table);   //[2017.08.02]
+
 %>
 
     

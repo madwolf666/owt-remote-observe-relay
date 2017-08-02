@@ -8,7 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ include file="/common.jsp" %>
 <jsp:useBean id="Environ" scope="page" class="common.Environ" />
-<jsp:useBean id="SetDB" scope="page" class="maintenance.SetDB" />
+<jsp:useBean id="AnalyzeLog" scope="page" class="maintenance.AnalyzeLog" />
 <%
     //パスを取得
     String SCRIPT_NAME = request.getServletPath();
@@ -20,7 +20,7 @@
     a_envPath = Environ.GetEnvironValue("mnt_env_path");
 
     //セッション変数
-    String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
+    String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Log_Analyze_Table"));
     String[] a_table_split = null;
     String[] a_column_split = null;
     ArrayList<String> a_coldefs = new ArrayList<String>();
@@ -30,7 +30,7 @@
         
         //該当テーブルの定義情報を読み込む
         try{
-            FileInputStream a_fs = new FileInputStream(a_envPath + a_table_split[0] + ".def");
+            FileInputStream a_fs = new FileInputStream(a_envPath + a_table_split[0] + "-analyze.def");
             InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
             BufferedReader a_br = new BufferedReader(a_isr);
             String a_line = "";
@@ -56,16 +56,16 @@
     //String OrderStartDate = request.getParameter("OrderStartDate");
     //[2017.07.28]
     if (a_PageNo < 0){
-        if (GetSessionValue(session.getAttribute("Mnt_pageNo")) != ""){
-            a_PageNo = Integer.valueOf(GetSessionValue(session.getAttribute("Mnt_pageNo")));
+        if (GetSessionValue(session.getAttribute("Mnt_Log_Analyze_pageNo")) != ""){
+            a_PageNo = Integer.valueOf(GetSessionValue(session.getAttribute("Mnt_Log_Analyze_pageNo")));
         }
     }
     
     //Beansへの値引渡し
-    SetDB.SetRealPath(a_realPath);
+    AnalyzeLog.SetRealPath(a_realPath);
 
     //テーブルの定義・制約・コメントの取得
-    ArrayList<String> a_columns = SetDB.ColumnsMnt(a_Mnt_Table);
+    ArrayList<String> a_columns = AnalyzeLog.ColumnsAnalyze(a_Mnt_Table);
     /*
     if (a_columns != null){
         for (int a_iCnt=0; a_iCnt<a_columns.size(); a_iCnt++){
@@ -77,10 +77,10 @@
         }
     }
     */
-    session.setAttribute("Mnt_Columns", a_columns);   //[2017.07.28]
+    session.setAttribute("Mnt_Log_Analyze_Columns", a_columns);   //[2017.07.28]
     
     //一覧データを取得
-    ArrayList<String> a_arrayList = SetDB.FindMnt(a_Mnt_Table, a_PageNo, a_columns, a_coldefs);
+    ArrayList<String> a_arrayList = AnalyzeLog.FindAnalyze(a_Mnt_Table, a_PageNo, a_columns, a_coldefs);
     if (a_arrayList != null){
         out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
         //ヘッダ部

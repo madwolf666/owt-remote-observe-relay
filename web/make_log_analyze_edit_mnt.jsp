@@ -8,7 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ include file="/common.jsp" %>
 <jsp:useBean id="Environ" scope="page" class="common.Environ" />
-<jsp:useBean id="SetDB" scope="page" class="maintenance.SetDB" />
+<jsp:useBean id="AnalyzeLog" scope="page" class="maintenance.AnalyzeLog" />
 <%
     //パスを取得
     String SCRIPT_NAME = request.getServletPath();
@@ -20,8 +20,8 @@
     a_envPath = Environ.GetEnvironValue("mnt_env_path");
 
     //セッション変数
-    String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
-    ArrayList<String> a_columns = (ArrayList<String>)session.getAttribute("Mnt_Columns");
+    String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Log_Analyze_Table"));
+    ArrayList<String> a_columns = (ArrayList<String>)session.getAttribute("Mnt_Log_Analyze_Columns");
     String[] a_table_split = null;
     String[] a_column_split = null;
     ArrayList<String> a_coldefs = new ArrayList<String>();
@@ -31,7 +31,7 @@
         
         //該当テーブルの定義情報を読み込む
         try{
-            FileInputStream a_fs = new FileInputStream(a_envPath + a_table_split[0] + ".def");
+            FileInputStream a_fs = new FileInputStream(a_envPath + a_table_split[0] + "-analyze.def");
             InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
             BufferedReader a_br = new BufferedReader(a_isr);
             String a_line = "";
@@ -57,13 +57,13 @@
     String a_IDX = request.getParameter("IDX");
 
     //Beansへの値引渡し
-    SetDB.SetRealPath(a_realPath);
+    AnalyzeLog.SetRealPath(a_realPath);
 
     //登録済データを取得
     ArrayList<String> a_arrayList = null;
     out.print("<input type='hidden' id='txt_idx' name='txt_idx' value='");
     if (a_ACT.equals("e") == true){
-        a_arrayList = SetDB.GetMnt(a_Mnt_Table, a_columns, a_coldefs, a_IDX);
+        a_arrayList = AnalyzeLog.GetAnalyze(a_Mnt_Table, a_columns, a_coldefs, a_IDX);
         out.print(a_IDX);
     }else{
     }

@@ -1,0 +1,5 @@
+テーブル名	説明	検索キーのカラム名：型（n/s）：修正可否（n/y）:自動採番（n/y）
+mss2operationlog	MSSV2用RAS通信ログ	rascode:s:y:n
+operationlog	オペレーションログ	rascode:s:y:n
+pbxoperationlog	PBXリモートのオペレーションログ	detail:s:y:n
+multianalyzelog	障害解析結果	detail:s:y:n

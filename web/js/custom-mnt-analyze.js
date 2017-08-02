@@ -2,16 +2,16 @@ $(function () {
     //$('#set-table-name').change(function(){alert($('[name=set-table-name]').val());});
     $('#set-table-name').change(function(){
         //alert($('[name=set-table-name] option:selected').val());
-        make_table_list_mnt_first($('[name=set-table-name] option:selected').val());
+        make_log_analyze_list_mnt_first($('[name=set-table-name] option:selected').val());
     });
 });
 
 //セッション変数設定
 var g_IsSet_Session = false;
-function set_session_value_mnt_table(h_table){
+function set_session_value_mnt_log_analyze(h_table){
     //alert(h_table);
     var a_data = {
-            'Mnt_Table': h_table
+            'Mnt_Log_Analyze_Table': h_table
     };
     //alert(m_parentURL);
     $.ajax({
@@ -33,9 +33,9 @@ function set_session_value_mnt_table(h_table){
 }
 
 //セッション変数設定
-function set_session_value_mnt_pageNo(h_pageNo){
+function set_session_value_mnt_log_analyze_pageNo(h_pageNo){
     var a_data = {
-            'Mnt_pageNo': h_pageNo
+            'Mnt_Log_Analyze_pageNo': h_pageNo
     };
     //alert(m_parentURL);
     $.ajax({
@@ -57,13 +57,13 @@ function set_session_value_mnt_pageNo(h_pageNo){
 }
 
 //リモートDBテーブル名取得
-function make_table_select_mnt(){
+function make_log_analyze_select_mnt(){
     $("#new-mnt").hide();
-    $("#reset-mnt").hide();
+    //$("#reset-mnt").hide();
     $("#entry-mnt").hide();
     $("#back-mnt").hide();
     $.ajax({
-        url: m_parentURL + "make_table_select_mnt.jsp",
+        url: m_parentURL + "make_log_analyze_select_mnt.jsp",
         type: 'POST',
         dataType: "html",
         async: false,
@@ -81,31 +81,40 @@ function make_table_select_mnt(){
 }
 
 //一覧表示（最初）
-function do_make_table_list_mnt_first(){
+function do_make_log_analyze_list_mnt_first(){
     if (g_IsSet_Session == false) {
         //doSomething();
-        setTimeout(function(){do_make_table_list_mnt_first()}, 1000);
+        setTimeout(function(){do_make_log_analyze_list_mnt_first()}, 1000);
     }else{
         g_IsSet_Session = false;
-        //alert("make_table_list_mnt_first--->" + g_IsSet_Session)
+        //alert("make_log_table_list_mnt_first--->" + g_IsSet_Session)
         //alert(h_table);
         //make_pager(2,h_pageNo);   //[2016.02.15]
-        make_table_list_mnt(1);
+        make_log_analyze_list_mnt(1);
     }
 }
 
-function make_table_list_mnt_first(h_table){
+function make_log_analyze_list_mnt_first(h_table){
     //alert(h_table);
-    set_session_value_mnt_table(h_table);
-    //alert("make_table_list_mnt_first--->" + g_IsSet_Session)
-    do_make_table_list_mnt_first();
+    if (h_table != ""){
+        set_session_value_mnt_log_analyze(h_table);
+        //alert("make_log_table_list_mnt_first--->" + g_IsSet_Session)
+        do_make_log_analyze_list_mnt_first();
+    }else{
+        $("#my-pager").empty();
+        $("#my-list").empty();
+        $("#new-mnt").hide();
+        //$("#reset-mnt").hide();
+        $("#entry-mnt").hide();
+        $("#back-mnt").hide();
+    }
 }
 
 //一覧表示
-function make_table_list_mnt(h_pageNo){
+function make_log_analyze_list_mnt(h_pageNo){
     //alert(m_parentURL);
     $.ajax({
-        url: m_parentURL + "make_table_list_mnt.jsp",
+        url: m_parentURL + "make_log_analyze_list_mnt.jsp",
         type: 'POST',
         dataType: "html",
         async: false,
@@ -113,10 +122,11 @@ function make_table_list_mnt(h_pageNo){
             'PageNo': h_pageNo
         },
         success: function(data, dataType){
-            make_pager(7,h_pageNo); //[2017.07.27]
+            //alert(data);
+            make_pager(8,h_pageNo); //[2017.07.27]
             $("#my-list").empty().append(data);
             //alert($("#reset-mnt"));
-            $("#reset-mnt").hide();
+            //$("#reset-mnt").hide();
             $("#entry-mnt").hide();
             $("#back-mnt").hide();
         },
@@ -129,10 +139,10 @@ function make_table_list_mnt(h_pageNo){
 }
 
 //テーブル情報編集
-function make_table_edit_mnt(h_act, h_idx){
-    //alert("make_table_edit_mnt");
+function make_log_analyze_edit_mnt(h_act, h_idx){
+    //alert("make_log_analyze_edit_mnt");
     $.ajax({
-        url: m_parentURL + "make_table_edit_mnt.jsp",
+        url: m_parentURL + "make_log_analyze_edit_mnt.jsp",
         type: 'POST',
         dataType: "html",
         async: false,
@@ -144,7 +154,7 @@ function make_table_edit_mnt(h_act, h_idx){
             $("#my-pager").empty().append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
             $("#my-list").empty().append(data);
             $("#new-mnt").hide();
-            $("#reset-mnt").show();
+            //$("#reset-mnt").show();
             $("#entry-mnt").show();
             $("#back-mnt").show();
             //alert($("#my-list").text());
@@ -155,28 +165,4 @@ function make_table_edit_mnt(h_act, h_idx){
        complete: function (data) {
        }
    });	
-}
-
-//テーブル情報編集内容のリセット
-function reset_table_edit_mnt(){
-    var a_act = $("#txt_act").val();
-    var a_idx = $("#txt_idx").val();
-    //alert(a_act);
-    //alert(a_idx);
-    if (confirm("入力内容をリセットします。よろしいですか？")){
-        make_table_edit_mnt(a_act, a_idx);
-    }
-}
-
-//数値とバックスペース・リターンのみを入力可能にする
-function input_numOnly(){
-  var a_m = String.fromCharCode(event.keyCode);
-  if("0123456789\b\r".indexOf(a_m, 0) < 0) return false;
-  //deleteキー
-  /*
-  if(event.keyCode != 46){
-      return false;
-  }
-  */
-  return true;
 }

@@ -20,7 +20,7 @@
 
     Environ.SetRealPath(a_realPath);
     a_envPath = Environ.GetEnvironValue("mnt_env_path");
-    a_tableInfo = Environ.GetEnvironValue("mnt_table_info");
+    a_tableInfo = Environ.GetEnvironValue("mnt_log_table_info");
 
     out.print("<select id='set-table-name' name='set-table-name'>");
     out.print("<option value=''></option>");

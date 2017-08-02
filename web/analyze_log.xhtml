@@ -21,30 +21,23 @@
             <link rel="stylesheet" href="css/custom.css" type="text/css" id="hpcustom" />
             <script type="text/javascript" src="js/jquery.min.js"><!-- hpbiptitle jQuery library --></script>
             <script type="text/javascript" src="js/move-mainnav.js">hpb-move-mainnav-js</script>
-            <!-- link type="text/css" href="css/jquery-ui.css" rel="stylesheet" / -->
+            <link type="text/css" href="css/jquery-ui.css" rel="stylesheet" />
             <script type="text/javascript" src="js/jquery.blockUI.js"></script>
             <script type="text/javascript" src="js/custom.js"></script>
-            <script type="text/javascript" src="js/custom-mnt-set.js"></script>
-  <!-- -->
+            <script type="text/javascript" src="js/custom-mnt-analyze.js"></script>
+
            <script type="text/javascript" src="js/jquery-ui.min.js"></script>
             <script type="text/javascript" src="js/jquery.ui.datepicker-ja.min.js"></script>
-<!-- -->
-<!--
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
-            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-ja.min.js"></script>
--->
-<!--
-<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
--->
-            <link type="text/css" href="css/ui-lightness.jquery-ui.css" rel="stylesheet" />
-            <script type="text/javascript" src="js/jquery.datetimepicker.js"></script>
-            <link type="text/css" href="css/jquery.datetimepicker.css" rel="stylesheet" />
+
             <title><ui:insert name="title">リモート監視中継</ui:insert></title>
             <style>
                 li.errorStyle {
                     color : red;
                 }
+                a.linkA:link { color: #ffffff; }
+                a.linkA:visited { color: #ffffff; }
+                /*a:hover { color: #ff0000; }
+                a:active { color: #ff8000; }*/
             </style>
         </h:head>
 
@@ -62,7 +55,7 @@
                 <div id="hpb-wrapper" style="width:100%;">
                   <!-- page title -->
                     <div id="hpb-title">
-                        <h2 id="my-title"><span class="ja"><ui:insert name="title">リモートDB設定</ui:insert></span><span class="en"></span></h2>
+                        <h2><span class="ja"><ui:insert name="title">保全機能</ui:insert></span><span class="en"></span></h2>
                     </div>
                   <!-- page title end -->
                   <!-- main -->
@@ -70,15 +63,12 @@
                     <ui:insert name="box">
                         <table border="0">
                             <tr>
-                                <td rowspan="1" colspan="4" valign="top"><div id="my-table-select" /></td>
+                                <td rowspan="1" colspan="3" valign="top"><div id="my-table-select" /></td>
                             </tr>
-                        </table>
-                        <table border="0">
                             <tr>
-                                <td rowspan="1" valign="top"><div id="new-mnt"><input id="change_submit" type="button" value="　新規登録　" onclick="make_table_edit_mnt('n','');" /></div></td>
-                                <td rowspan="1" valign="top"><div id="reset-mnt"><input id="change_submit" type="button" value="　リセット　" onclick="reset_table_edit_mnt();" /></div></td>
-                                <td rowspan="1" valign="top"><div id="entry-mnt"><input id="change_submit" type="button" value="　登録終了　" onclick="entry_table_mnt();" /></div></td>
-                                <td rowspan="1" valign="top"><div id="back-mnt"><input id="change_submit" type="button" value="　戻る　" onclick="make_table_list_mnt(-1);" /></div></td>
+                                <td rowspan="1" valign="top"><div id="new-mnt"><input id="change_submit" type="button" value="　新規登録　" onclick="make_log_analyze_edit_mnt('n','');" /></div></td>
+                                <td rowspan="1" valign="top"><div id="entry-mnt"><input id="change_submit" type="button" value="　登録終了　" onclick="entry_log_analyze_mnt();" /></div></td>
+                                <td rowspan="1" valign="top"><div id="back-mnt"><input id="change_submit" type="button" value="　戻る　" onclick="make_log_analyze_list_mnt(-1);" /></div></td>
                             </tr>
                         </table>
                         <div id="my-pager">&nbsp;&nbsp;&nbsp;&nbsp;</div>
@@ -99,18 +89,18 @@
               <!-- footer end -->
             </div>
             <!-- container end -->
-            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:212px;left:5px;background-color:#ffffff;width:99%;">
+            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:178px;left:5px;background-color:#ffffff;width:99%;">
             </div>
             <script type="text/javascript" src="js/navigation.js">hpb-navigation-js</script>
-            
+
             <h:messages errorClass="errorStyle"/>
             </h:form>
         </h:body>
     </f:view>
 <script type="text/javascript">
     make_menu();
-    make_table_select_mnt();
-    make_table_list_mnt(1);
+    make_log_analyze_select_mnt();
+    make_log_analyze_list_mnt(1);
     $(window).resize(function(){
         resize_tbl_list();
     });
