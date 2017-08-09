@@ -1,10 +1,10 @@
 テーブル名	説明	キーのカラム名：型（n/s）：修正可否（n/y）:自動採番（n/y）
-customer	PBXリモート用顧客情報	id:n:n:y
+pbxremotecustomer	PBXリモートシステム用顧客データ	usercode:s:n:y
+irmsremotecustomer	IRMSユーザ管理	usercode:s:n:y
+customer	PBXリモートユーザ管理	id:n:n:y
 customerstation	顧客の拠点毎のデータ	id:n:n:y
 mss2remotecustomer	ユーザ管理	usercode:s:y:n
 newcustomermanage	顧客基本データ	id:n:n:y
-irmsremotecustomer	IRMSユーザ管理	usercode:s:y:n
-pbxremotecustomer	PBXリモートシステム用顧客データ	id:n:n:y
 codemaster	コードマスタ	codeid:s:y:n,code:s:y:n
 croscoretrbinfo	CrosCore障害情報マスタ	num:n:n:y
 discoveryneotrbinfo	DiscoveryNeo障害情報マスタ	num:n:n:y

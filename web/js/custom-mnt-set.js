@@ -1,6 +1,7 @@
 $(function () {
     //$('#set-table-name').change(function(){alert($('[name=set-table-name]').val());});
     $('#set-table-name').change(function(){
+        //alert($('#set-table-name').val());
         //alert($('[name=set-table-name] option:selected').val());
         make_table_list_mnt_first($('[name=set-table-name] option:selected').val());
     });
@@ -59,9 +60,12 @@ function set_session_value_mnt_pageNo(h_pageNo){
 //リモートDBテーブル名取得
 function make_table_select_mnt(){
     $("#new-mnt").hide();
-    $("#reset-mnt").hide();
+    //$("#reset-mnt").hide();
+    $("#confirm-mnt").hide();
     $("#entry-mnt").hide();
     $("#back-mnt").hide();
+    $("#cancel-mnt").hide();
+    $("#list-mnt").hide();
     $.ajax({
         url: m_parentURL + "make_table_select_mnt.jsp",
         type: 'POST',
@@ -104,9 +108,12 @@ function make_table_list_mnt_first(h_table){
         $("#my-pager").empty();
         $("#my-list").empty();
         $("#new-mnt").hide();
-        $("#reset-mnt").hide();
+        //$("#reset-mnt").hide();
+        $("#confirm-mnt").hide();
         $("#entry-mnt").hide();
         $("#back-mnt").hide();
+        $("#cancel-mnt").hide();
+        $("#list-mnt").hide();
     }
 }
 
@@ -124,10 +131,13 @@ function make_table_list_mnt(h_pageNo){
         success: function(data, dataType){
             make_pager(7,h_pageNo); //[2017.07.27]
             $("#my-list").empty().append(data);
-            //alert($("#reset-mnt"));
-            $("#reset-mnt").hide();
+            $("#new-mnt").show();
+            //$("#reset-mnt").hide();
+            $("#confirm-mnt").hide();
             $("#entry-mnt").hide();
             $("#back-mnt").hide();
+            $("#cancel-mnt").hide();
+            $("#list-mnt").hide();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown.message);
@@ -147,15 +157,19 @@ function make_table_edit_mnt(h_act, h_idx){
         async: false,
         data:{
             'ACT': h_act,
-            'IDX': h_idx
+            'IDX': h_idx,
+            'DB': '1',
         },
         success: function(data, dataType){
             $("#my-pager").empty().append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
             $("#my-list").empty().append(data);
             $("#new-mnt").hide();
-            $("#reset-mnt").show();
-            $("#entry-mnt").show();
-            $("#back-mnt").show();
+            //$("#reset-mnt").show();
+            $("#confirm-mnt").show();
+            $("#entry-mnt").hide();
+            $("#back-mnt").hide();
+            $("#cancel-mnt").hide();
+            $("#list-mnt").show();
             //alert($("#my-list").text());
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {

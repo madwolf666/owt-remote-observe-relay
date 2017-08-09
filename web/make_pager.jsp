@@ -4,8 +4,10 @@
     Author     : Chappy
 --%>
 
+<%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ include file="/common.jsp" %>
+<jsp:useBean id="Environ" scope="page" class="common.Environ" />
 <jsp:useBean id="RemoteTrouble" scope="page" class="remote.RemoteTrouble" />
 <jsp:useBean id="ReportMonthly" scope="page" class="report.ReportMonthly" />
 <jsp:useBean id="WarnSchedule" scope="page" class="warn.WarnSchedule" />
@@ -16,8 +18,14 @@
     String SCRIPT_NAME = request.getServletPath();
     String a_mainPath = GetMainPath(SCRIPT_NAME);
     String a_realPath = application.getRealPath(a_mainPath);
+    String a_envPath = "";
+    String a_showlist = "";
 
-   //POSTデータを取得
+    Environ.SetRealPath(a_realPath);
+    a_envPath = Environ.GetEnvironValue("mnt_env_path");
+    a_showlist = a_envPath + Environ.GetEnvironValue("mnt_showlist_info");
+
+    //POSTデータを取得
     int a_Kind = Integer.valueOf(request.getParameter("Kind"));
     int a_PageNo = Integer.valueOf(request.getParameter("PageNo"));
 
@@ -35,6 +43,8 @@
 
     String Mnt_Table = "";  //[2017.07.27]
     int Mnt_pageNo = -1;    //[2017.07.27]
+    String a_col_name = "";
+    String a_find_key = "";
     
     String a_sOut = "";
     //int a_list_sum = 0;
@@ -139,7 +149,7 @@
                 }
             }
             SetDB.SetRealPath(a_realPath);
-            a_sOut = SetDB.MakePagerMnt(Mnt_Table, a_PageNo);
+            a_sOut = SetDB.MakePagerMnt(a_Kind, a_PageNo, Mnt_Table);
             session.setAttribute("Mnt_pageNo", a_PageNo);   //[2017.07.28]
             break;
         case 8: //保全[2017.08.02]
@@ -154,6 +164,18 @@
             a_sOut = AnalyzeLog.MakePagerAnalyze(Mnt_Table, a_PageNo);
             session.setAttribute("Mntt_Log_Analyze_pageNo", a_PageNo);   //[2017.07.28]
             break;
+        case 9: //リスト表示[2017.08.09]
+            a_col_name = request.getParameter("col_name");
+            a_find_key = request.getParameter("find_key");
+            //Beansへの値引渡し
+            SetDB.SetRealPath(a_realPath);
+
+            //定義情報の読み込み
+            ArrayList<String> a_arrayList = null;
+            String[] a_show_def = GetDef_ShowList(a_showlist, a_col_name);
+            if (a_show_def != null){
+                a_sOut = SetDB.MakePagerShowList(a_Kind, a_PageNo, a_show_def, a_find_key);
+            }
     }
 
     out.print(a_sOut);

@@ -594,7 +594,7 @@ remotememo			varchar2(20),
 maintenancecenter	varchar2(6),
 maintenancegroup	varchar2(6),
 maintenancedirect	varchar2(20),
-commentary			varchar2(20),
+"COMMENT"				varchar2(20),
 notes				varchar2(26),
 termcode			varchar2(8),
 termname			varchar2(10) not null,
@@ -644,7 +644,7 @@ comment on column pbxremotecustomer.remotememo is '記事：';
 comment on column pbxremotecustomer.maintenancecenter is '保守担当者　センタ：';
 comment on column pbxremotecustomer.maintenancegroup is '保守担当者　Ｇ長：';
 comment on column pbxremotecustomer.maintenancedirect is '保守担当者　直接：';
-comment on column pbxremotecustomer.commentary is 'コメント';
+comment on column pbxremotecustomer.comment is 'コメント';
 comment on column pbxremotecustomer.notes is '注意事項';
 comment on column pbxremotecustomer.termcode is '端末番号';
 comment on column pbxremotecustomer.termname is '端末名';
@@ -802,3 +802,22 @@ comment on column ssclustertrbinfo.class is 'class';
 comment on column ssclustertrbinfo.action is '対策';
 comment on column ssclustertrbinfo.commentary is '備考';
 comment on column ssclustertrbinfo.summary is '概要';
+
+-- リモート発報システム用顧客データ
+create table remotemonitoringcustomer (
+id				number not null,
+usercode		varchar2(6) not null,
+stationid		number,
+remotesetid		number,
+usernumber		number,
+idcode			varchar2(64) not null,
+machinename		varchar2(24),
+version			varchar2(20),
+nodecode		varchar2(2),
+g1code			varchar2(2),
+urgentreportid	number not null,
+sendmaillevel	number not null,
+autoalarmreset	number,
+primary key(id)
+);
+create index remotemonitoringcustomer_index1 on remotemonitoringcustomer(usercode);

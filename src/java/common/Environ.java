@@ -8,8 +8,16 @@ package common;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +39,37 @@ public class Environ {
     private Properties _Prop = new Properties();
     private String _realPath = "";
     
+    public String _db_driver = "";
+    public String _db_server = "";
+    public String _db_url = "";
+    public String _db_user = "";
+    public String _db_pass = "";
+    public String _db_name = "";
+
+    //入力項目の定義
+    public static int COLUMN_DEF_NAME = 0;  //カラム名（複数）
+    public static int COLUMN_DEF_TABLE_NAME = 1;//テーブル名（複数）
+    public static int COLUMN_DEF_NESS = 2;   //必須有無（a/n/y）
+    public static int COLUMN_DEF_TYPE = 3;  //型（n/s/time/date）
+    public static int COLUMN_DEF_TIME = 4;//時刻指定（n/y）
+    public static int COLUMN_DEF_LENGTH = 5;    //MAX桁
+    public static int COLUMN_DEF_PULLDOWN = 6; //プルダウン（n/y）
+    public static int COLUMN_DEF_COMMENT = 7; //コメント
+
+    //DBテーブルのキー定義
+    public static int DB_TABLE_KEY_DEF_NAME = 0;           //キーのカラム名
+    public static int DB_TABLE_KEY_DEF_TYPE = 1;           //型（n/s）
+    public static int DB_TABLE_KEY_DEF_EDITABLE = 2;       //修正可否（n/y）
+    public static int DB_TABLE_KEY_DEF_AUTOINCREMENT = 3;  //自動採番（n/y）
+
+    //リスト表示
+    public static int SHOWLIST_COLUMN_NAME = 0;        //カラム名
+    public static int SHOWLIST_BUTTON_NAME = 1;        //ボタン名
+    public static int SHOWLIST_FIND_KEY_NAME = 2;      //検索キー
+    public static int SHOWLIST_SELECT_KEY_NAME = 3;    //選択キー
+    public static int SHOWLIST_FIND_SQL = 4;           //取得SQL
+    public static int SHOWLIST_ITEM_NAME = 5;          //項目表示
+
     public Environ(){
         //-------------------------------------------------------------------
         // conf
@@ -64,7 +103,7 @@ public class Environ {
     
     public void SetRealPath(String h_path){
         _realPath = h_path;
-         try{
+        try{
             _Prop.load(new FileInputStream(_realPath + _conf));
             
             //ログパスを設定
@@ -74,6 +113,14 @@ public class Environ {
             _MyLogger.putLogName(a_sVal);
             a_sVal = _Prop.getProperty("log_level");
             _MyLogger.putLogLevel(Integer.valueOf(a_sVal));
+
+            _db_driver = GetEnvironValue("mnt_db_driver");
+            _db_server = GetEnvironValue("mnt_db_server");
+            _db_url = GetEnvironValue("mnt_db_url");
+            _db_user = GetEnvironValue("mnt_db_user");
+            _db_pass = GetEnvironValue("mnt_db_pass");
+            _db_name = GetEnvironValue("mnt_db_name");
+            
         } catch (IOException ex) {
             Logger.getLogger(Environ.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -135,6 +182,9 @@ public class Environ {
             break;
         case 8: //保全[2017.08.02]
             a_sFunc = "make_log_analyze_list_mnt";
+            break;
+        case 9: //リスト表示[2017.08.09]
+            a_sFunc = "make_show_list";
             break;
         }
         
@@ -364,5 +414,184 @@ public class Environ {
                 break;
         }
         return a_sRet;
+    }
+
+    public  ArrayList<String> GetDbColumns(String h_table) throws Exception{
+        String[] a_table_split = null;
+        ArrayList<String> a_arrayRet = null;
+        int a_iSum = 0;
+        Connection a_con = null;
+        PreparedStatement a_ps = null;
+        ResultSet a_rs = null;
+        String a_sql = "";
+        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+            a_sql =
+"SELECT DISTINCT" +
+"  main.column_id," +
+"  LOWER(main.column_name) AS column_name," +
+"  LOWER(main.data_type) AS data_type," +
+"  main.data_length," +
+"  LOWER(main.nullable) AS nullable," +
+"  main.data_precision," +
+"  main.data_scale," +
+"  LOWER(sub.constraint_type) AS constraint_type," +
+"  cmn.comments AS column_comment" +
+" FROM " +
+"  user_tab_columns main" +
+" LEFT JOIN" +
+"  (SELECT" +
+"    col.column_name, " +
+"    con.constraint_type," +
+"    con.last_change," +
+"    con.index_name," +
+"    con.table_name" +
+"   FROM " +
+"    user_constraints con" +
+"   JOIN" +
+"    user_cons_columns col " +
+"   ON" +
+"    con.constraint_name=col.constraint_name " +
+"    AND con.table_name=col.table_name" +
+"    AND con.constraint_type IN ('P', 'U')" +
+"   ORDER BY " +
+"    con.table_name) sub" +
+" ON " +
+"  sub.column_name=main.column_name" +
+"  AND sub.table_name=main.table_name" +
+" LEFT JOIN" +
+"  user_col_comments cmn" +
+" ON" +
+"  main.column_name=cmn.column_name" +
+"  AND main.table_name=cmn.table_name" +
+" WHERE " +
+"  main.table_name=UPPER(?)" +
+" ORDER BY" +
+"  column_id";
+        }else if (_db_driver.equals("org.postgresql.Driver")){
+            a_sql =
+"SELECT DISTINCT" +
+"  main.ordinal_position AS column_id," +
+"  LOWER(main.column_name) AS column_name," +
+"  LOWER(main.data_type) AS data_type," +
+"  main.character_maximum_length AS data_length," +
+"  LOWER(main.is_nullable) AS nullable," +
+"  main.numeric_precision AS data_precision," +
+"  main.numeric_scale AS data_scale," +
+"  LOWER(sub.constraint_type) AS constraint_type," +
+"  cmn.column_comment" +
+" FROM" +
+"  information_schema.columns main" +
+" LEFT JOIN" +
+"  (SELECT" +
+"    col.column_name," +
+"    con.constraint_type," +
+"    con.table_name" +
+"   FROM" +
+"    information_schema.table_constraints con" +
+"   JOIN" +
+"    information_schema.constraint_column_usage col" +
+"   ON" +
+"    con.constraint_name=col.constraint_name" +
+"    AND con.table_name=col.table_name" +
+"    AND con.constraint_type IN ('PRIMARY KEY', 'UNIQUE')" +
+"   ORDER BY" +
+"    con.table_name) sub" +
+"  ON" +
+"  sub.column_name=main.column_name" +
+"  AND sub.table_name=main.table_name" +
+" LEFT JOIN" +
+"  (" +
+"   SELECT" +
+"     ns.oid as schema_id" +
+"    ,a.oid as table_id" +
+"    ,attr.attnum as column_id" +
+"    ,ns.nspname as schema_name" +
+"    ,a.relname as table_name" +
+"    ,des.description as table_comment" +
+"    ,attr.attname as column_name" +
+"    ,des2.description as column_comment" +
+"   FROM" +
+"    pg_catalog.pg_class a" +
+"    INNER JOIN pg_catalog.pg_namespace ns ON a.relnamespace=ns.oid" +
+"    LEFT JOIN pg_catalog.pg_description des ON a.oid=des.objoid AND des.objsubid=0" +
+"    INNER JOIN pg_catalog.pg_attribute attr ON a.oid=attr.attrelid AND attr.attnum>0" +
+"    LEFT JOIN pg_catalog.pg_description des2 ON a.oid=des2.objoid AND attr.attnum=des2.objsubid" +
+"   WHERE" +
+"     a.relkind IN ('r', 'v')" +
+"     AND ns.nspname IN (?)" +
+"  ) cmn" +
+" ON" +
+"  main.column_name=cmn.column_name" +
+"  AND main.table_name=cmn.table_name" +
+" WHERE " +
+"  main.table_name=?" +
+" ORDER BY" +
+"  column_id";
+        }
+        //int a_iRet = 0;
+        try{
+            a_table_split = h_table.split("\t");
+            if (a_table_split.length<2){
+                return a_arrayRet;
+            }
+
+            Class.forName (_db_driver);
+            // データベースとの接続
+            a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
+            a_ps = a_con.prepareStatement(a_sql);
+            if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                a_ps.setString(1, a_table_split[0]);
+            }else if (_db_driver.equals("org.postgresql.Driver")){
+                a_ps.setString(1, _db_name);
+                a_ps.setString(2, a_table_split[0]);
+            }
+            a_rs = a_ps.executeQuery();
+            while(a_rs.next()){
+                String a_sVal = "";
+                String a_sRet = "";
+                if (a_iSum == 0){
+                    a_arrayRet = new ArrayList<String>();
+                }
+                
+                a_sVal = ExistDBString(a_rs,"column_id");
+                a_sRet += a_sVal;
+                a_sVal = ExistDBString(a_rs,"column_name");
+                a_sRet += "\t" + a_sVal;
+                a_sVal = ExistDBString(a_rs,"data_type");
+                a_sRet += "\t" + a_sVal;
+                a_sVal = ExistDBString(a_rs,"data_length");
+                a_sRet += "\t" + a_sVal;
+                a_sVal = ExistDBString(a_rs,"nullable");
+                a_sRet += "\t" + a_sVal;
+                a_sVal = ExistDBString(a_rs,"data_precision");
+                a_sRet += "\t" + a_sVal;
+                a_sVal = ExistDBString(a_rs,"data_scale");
+                a_sRet += "\t" + a_sVal;
+                a_sVal = ExistDBString(a_rs,"constraint_type");
+                a_sRet += "\t" + a_sVal;
+                a_sVal = ExistDBString(a_rs,"column_comment");
+                a_sRet += "\t" + a_sVal;
+
+                a_arrayRet.add(a_sRet);
+                a_iSum++;
+            }
+            a_rs.close();
+            a_ps.close();
+            
+        } catch (SQLException e) {
+            _MyLogger.severe("[GetDbColumns]" + e.getMessage());
+        } catch (ClassNotFoundException ex) {
+            _MyLogger.severe("[GetDbColumns]" + ex.getMessage());
+        } finally{
+            if (a_ps != null){
+                a_ps.close();
+            }
+            if (a_con != null){
+                a_con.close();
+            }
+        }
+        _MyLogger.info("*** GetDbColumns is finished. ***");
+        
+        return a_arrayRet;
     }
 }

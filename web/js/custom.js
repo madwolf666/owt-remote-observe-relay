@@ -101,6 +101,7 @@ function show_Alert(h_obj, h_msg) {
 
 //ページング
 function make_pager(h_kind,h_pageNo){
+    //alert(h_kind + "," + h_pageNo);
     //1：SFケース詳細
     //2：リモート発報障害検索
     //3：リモート月報作成
@@ -109,6 +110,7 @@ function make_pager(h_kind,h_pageNo){
     //6：ユーザ選択
     //7：リモートDB設定[2017.07.27]
     //8：保全[2017.08.02]
+    //9：リスト表示[2017.08.09]
     
     //h_kind：3,4,5
     var a_data = {
@@ -142,10 +144,20 @@ function make_pager(h_kind,h_pageNo){
                 'PageNo': h_pageNo,
             };
             break;
+        case 9: //リスト表示[2017.08.09]
+            a_data = {
+                'Kind': h_kind,
+                'PageNo': h_pageNo,
+                'col_name': $('#show_col_name').val(),
+            };
+            break;
         default:
             break;
     }
     
+    //alert(a_data);
+    //alert(m_parentURL);
+
     $.ajax({
         url: m_parentURL + "make_pager.jsp",
         type: 'POST',
@@ -175,7 +187,8 @@ function make_pager(h_kind,h_pageNo){
         },
        complete: function (data) {
        }
-   });	
+   });
+
 }
 
 //セッション変数設定
@@ -919,3 +932,63 @@ function test_Alarm(){
     return true;
 }
 
+//リスト表示
+//function make_show_list(h_pageNo, h_colName, h_find_key, h_select_key, h_find_sql){
+function make_show_list(h_pageNo, h_colName){
+    //alert('show_list--->' + h_pageNo + "," + h_colName + "," + h_find_key + "," + h_select_key + "," + h_find_sql);
+    //alert('show_list--->' + h_pageNo + "," + $('#show_col_name_' + h_colName).val() + "," + $('#show_find_key_' + h_colName).val());
+    var a_find_key = '';
+    var a_result = '';
+    if ($('#' + $('#show_find_key_' + h_colName).val()).val() != null){
+        a_find_key = $('#' + $('#show_find_key_' + h_colName).val()).val();
+    }
+    //alert(a_find_key);
+    $.ajax({
+        url: m_parentURL + "make_show_list.jsp",
+        type: 'POST',
+        dataType: "html",
+        async: false,
+        data:{
+            'PageNo': h_pageNo,
+            'col_name': $('#show_col_name_' + h_colName).val(),
+            'find_key': a_find_key
+        },
+        success: function(data, dataType){
+            a_result = data.trim();
+            if (a_result != 'NO_FIND_KEY'){
+                //alert(data);
+                $("#show-list").empty().append(data);
+            }
+            //make_pager(6,h_pageNo); //[2016.03.03]bug-fixed.
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown.message);
+        },
+       complete: function (data) {
+       }
+    });	
+
+    if (a_result != 'NO_FIND_KEY'){
+        var $popup = $("#popup1");
+
+        //alert($popup);
+        // ポップアップの幅と高さからmarginを計算する
+        var mT = ($popup.outerHeight() / 2) * (-1) + 'px';
+        var mL = ($popup.outerWidth() / 2) * (-1) + 'px';
+        //alert(mT + "," + mL);
+        // marginを設定して表示
+        $('.popup').hide();
+        $popup.css({
+                'margin-top': mT,
+                'margin-left': mL
+        }).show();
+        //$('#overlay').show();
+    }
+    return false;
+}
+
+//リスト上の選択
+function select_show_list(h_selectKey, h_selectVal){
+    //alert(h_selectKey + "," + h_selectVal);
+    $('#' + h_selectKey).val(h_selectVal);
+}

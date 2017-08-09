@@ -79,6 +79,11 @@ public class AnalyzeLog implements Serializable {
         _Environ._MyLogger.info("*** SetRealPath is finished. ***");
     }
     
+    //[2017.08.04]
+    public  ArrayList<String> GetDbColumns(String h_table) throws Exception{
+        return _Environ.GetDbColumns(h_table);
+    }
+
     //登録
     public String EnteryAnalyze(String h_table, ArrayList<String> h_columns, String[] h_column_split, String h_act, String h_idx, ArrayList<String> h_post_data) throws Exception{
         String a_sRet = "";
@@ -101,20 +106,20 @@ public class AnalyzeLog implements Serializable {
                 //自動採番のSQL組み立て
                 for (int a_iCnt=0; a_iCnt<h_column_split.length; a_iCnt++){
                     String[] a_split = h_column_split[a_iCnt].split(":");
-                    if (a_split[3].equals("y")){
+                    if (a_split[_Environ.DB_TABLE_KEY_DEF_AUTOINCREMENT].equals("y")){
                         //自動採番
                         if (a_sql_f != ""){
                             a_sql_f += ",";
                         }
-                        a_sql_f += a_split[0];
+                        a_sql_f += a_split[_Environ.DB_TABLE_KEY_DEF_NAME];
                         
                         if (a_sql_v != ""){
                             a_sql_v += ",";
                         }
                         if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
-                            a_sql_v += "(SELECT NVL(MAX(" + a_split[0] + "),0)+1 FROM " + h_table + ")";
+                            a_sql_v += "(SELECT NVL(MAX(" + a_split[_Environ.DB_TABLE_KEY_DEF_NAME] + "),0)+1 FROM " + h_table + ")";
                         }else if (_db_driver.equals("org.postgresql.Driver")){
-                            a_sql_v += "(SELECT COALESCE(MAX(" + a_split[0] + "),0)+1 FROM " + h_table + ")";
+                            a_sql_v += "(SELECT COALESCE(MAX(" + a_split[_Environ.DB_TABLE_KEY_DEF_NAME] + "),0)+1 FROM " + h_table + ")";
                         }
                     }
                 }
@@ -128,8 +133,8 @@ public class AnalyzeLog implements Serializable {
                     if (a_sql_w != ""){
                         a_sql_w += " AND ";
                     }
-                    a_sql_w += "(" + a_split[0] + "="; 
-                    if (a_split[1].equals("n") == true){
+                    a_sql_w += "(" + a_split[_Environ.DB_TABLE_KEY_DEF_NAME] + "="; 
+                    if (a_split[_Environ.DB_TABLE_KEY_DEF_TYPE].equals("n") == true){
                         //数値の場合
                         a_sql_w += a_split_idx[a_iCnt];
                     }else{
@@ -151,7 +156,7 @@ public class AnalyzeLog implements Serializable {
                     a_sql_f += a_split[0];  //カラム
                     for (int a_iCnt2=0; a_iCnt2<h_columns.size(); a_iCnt2++){
                         String[] a_split2 = h_columns.get(a_iCnt2).split("\t");
-                        if (a_split2[1].equals(a_split[0]) == true){
+                        if (a_split2[_Environ.COLUMN_DEF_NAME].equals(a_split[0]) == true){
                             //カラム検出
                             a_index++;
                             if (a_sql_v != ""){
@@ -185,13 +190,13 @@ public class AnalyzeLog implements Serializable {
                 if (a_split[1] != ""){
                     for (int a_iCnt2=0; a_iCnt2<h_columns.size(); a_iCnt2++){
                         String[] a_split2 = h_columns.get(a_iCnt2).split("\t");
-                        if (a_split2[1].equals(a_split[0]) == true){
+                        if (a_split2[_Environ.COLUMN_DEF_NAME].equals(a_split[0]) == true){
                             //カラム検出
                             a_index++;
-                            if (a_split2[2].indexOf("num") >= 0){
+                            if (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("num") >= 0){
                                 //数値の場合
                                 a_ps.setInt(a_index, Integer.valueOf(a_split[1]));
-                            }else if (a_split2[2].indexOf("time") >= 0){
+                            }else if (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0){
                                 //timestamp
                                 java.sql.Timestamp a_ts = null;
                                 SimpleDateFormat a_sdf = null;
@@ -202,7 +207,7 @@ public class AnalyzeLog implements Serializable {
                                 }
                                 a_ts = new java.sql.Timestamp(a_sdf.parse(a_split[1]).getTime());
                                 a_ps.setTimestamp(a_index, a_ts);
-                            }else if (a_split2[2].indexOf("date") >= 0){
+                            }else if (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0){
                                 //date
                                 java.sql.Date a_dt = null;
                                 SimpleDateFormat a_sdf = null;
@@ -347,185 +352,6 @@ public class AnalyzeLog implements Serializable {
         return a_sRet;
     }
     
-    public  ArrayList<String> ColumnsAnalyze(String h_table) throws Exception{
-        String[] a_table_split = null;
-        ArrayList<String> a_arrayRet = null;
-        int a_iSum = 0;
-        Connection a_con = null;
-        PreparedStatement a_ps = null;
-        ResultSet a_rs = null;
-        String a_sql = "";
-        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
-            a_sql =
-"SELECT DISTINCT" +
-"  main.column_id," +
-"  LOWER(main.column_name) AS column_name," +
-"  LOWER(main.data_type) AS data_type," +
-"  main.data_length," +
-"  LOWER(main.nullable) AS nullable," +
-"  main.data_precision," +
-"  main.data_scale," +
-"  LOWER(sub.constraint_type) AS constraint_type," +
-"  cmn.comments AS column_comment" +
-" FROM " +
-"  user_tab_columns main" +
-" LEFT JOIN" +
-"  (SELECT" +
-"    col.column_name, " +
-"    con.constraint_type," +
-"    con.last_change," +
-"    con.index_name," +
-"    con.table_name" +
-"   FROM " +
-"    user_constraints con" +
-"   JOIN" +
-"    user_cons_columns col " +
-"   ON" +
-"    con.constraint_name=col.constraint_name " +
-"    AND con.table_name=col.table_name" +
-"    AND con.constraint_type IN ('P', 'U')" +
-"   ORDER BY " +
-"    con.table_name) sub" +
-" ON " +
-"  sub.column_name=main.column_name" +
-"  AND sub.table_name=main.table_name" +
-" LEFT JOIN" +
-"  user_col_comments cmn" +
-" ON" +
-"  main.column_name=cmn.column_name" +
-"  AND main.table_name=cmn.table_name" +
-" WHERE " +
-"  main.table_name=UPPER(?)" +
-" ORDER BY" +
-"  column_id";
-        }else if (_db_driver.equals("org.postgresql.Driver")){
-            a_sql =
-"SELECT DISTINCT" +
-"  main.ordinal_position AS column_id," +
-"  LOWER(main.column_name) AS column_name," +
-"  LOWER(main.data_type) AS data_type," +
-"  main.character_maximum_length AS data_length," +
-"  LOWER(main.is_nullable) AS nullable," +
-"  main.numeric_precision AS data_precision," +
-"  main.numeric_scale AS data_scale," +
-"  LOWER(sub.constraint_type) AS constraint_type," +
-"  cmn.column_comment" +
-" FROM" +
-"  information_schema.columns main" +
-" LEFT JOIN" +
-"  (SELECT" +
-"    col.column_name," +
-"    con.constraint_type," +
-"    con.table_name" +
-"   FROM" +
-"    information_schema.table_constraints con" +
-"   JOIN" +
-"    information_schema.constraint_column_usage col" +
-"   ON" +
-"    con.constraint_name=col.constraint_name" +
-"    AND con.table_name=col.table_name" +
-"    AND con.constraint_type IN ('PRIMARY KEY', 'UNIQUE')" +
-"   ORDER BY" +
-"    con.table_name) sub" +
-"  ON" +
-"  sub.column_name=main.column_name" +
-"  AND sub.table_name=main.table_name" +
-" LEFT JOIN" +
-"  (" +
-"   SELECT" +
-"     ns.oid as schema_id" +
-"    ,a.oid as table_id" +
-"    ,attr.attnum as column_id" +
-"    ,ns.nspname as schema_name" +
-"    ,a.relname as table_name" +
-"    ,des.description as table_comment" +
-"    ,attr.attname as column_name" +
-"    ,des2.description as column_comment" +
-"   FROM" +
-"    pg_catalog.pg_class a" +
-"    INNER JOIN pg_catalog.pg_namespace ns ON a.relnamespace=ns.oid" +
-"    LEFT JOIN pg_catalog.pg_description des ON a.oid=des.objoid AND des.objsubid=0" +
-"    INNER JOIN pg_catalog.pg_attribute attr ON a.oid=attr.attrelid AND attr.attnum>0" +
-"    LEFT JOIN pg_catalog.pg_description des2 ON a.oid=des2.objoid AND attr.attnum=des2.objsubid" +
-"   WHERE" +
-"     a.relkind IN ('r', 'v')" +
-"     AND ns.nspname IN (?)" +
-"  ) cmn" +
-" ON" +
-"  main.column_name=cmn.column_name" +
-"  AND main.table_name=cmn.table_name" +
-" WHERE " +
-"  main.table_name=?" +
-" ORDER BY" +
-"  column_id";
-        }
-        //int a_iRet = 0;
-        try{
-            a_table_split = h_table.split("\t");
-            if (a_table_split.length<2){
-                return a_arrayRet;
-            }
-
-            Class.forName (_db_driver);
-            // データベースとの接続
-            a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
-            a_ps = a_con.prepareStatement(a_sql);
-            if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
-                a_ps.setString(1, a_table_split[0]);
-            }else if (_db_driver.equals("org.postgresql.Driver")){
-                a_ps.setString(1, _db_name);
-                a_ps.setString(2, a_table_split[0]);
-            }
-            a_rs = a_ps.executeQuery();
-            while(a_rs.next()){
-                String a_sVal = "";
-                String a_sRet = "";
-                if (a_iSum == 0){
-                    a_arrayRet = new ArrayList<String>();
-                }
-                
-                a_sVal = _Environ.ExistDBString(a_rs,"column_id");
-                a_sRet += a_sVal;
-                a_sVal = _Environ.ExistDBString(a_rs,"column_name");
-                a_sRet += "\t" + a_sVal;
-                a_sVal = _Environ.ExistDBString(a_rs,"data_type");
-                a_sRet += "\t" + a_sVal;
-                a_sVal = _Environ.ExistDBString(a_rs,"data_length");
-                a_sRet += "\t" + a_sVal;
-                a_sVal = _Environ.ExistDBString(a_rs,"nullable");
-                a_sRet += "\t" + a_sVal;
-                a_sVal = _Environ.ExistDBString(a_rs,"data_precision");
-                a_sRet += "\t" + a_sVal;
-                a_sVal = _Environ.ExistDBString(a_rs,"data_scale");
-                a_sRet += "\t" + a_sVal;
-                a_sVal = _Environ.ExistDBString(a_rs,"constraint_type");
-                a_sRet += "\t" + a_sVal;
-                a_sVal = _Environ.ExistDBString(a_rs,"column_comment");
-                a_sRet += "\t" + a_sVal;
-
-                a_arrayRet.add(a_sRet);
-                a_iSum++;
-            }
-            a_rs.close();
-            a_ps.close();
-            
-        } catch (SQLException e) {
-            _Environ._MyLogger.severe("[ColumnsMnt]" + e.getMessage());
-        } catch (ClassNotFoundException ex) {
-            _Environ._MyLogger.severe("[ColumnsMnt]" + ex.getMessage());
-        } finally{
-            if (a_ps != null){
-                a_ps.close();
-            }
-            if (a_con != null){
-                a_con.close();
-            }
-        }
-        _Environ._MyLogger.info("*** ColumnsAnalyze is finished. ***");
-        
-        return a_arrayRet;
-    }
-        
     public  ArrayList<String> FindAnalyze(String h_table, int h_pageNo, ArrayList<String> h_columns, ArrayList<String> h_coldefs) throws Exception{
         String[] a_table_split = null;
         String[] a_column_split = null;
@@ -552,8 +378,8 @@ public class AnalyzeLog implements Serializable {
                 if (a_iCnt > 0){
                     a_fields += ",";
                 }
-                a_fields += a_any_split[0];
-                a_key[a_iCnt] = a_any_split[0];
+                a_fields += a_any_split[_Environ.DB_TABLE_KEY_DEF_NAME];
+                a_key[a_iCnt] = a_any_split[_Environ.DB_TABLE_KEY_DEF_NAME];
             }
             
             a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0];
@@ -591,17 +417,17 @@ public class AnalyzeLog implements Serializable {
                     a_sRet = "";
                     for (int a_iCnt=0; a_iCnt<h_columns.size(); a_iCnt++){
                         String[] a_split2 = h_columns.get(a_iCnt).split("\t");
-                        a_sVal = _Environ.ExistDBString(a_rs,a_split2[1]);
+                        a_sVal = _Environ.ExistDBString(a_rs,a_split2[_Environ.COLUMN_DEF_NAME]);
 
                         if (a_sVal != ""){
-                            if ((a_split2[2].indexOf("time") >= 0) || (a_split2[2].indexOf("date") >= 0)){
+                            if ((a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0)){
                                 //日付
                                 a_sVal = a_sVal.replace("-", "/");
                                 for (int a_iCnt2=0; a_iCnt2<h_coldefs.size(); a_iCnt2++){
                                     String[] a_split3 = h_coldefs.get(a_iCnt2).split(":");
-                                    if (a_split3[0].equals(a_split2[1]) == true){
+                                    if (a_split3[_Environ.COLUMN_DEF_NAME].equals(a_split2[_Environ.COLUMN_DEF_NAME]) == true){
                                         //カラム一致
-                                        if (a_split3[2].equals("n")){
+                                        if (a_split3[_Environ.COLUMN_DEF_TIME].equals("n")){
                                             //時刻指定なし
                                             a_sVal = a_sVal.substring(0, 10);
                                         }
@@ -611,7 +437,7 @@ public class AnalyzeLog implements Serializable {
                         }
                         
                         String a_sTmp1 = a_sVal;
-                        if (a_split2[1].equals(a_key[0]) == true){
+                        if (a_split2[_Environ.COLUMN_DEF_NAME].equals(a_key[0]) == true){
                             a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
                             for (int a_iCnt2=1; a_iCnt2<a_key.length; a_iCnt2++){
                                 String a_sTmp2 = _Environ.ExistDBString(a_rs,a_key[a_iCnt2]);
@@ -671,8 +497,8 @@ public class AnalyzeLog implements Serializable {
             a_key = new String[a_column_split.length];
             for (int a_iCnt=0; a_iCnt<a_column_split.length; a_iCnt++){
                 a_any_split = a_column_split[a_iCnt].split(":");
-                a_key[a_iCnt] = a_any_split[0];
-                a_type[a_iCnt] = a_any_split[1];
+                a_key[a_iCnt] = a_any_split[_Environ.DB_TABLE_KEY_DEF_NAME];
+                a_type[a_iCnt] = a_any_split[_Environ.DB_TABLE_KEY_DEF_TYPE];
             }
 
             a_sql = "SELECT * FROM " + a_table_split[0] + " WHERE";
@@ -701,17 +527,17 @@ public class AnalyzeLog implements Serializable {
             while(a_rs.next()){
                 for (int a_iCnt=0; a_iCnt<h_columns.size(); a_iCnt++){
                     String[] a_split2 = h_columns.get(a_iCnt).split("\t");
-                    a_sVal = _Environ.ExistDBString(a_rs,a_split2[1]);
+                    a_sVal = _Environ.ExistDBString(a_rs,a_split2[_Environ.COLUMN_DEF_NAME]);
                     
                     if (a_sVal != ""){
-                        if ((a_split2[2].indexOf("time") >= 0) || (a_split2[2].indexOf("date") >= 0)){
+                        if ((a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0)){
                             //日付
                             a_sVal = a_sVal.replace("-", "/");
                             for (int a_iCnt2=0; a_iCnt2<h_coldefs.size(); a_iCnt2++){
                                 String[] a_split3 = h_coldefs.get(a_iCnt2).split(":");
-                                if (a_split3[0].equals(a_split2[1]) == true){
+                                if (a_split3[_Environ.COLUMN_DEF_NAME].equals(a_split2[_Environ.COLUMN_DEF_NAME]) == true){
                                     //カラム一致
-                                    if (a_split3[2].equals("n")){
+                                    if (a_split3[_Environ.COLUMN_DEF_TIME].equals("n")){
                                         //時刻指定なし
                                         a_sVal = a_sVal.substring(0, 10);
                                     }

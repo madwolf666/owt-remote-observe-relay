@@ -50,6 +50,7 @@
 
         }
     }
+    session.setAttribute("Mnt_Coldefs", a_coldefs);
 
     //POSTデータを取得
     int a_PageNo = Integer.valueOf(request.getParameter("PageNo"));
@@ -64,24 +65,10 @@
     //Beansへの値引渡し
     SetDB.SetRealPath(a_realPath);
 
-    //テーブルの定義・制約・コメントの取得
-    ArrayList<String> a_columns = SetDB.ColumnsMnt(a_Mnt_Table);
-    /*
-    if (a_columns != null){
-        for (int a_iCnt=0; a_iCnt<a_columns.size(); a_iCnt++){
-            String[] a_split = a_columns.get(a_iCnt).split("\t");
-            out.print("****************************************<br>");
-            for (int a_iCnt2=0; a_iCnt2<a_split.length; a_iCnt2++){
-                out.print(a_split[a_iCnt2] + "<br>");
-            }
-        }
-    }
-    */
-    session.setAttribute("Mnt_Columns", a_columns);   //[2017.07.28]
-    
     //一覧データを取得
-    ArrayList<String> a_arrayList = SetDB.FindMnt(a_Mnt_Table, a_PageNo, a_columns, a_coldefs);
+    ArrayList<String> a_arrayList = SetDB.FindMnt(a_Mnt_Table, a_PageNo, a_coldefs);
     if (a_arrayList != null){
+        /*
         out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
         //ヘッダ部
         out.print("<tr bgcolor='#003366'>");
@@ -110,6 +97,7 @@
         }
 
         out.print("</table>");
+        */
     }
 
     out.print(OutCopyRight());

@@ -76,9 +76,12 @@
                         <table border="0">
                             <tr>
                                 <td rowspan="1" valign="top"><div id="new-mnt"><input id="change_submit" type="button" value="　新規登録　" onclick="make_table_edit_mnt('n','');" /></div></td>
-                                <td rowspan="1" valign="top"><div id="reset-mnt"><input id="change_submit" type="button" value="　リセット　" onclick="reset_table_edit_mnt();" /></div></td>
-                                <td rowspan="1" valign="top"><div id="entry-mnt"><input id="change_submit" type="button" value="　登録終了　" onclick="entry_table_mnt();" /></div></td>
-                                <td rowspan="1" valign="top"><div id="back-mnt"><input id="change_submit" type="button" value="　戻る　" onclick="make_table_list_mnt(-1);" /></div></td>
+                                <!-- td rowspan="1" valign="top"><div id="reset-mnt"><input id="change_submit" type="button" value="　リセット　" onclick="reset_table_edit_mnt();" /></div></td -->
+                                <td rowspan="1" valign="top"><div id="confirm-mnt"><input id="change_submit" type="button" value="　確認　" onclick="confirm_table_mnt();" /></div></td>
+                                <td rowspan="1" valign="top"><div id="entry-mnt"><input id="change_submit" type="button" value="　登録　" onclick="entry_table_mnt();" /></div></td>
+                                <td rowspan="1" valign="top"><div id="back-mnt"><input id="change_submit" type="button" value="　戻る　" onclick="back_table_mnt();" /></div></td>
+                                <td rowspan="1" valign="top"><div id="cancel-mnt"><input id="change_submit" type="button" value="　キャンセル　" onclick="cancel_table_mnt();" /></div></td>
+                                <td rowspan="1" valign="top"><div id="list-mnt"><input id="change_submit" type="button" value="　一覧へ戻る　" onclick="make_table_list_mnt(-1);" /></div></td>
                             </tr>
                         </table>
                         <div id="my-pager">&nbsp;&nbsp;&nbsp;&nbsp;</div>
@@ -101,6 +104,9 @@
             <!-- container end -->
             <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:212px;left:5px;background-color:#ffffff;width:99%;">
             </div>
+            <div id="popup1" class="popup">
+                <div id="show-list" class="popup_inner" style=""></div>
+            </div>
             <script type="text/javascript" src="js/navigation.js">hpb-navigation-js</script>
             
             <h:messages errorClass="errorStyle"/>
@@ -110,7 +116,7 @@
 <script type="text/javascript">
     make_menu();
     make_table_select_mnt();
-    make_table_list_mnt(1);
+    //make_table_list_mnt(1);
     $(window).resize(function(){
         resize_tbl_list();
     });

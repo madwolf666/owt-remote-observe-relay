@@ -65,7 +65,7 @@
     AnalyzeLog.SetRealPath(a_realPath);
 
     //テーブルの定義・制約・コメントの取得
-    ArrayList<String> a_columns = AnalyzeLog.ColumnsAnalyze(a_Mnt_Table);
+    ArrayList<String> a_columns = AnalyzeLog.GetDbColumns(a_Mnt_Table);
     /*
     if (a_columns != null){
         for (int a_iCnt=0; a_iCnt<a_columns.size(); a_iCnt++){

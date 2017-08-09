@@ -4,10 +4,13 @@
     Author     : Chappy
 --%>
 
+<%@page import="java.util.ArrayList,java.io.*,java.util.*,java.text.SimpleDateFormat"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%!
 //パスを取得
-String GetMainPath(String h_script_name){
+String GetMainPath(
+    String h_script_name
+    ){
     String[] a_pathResult = h_script_name.split("/");
     int idx = a_pathResult.length;
     String a_mainPath = "";
@@ -24,7 +27,9 @@ String GetMainPath(String h_script_name){
 }    
 
 //セッション変数取得
-String GetSessionValue(Object h_session){
+String GetSessionValue(
+    Object h_session
+    ){
     String a_sRet = "";
     if (h_session == null){
         a_sRet = "";
@@ -44,6 +49,580 @@ String OutCopyRight(){
     a_sRet += "</div>";
 
     return a_sRet;
+}
+
+//入力項目の定義
+static int COLUMN_DEF_NAME = 0;         //カラム名（複数）
+static int COLUMN_DEF_TABLE_NAME = 1;   //テーブル名（複数）
+static int COLUMN_DEF_NESS = 2;         //必須有無（a/n/y）
+static int COLUMN_DEF_TYPE = 3;         //型（n/s/time/date）
+static int COLUMN_DEF_TIME = 4;         //時刻指定（n/y）
+static int COLUMN_DEF_LENGTH = 5;       //MAX桁
+static int COLUMN_DEF_PULLDOWN = 6;     //プルダウン（n/y）
+static int COLUMN_DEF_COMMENT = 7;      //コメント
+
+//DBテーブルのキー定義
+static int DB_TABLE_KEY_DEF_NAME = 0;           //キーのカラム名
+static int DB_TABLE_KEY_DEF_TYPE = 1;           //型（n/s）
+static int DB_TABLE_KEY_DEF_EDITABLE = 2;       //修正可否（n/y）
+static int DB_TABLE_KEY_DEF_AUTOINCREMENT = 3;  //自動採番（n/y）
+
+//リスト表示
+static int SHOWLIST_COLUMN_NAME = 0;        //カラム名
+static int SHOWLIST_BUTTON_NAME = 1;        //ボタン名
+static int SHOWLIST_FIND_KEY_NAME = 2;      //検索キー
+static int SHOWLIST_SELECT_KEY_NAME = 3;    //選択キー
+static int SHOWLIST_FIND_SQL = 4;           //取得SQL
+static int SHOWLIST_ITEM_NAME = 5;          //項目表示
+
+//JavaScript生成
+String g_JScript_Val_Auto = "";  //javascript変数の出力
+String g_JScript_Program = "";  //javascriptコードの出力
+String g_JScript_IsNumeric = "";
+String g_JScript_IsRequired = "";
+String g_Post_Data = "";
+
+//リスト表示
+String[] GetDef_ShowList(
+    String h_showlist,
+    String h_col_name
+    ){
+    String[] a_show_def = null;
+    try{
+        FileInputStream a_fs = new FileInputStream(h_showlist);
+        InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
+        BufferedReader a_br = new BufferedReader(a_isr);
+        String a_line = "";
+        int a_rec = 0;
+        while ((a_line = a_br.readLine())!=null){
+            //1行目はタイトル
+            if (a_rec > 0){
+                a_show_def = a_line.split("\t");
+                if (a_show_def[SHOWLIST_COLUMN_NAME].equals(h_col_name) == true){
+                    break;
+                }
+            }
+            a_rec++;
+        }
+        a_br.close();
+        a_isr.close();
+        a_fs.close();
+
+    }catch(Exception e){
+
+    }
+
+    return a_show_def;
+}
+
+
+//  h_isEdit    true:編集、false:参照
+//  h_act   
+//  h_coldef    入力項目の定義
+//  h_key       キーのカラム名：型：修正可否
+//  h_pulldown  プルダウン定義ファイル名
+//  h_showlist  リスト表示定義ファイル名
+//  h_val       DB登録値
+String Make_Tag_Mnt(
+    boolean h_isEdit,
+    String h_act,
+    String[] h_coldef,
+    String[] h_key,
+    String h_pulldown,
+    String h_showlist,
+    String h_val
+    ){
+    String a_sRet = "";
+    String a_isTime = "";
+    boolean a_IsNess = false;
+
+    //カラム名を取得：0番目をメインとする
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String a_colName = a_colNames[0];
+    /*String[] a_vals = h_vals.split("\t");
+    String a_val = "";
+    if (a_vals.length>1){
+        a_val = a_vals[1];
+    }*/
+
+    if (h_coldef[COLUMN_DEF_NESS].equals("a")){
+        //自動更新
+        g_JScript_Val_Auto += "," + a_colName;
+        a_sRet = h_val;
+        a_sRet += "<input type='hidden' name='"+ a_colName + "' id='" + a_colName + "' style='' value='" + h_val + "'>";
+        g_Post_Data += "            ,'" + a_colName + "': $('#" + a_colName + "').val()";
+        return a_sRet;
+    }else if (h_coldef[COLUMN_DEF_NESS].equals("y")){
+        //必須入力
+        a_IsNess = true;
+    }else{
+    }
+    a_isTime = h_coldef[COLUMN_DEF_TIME];
+
+    if (a_IsNess == true){
+        g_JScript_IsRequired += "    if (!check_IsRequired(\"#" + a_colName + "\", \"" + a_colName + "は必須入力です！\")){return false;}";
+    }
+
+    if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("n") >= 0){
+        if (h_coldef[COLUMN_DEF_TYPE].indexOf("n") >= 0){
+            //data_precisionが整数桁、data_scaleが小数桁
+            a_sRet += Make_Input_Tag_Mnt_Numeric(h_isEdit, h_coldef, "width:100%;", h_val);
+            //g_JScript_IsNumeric += "    alert($(\"#" + h_column[1] + "\"));";
+            g_JScript_IsNumeric += "    if (!check_IsNumeric(\"#" + a_colName + "\", \"" + a_colName + "は数値入力です！\")){return false;}";
+        }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("s") >= 0){
+            //data_lengthがMAX桁数
+            a_sRet += Make_Input_Tag_Mnt_String(h_isEdit, h_coldef, "width:100%;", h_val);
+        }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("time") >= 0){
+            //ミリ秒まで扱う？
+            a_sRet += Make_Input_Tag_Mnt_TimeStamp(h_isEdit, h_coldef, "width:100%;", a_isTime, h_val);
+        }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("date") >= 0){
+            a_sRet += Make_Input_Tag_Mnt_Date(h_isEdit, h_coldef, "width:100%;", a_isTime, h_val);
+        }
+    }else if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("y") >= 0){
+        //該当テーブルの定義情報を読み込む
+        try{
+            FileInputStream a_fs = new FileInputStream(h_pulldown);
+            InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
+            BufferedReader a_br = new BufferedReader(a_isr);
+            String a_line = "";
+            int a_rec = 0;
+            while ((a_line = a_br.readLine())!=null){
+                //1行目はタイトル
+                if (a_rec > 0){
+                    String[] a_split1 = a_line.split("\t");
+                    if (a_split1[0].equals(a_colName) == true){
+                        a_sRet += Make_Input_Tag_Mnt_Option(h_isEdit, a_split1, "width:100%;", h_val);
+                        break;
+                    }
+                }
+                a_rec++;
+            }
+            a_br.close();
+            a_isr.close();
+            a_fs.close();
+
+        }catch(Exception e){
+
+        }
+    }else if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("l") >= 0){
+        //該当テーブルの定義情報を読み込む
+        String[] a_show_def = GetDef_ShowList(h_showlist, a_colName);
+        if (a_show_def != null){
+            a_sRet += Make_Input_Tag_Mnt_ShowList(h_isEdit, h_coldef, a_show_def, "width:auto;", h_val);
+        }   
+    }
+
+    g_Post_Data += "            ,'" + a_colName + "': $('#" + a_colName + "').val()";
+    
+    /*
+〇nullable
+　'n'の文字が検出された場合は
+　　必須入力
+
+〇constraint_type
+　'p'もしくは'u'の文字が検出された場合
+　　二重登録不可
+
+〇column_comment
+　空の場合は、column_nameそのものを出力
+    */
+    
+    return a_sRet; 
+}
+
+//inputタグ生成（数値）
+String Make_Input_Tag_Mnt_Numeric(
+    boolean h_isEdit,
+    String[] h_coldef,
+    String h_style,
+    String h_val
+    ){
+    String a_sRet = "";
+    int a_max_len = 10;
+    
+    //カラム名を取得：0番目をメインとする
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String a_colName = a_colNames[0];
+
+    a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
+
+    if (h_isEdit == false){
+        a_sRet += h_val;
+    }
+
+    a_sRet += "<input type='";
+    if (h_isEdit == true){
+        a_sRet += "text";
+    }else{
+        a_sRet += "hidden";
+    }
+    a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
+    
+    return a_sRet;
+}
+
+//inputタグ生成（文字）
+String Make_Input_Tag_Mnt_String(
+    boolean h_isEdit,
+    String[] h_coldef,
+    String h_style,
+    String h_val
+    ){
+    String a_sRet = "";
+    int a_max_len = 0;
+
+    //カラム名を取得：0番目をメインとする
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String a_colName = a_colNames[0];
+
+    a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
+    
+    if (h_isEdit == false){
+        a_sRet += h_val;
+    }
+
+    if (a_max_len > 128){
+        if (h_isEdit == true){
+            a_sRet += "<textarea name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
+        }else{
+            a_sRet += "<input type='hidden' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+        }
+    }else{
+        a_sRet += "<input type='";
+        if (h_isEdit == true){
+            a_sRet += "text";
+        }else{
+            a_sRet += "hidden";
+        }
+        a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
+    }
+
+    return a_sRet;
+}
+
+//inputタグ生成（タイムスタンプ）
+String Make_Input_Tag_Mnt_TimeStamp(
+    boolean h_isEdit,
+    String[] h_coldef,
+    String h_style,
+    String h_isTime,
+    String h_val
+    ){
+    String a_sRet = "";
+    int a_max_len = 10 + 1 + 8;
+
+    //カラム名を取得：0番目をメインとする
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String a_colName = a_colNames[0];
+
+    if (h_isEdit == false){
+        a_sRet += h_val;
+    }
+
+    a_sRet += "<input type='";
+    if (h_isEdit == true){
+        a_sRet += "text";
+    }else{
+        a_sRet += "hidden";
+    }
+    a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
+
+    //g_JScript_Out += "$('#d_" + h_column[1] + "').datepicker({});";
+    //g_JScript_Out += "$('#t_" + h_column[1] + "').datepicker({format:'H:i', datepicker:false, lang:'ja', step:1});";
+    //g_JScript_Out += "$('#" + h_column[1] + "').datetimepicker({dateFormat:'Y/m/d', showSecond: true, timeFormat:'hh:mm:ss', lang:'ja', step:0.1});";
+    if (h_isTime.equals("y")){
+        a_max_len = 10 + 1 + 8;
+        g_JScript_Program += "$('#" + a_colName + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+    }else{
+        a_max_len = 10;
+        g_JScript_Program += "$('#" + a_colName + "').datepicker({});";
+    }
+
+    a_sRet +=  String.valueOf(a_max_len) + "'>";
+
+    return a_sRet;
+}
+
+//inputタグ生成（日付）
+String Make_Input_Tag_Mnt_Date(
+    boolean h_isEdit,
+    String[] h_coldef,
+    String h_style,
+    String h_isTime,
+    String h_val
+    ){
+    String a_sRet = "";
+    int a_max_len = 10;
+
+    //カラム名を取得：0番目をメインとする
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String a_colName = a_colNames[0];
+
+    if (h_isEdit == false){
+        a_sRet += h_val;
+    }
+
+    a_sRet += "<input type='";
+    if (h_isEdit == true){
+        a_sRet += "text";
+    }else{
+        a_sRet += "hidden";
+    }
+    a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
+
+    if (h_isTime.equals("y")){
+        a_max_len = 10 + 1 + 8;
+        g_JScript_Program += "$('#" + a_colName + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+    }else{
+        a_max_len = 10;
+        g_JScript_Program += "$('#" + a_colName + "').datepicker({});";
+    }
+
+    a_sRet +=  String.valueOf(a_max_len) + "'>";
+
+    return a_sRet;
+}
+
+//optionタグ生成
+String Make_Input_Tag_Mnt_Option(
+    boolean h_isEdit,
+    String[] h_option,
+    String h_style,
+    String h_val
+    ){
+    String a_sRet = "";
+    String[] a_split1 = null;
+    String[] a_split2 = null;
+
+    a_split1 = h_option[1].split(",");
+
+    if (h_isEdit == false){
+        for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
+            a_split2 = a_split1[a_iCnt].split(":");
+            if (a_split2[0].equals(h_val) == true){
+                a_sRet += a_split2[1];
+                break;
+            }
+        }
+    }
+
+    if (h_isEdit == true){
+        a_sRet += "<select id='" + h_option[0] + "' name='" + h_option[0] + "' style='" + h_style + "'>";
+        a_sRet += "<option value=''></option>";
+
+        for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
+            a_split2 = a_split1[a_iCnt].split(":");
+            a_sRet += "<option value='" + a_split2[0] + "'";
+            if (a_split2[0].equals(h_val) == true){
+                a_sRet += " selected";
+            }
+            a_sRet += ">" + a_split2[1] + "</option>";
+        }
+        a_sRet += "</select>";
+    }else{
+        a_sRet += "<input type='hidden' name='"+ h_option[0] + "' id='" + h_option[0]  + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+    }
+
+    return a_sRet;
+}
+
+//リスト表示生成
+String Make_Input_Tag_Mnt_ShowList(
+    boolean h_isEdit,
+    String[] h_coldef,
+    String[] h_option,
+    String h_style,
+    String h_val
+    ){
+    String a_sRet = "";
+    //String[] a_split1 = null;
+    //String[] a_split2 = null;
+    int a_max_len = 0;
+
+    String a_colName = h_option[SHOWLIST_COLUMN_NAME];
+
+    a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
+    
+    if (h_isEdit == false){
+        a_sRet += h_val;
+    }
+
+    if (a_max_len > 128){
+        if (h_isEdit == true){
+            a_sRet += "<textarea name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
+        }else{
+            a_sRet += "<input type='hidden' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+        }
+    }else{
+        a_sRet += "<input type='";
+        if (h_isEdit == true){
+            a_sRet += "text";
+        }else{
+            a_sRet += "hidden";
+        }
+        a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
+    }
+
+    if (h_isEdit == true){
+        a_sRet += "<input type='hidden' name='show_col_name_" + a_colName + "' id='show_col_name_" + a_colName + "' value='" + a_colName + "'>";
+        a_sRet += "<input type='hidden' name='show_find_key_" + a_colName + "' id='show_find_key_" + a_colName + "' value='" + h_option[SHOWLIST_FIND_KEY_NAME] + "'>";
+        a_sRet += "&nbsp;&nbsp;<input type='button' value='" + h_option[SHOWLIST_BUTTON_NAME] + "' onclick='make_show_list(1";
+        a_sRet += ",\"" + a_colName + "\"";
+        /*a_sRet += ",\"" + h_option[SHOWLIST_FIND_KEY_NAME] + "\"";
+        a_sRet += ",\"" + h_option[SHOWLIST_SELECT_KEY_NAME] + "\"";
+        a_sRet += ",\"" + h_option[SHOWLIST_FIND_SQL] + "\"";*/
+        a_sRet += ");'>";
+    }
+
+    return a_sRet;
+}
+
+//入力確認
+String Make_Confirm_Table_Mnt(String h_act, String h_idx){
+    String a_sRet = "" ;
+   
+    a_sRet = "function confirm_table_mnt(){";
+   
+    /*
+    a_sRet += " var a_act = $(\"#txt_act\").val();";
+    a_sRet += " var a_idx = $(\"#txt_idx\").val();";
+    */
+    
+    //数値入力チェック
+    a_sRet += g_JScript_IsNumeric;
+    
+    //必須入力チェック
+    if (h_act.equals("n")){
+        a_sRet += g_JScript_IsRequired;
+    }
+
+    //a_sRet += "alert($(\"#ext\").val());";
+
+    a_sRet += " $.ajax({";
+    a_sRet += "     url: m_parentURL + \"confirm_table_mnt.jsp\",";
+    a_sRet += "     type: 'POST',";
+    a_sRet += "     dataType: \"html\",";
+    a_sRet += "     async: false,";
+    a_sRet += "     data:{";
+    a_sRet += "         'ACT': \"" + h_act + "\"";
+    a_sRet += "         ,'IDX': \"" + h_idx + "\"";
+    
+    //入力カラム数分、セットする
+    a_sRet += g_Post_Data;
+        
+    a_sRet += "     },";
+    a_sRet += "     success: function(data, dataType){";
+    a_sRet += "         $(\"#my-pager\").empty().append(\"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\");";
+    a_sRet += "         $(\"#my-list\").empty().append(data);";
+    a_sRet += "         $(\"#new-mnt\").hide();";
+    //a_sRet += "         //$(\"#reset-mnt\").show();";
+    a_sRet += "         $(\"#confirm-mnt\").hide();";
+    a_sRet += "         $(\"#entry-mnt\").show();";
+    a_sRet += "         $(\"#back-mnt\").show();";
+    a_sRet += "         $(\"#cancel-mnt\").show();";
+    a_sRet += "         $(\"#list-mnt\").show();";
+    a_sRet += "     },";
+    a_sRet += "     error: function (XMLHttpRequest, textStatus, errorThrown) {";
+    a_sRet += "         alert(errorThrown.message);";
+    a_sRet += "     },";
+    a_sRet += "     complete: function (data) {";
+    a_sRet += "     }";
+    a_sRet += " });";
+    a_sRet += " return true;";
+    a_sRet += "}";
+
+    a_sRet += ";";
+    a_sRet += "function back_table_mnt(){";
+    a_sRet += " $.ajax({";
+    a_sRet += "     url: m_parentURL + \"make_table_edit_mnt.jsp\",";
+    a_sRet += "     type: 'POST',";
+    a_sRet += "     dataType: \"html\",";
+    a_sRet += "     async: false,";
+    a_sRet += "     data:{";
+    a_sRet += "         'ACT': \"" + h_act + "\"";
+    a_sRet += "         ,'IDX': \"" + h_idx + "\"";
+    a_sRet += "         ,'DB': '0'";
+    
+    //入力カラム数分、セットする
+    a_sRet += g_Post_Data;
+        
+    a_sRet += "     },";
+    a_sRet += "     success: function(data, dataType){";
+    a_sRet += "         $(\"#my-pager\").empty().append(\"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\");";
+    a_sRet += "         $(\"#my-list\").empty().append(data);";
+    a_sRet += "         $(\"#new-mnt\").hide();";
+    //a_sRet += "         //$(\"#reset-mnt\").show();";
+    a_sRet += "         $(\"#confirm-mnt\").show();";
+    a_sRet += "         $(\"#entry-mnt\").hide();";
+    a_sRet += "         $(\"#back-mnt\").hide();";
+    a_sRet += "         $(\"#cancel-mnt\").hide();";
+    a_sRet += "         $(\"#list-mnt\").show();";
+    a_sRet += "     },";
+    a_sRet += "     error: function (XMLHttpRequest, textStatus, errorThrown) {";
+    a_sRet += "         alert(errorThrown.message);";
+    a_sRet += "     },";
+    a_sRet += "     complete: function (data) {";
+    a_sRet += "     }";
+    a_sRet += " });";
+    a_sRet += " return true;";
+    a_sRet += "}";
+
+    a_sRet += ";";
+    a_sRet += "function cancel_table_mnt(){";
+    //a_sRet += "alert('cancel_table_mnt');";
+    a_sRet += "    make_table_edit_mnt('" + h_act + "', '" + h_idx + "');";
+    a_sRet += "}";
+
+   return a_sRet;
+}
+
+String Make_Entry_Table_Mnt(String h_act, String h_idx){
+    String a_sRet = "" ;
+   
+    a_sRet = "function entry_table_mnt(){";
+   
+    /*
+    a_sRet += " var a_act = $(\"#txt_act\").val();";
+    a_sRet += " var a_idx = $(\"#txt_idx\").val();";
+    */
+    
+    a_sRet += " if (!confirm(\"登録します。よろしいですか？\")){";
+    a_sRet += "     return false;";
+    a_sRet += " }";
+
+    a_sRet += " $.ajax({";
+    a_sRet += "     url: m_parentURL + \"entry_table_mnt.jsp\",";
+    a_sRet += "     type: 'POST',";
+    a_sRet += "     dataType: \"html\",";
+    a_sRet += "     async: false,";
+    a_sRet += "     data:{";
+    a_sRet += "         'ACT': \"" + h_act + "\"";
+    a_sRet += "         ,'IDX': \"" + h_idx + "\"";
+    
+    //入力カラム数分、セットする
+    a_sRet += g_Post_Data;
+        
+    a_sRet += "     },";
+    a_sRet += "     success: function(data, dataType){";
+    a_sRet += "         var a_result = data.trim();";
+    a_sRet += "         if (a_result != \"\"){";
+    a_sRet += "             $(\"#my-pager\").empty().append(\"<font color='#ff0000'>\" + data + \"</font>\");";
+    a_sRet += "         } else{";
+    a_sRet += "             $(\"#my-pager\").empty();";
+    a_sRet += "             alert(\"登録しました。\");";
+    a_sRet += "             make_table_list_mnt(-1);";
+    a_sRet += "         }";
+    a_sRet += "     },";
+    a_sRet += "     error: function (XMLHttpRequest, textStatus, errorThrown) {";
+    a_sRet += "         alert(errorThrown.message);";
+    a_sRet += "     },";
+    a_sRet += "     complete: function (data) {";
+    a_sRet += "     }";
+    a_sRet += " });";
+    a_sRet += " return true;";
+    a_sRet += "}";
+    
+   return a_sRet;
 }
 %>
 
