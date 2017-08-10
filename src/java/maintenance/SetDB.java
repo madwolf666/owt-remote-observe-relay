@@ -127,8 +127,8 @@ public class SetDB implements Serializable {
             //DB更新するテーブルのSQLを組み立てる
             for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
                 String[] a_split = h_coldefs.get(a_iCnt).split("\t");
-                a_colNames = a_split[_Environ.COLUMN_DEF_NAME].split(",");
-                a_tableNames = a_split[_Environ.COLUMN_DEF_TABLE_NAME].split(",");
+                a_colNames = a_split[_Environ.COLUMN_DEF_NAME].split(":");
+                a_tableNames = a_split[_Environ.COLUMN_DEF_TABLE_NAME].split(":");
                 a_post_data = h_post_data.get(a_iCnt).split("\t");
                 a_post_val = "";
                 if (a_post_data.length>1){
@@ -459,7 +459,7 @@ public class SetDB implements Serializable {
             if (a_table_split.length < 2){
                 return a_arrayRet;
             }
-            a_column_split = a_table_split[1].split(",");
+            a_column_split = a_table_split[1].split(":");
             a_key = new String[a_column_split.length];
             for (int a_iCnt=0; a_iCnt<a_column_split.length; a_iCnt++){
                 a_any_split = a_column_split[a_iCnt].split(":");
@@ -586,7 +586,7 @@ public class SetDB implements Serializable {
             if (a_table_split.length<2){
                 return a_arrayRet;
             }
-            a_column_split = a_table_split[1].split(",");
+            a_column_split = a_table_split[1].split(":");
             a_type = new String[a_column_split.length];
             a_key = new String[a_column_split.length];
             for (int a_iCnt=0; a_iCnt<a_column_split.length; a_iCnt++){
@@ -871,5 +871,48 @@ public class SetDB implements Serializable {
         _Environ._MyLogger.info("*** FindMnt is finished. ***");
         
         return a_arrayRet;
+    }
+    
+    public String GetEquipmentTypeName(
+        String h_id
+        ) throws Exception{
+        String a_sRet = "";
+        String a_sVal = "";
+        Connection a_con = null;
+        PreparedStatement a_ps = null;
+        ResultSet a_rs = null;
+        String a_sql = "";
+        try{
+            a_sql = "SELECT NAME FROM EQUIPMENTTYPEMASTER WHERE id=?";
+
+            Class.forName (_db_driver);
+            // データベースとの接続
+            a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
+            a_ps = a_con.prepareStatement(a_sql);
+            a_ps.setInt(1, Integer.valueOf(h_id));
+            a_rs = a_ps.executeQuery();
+            while(a_rs.next()){
+                a_sVal = _Environ.ExistDBString(a_rs, "NAME");
+                a_sRet = a_sVal;
+            }
+            a_rs.close();
+            a_ps.close();
+        
+        } catch (SQLException e) {
+            _Environ._MyLogger.severe("[GetEquipmentTypeName]" + e.getMessage());
+        } catch (ClassNotFoundException ex) {
+            _Environ._MyLogger.severe("[GetEquipmentTypeName]" + ex.getMessage());
+        } finally{
+            if (a_ps != null){
+                a_ps.close();
+            }
+            if (a_con != null){
+                a_con.close();
+            }
+        }
+        
+        _Environ._MyLogger.info("*** GetEquipmentTypeName is finished. ***");
+
+        return a_sRet;
     }
 }

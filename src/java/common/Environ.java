@@ -47,14 +47,17 @@ public class Environ {
     public String _db_name = "";
 
     //入力項目の定義
-    public static int COLUMN_DEF_NAME = 0;  //カラム名（複数）
-    public static int COLUMN_DEF_TABLE_NAME = 1;//テーブル名（複数）
-    public static int COLUMN_DEF_NESS = 2;   //必須有無（a/n/y）
-    public static int COLUMN_DEF_TYPE = 3;  //型（n/s/time/date）
-    public static int COLUMN_DEF_TIME = 4;//時刻指定（n/y）
-    public static int COLUMN_DEF_LENGTH = 5;    //MAX桁
-    public static int COLUMN_DEF_PULLDOWN = 6; //プルダウン（n/y）
-    public static int COLUMN_DEF_COMMENT = 7; //コメント
+    public static int COLUMN_DEF_FIELD = 0;         //入力フィールド
+    public static int COLUMN_DEF_NAME = 1;          //カラム名（複数）
+    public static int COLUMN_DEF_TABLE_NAME = 2;    //テーブル名（複数）
+    public static int COLUMN_DEF_NESS = 3;          //必須有無（a/n/y）
+    public static int COLUMN_DEF_TYPE = 4;          //型（n/s/time/date）
+    public static int COLUMN_DEF_TIME = 5;          //時刻指定（n/y）
+    public static int COLUMN_DEF_LENGTH = 6;        //MAX桁
+    public static int COLUMN_DEF_PULLDOWN = 7;      //プルダウン（n/y）
+    public static int COLUMN_DEF_COMMENT = 8;       //コメント
+    public static int COLUMN_DEF_INIT = 9;          //初期値
+    public static int COLUMN_DEF_ACTION = 10;       //入力時の動作
 
     //DBテーブルのキー定義
     public static int DB_TABLE_KEY_DEF_NAME = 0;           //キーのカラム名

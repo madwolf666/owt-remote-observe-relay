@@ -29,7 +29,7 @@
     String[] a_column_split = null;
     if (a_Mnt_Table != ""){
         a_table_split = a_Mnt_Table.split("\t");
-        a_column_split = a_table_split[1].split(",");
+        a_column_split = a_table_split[1].split(":");
     }
 
     //POSTデータを取得
@@ -39,17 +39,59 @@
     for (int a_iCnt=0; a_iCnt<a_coldefs.size(); a_iCnt++){
         String[] a_split = a_coldefs.get(a_iCnt).split("\t");
         //カラム名を取得：0番目をメインとする
-        String[] a_colNames = a_split[COLUMN_DEF_NAME].split(",");
+        String[] a_colNames = a_split[COLUMN_DEF_NAME].split(":");
         String a_colName = a_colNames[0];
-        if (request.getParameter(a_colName) != null){
-            String a_val = request.getParameter(a_colName);
-            if (a_val.length()>0){
-                a_post_data.add(a_colName + "\t" + a_val);
-            }else{
-                a_post_data.add(a_colName + "\t");
+        String a_field = a_split[COLUMN_DEF_FIELD];
+        if (a_split[COLUMN_DEF_PULLDOWN].indexOf("p")>=0){
+            String a_plural = a_envPath + a_field + ".def";
+            ArrayList<String> a_plurals = GetDef_Plurals(a_plural);
+            String a_plural_data = "";
+            if (a_plurals != null){
+                for (int a_iCnt2=1; a_iCnt2<a_plurals.size(); a_iCnt2++){
+                    String[] a_split2 = a_plurals.get(a_iCnt2).split("\t");
+                    String[] a_split3 = a_split2[COLUMN_DEF_FIELD].split(":");
+                    if (a_iCnt2 > 1){
+                        a_plural_data += "\f\f";
+                    }
+                    for (int a_iCnt3=0; a_iCnt3<a_split3.length; a_iCnt3++){
+                        //該当番目の定義を組み立て
+                        String[] a_now_split = new String[COLUMN_DEF_ACTION + 1];
+                        for (int a_iCnt4=0; a_iCnt4<COLUMN_DEF_ACTION + 1; a_iCnt4++){
+                            String[] a_split4 = a_split2[a_iCnt4].split(":");
+                            a_now_split[a_iCnt4] = "";
+                            if (a_split4.length > a_iCnt3){
+                                a_now_split[a_iCnt4] = a_split4[a_iCnt3];
+                            }
+                        }
+                        if (a_iCnt3 > 0){
+                            a_plural_data += "\f\f";
+                        }
+                        a_field = a_now_split[COLUMN_DEF_FIELD];
+                        if (request.getParameter(a_field) != null){
+                            String a_val = HtmlEncode(request.getParameter(a_field));
+                            if (a_val.length()>0){
+                                a_plural_data += a_field + "\f" + a_val;
+                            }else{
+                                a_plural_data += a_field + "\f";
+                            }
+                        }else{
+                                a_plural_data += a_field + "\f";
+                        }
+                    }
+                }
             }
+            a_post_data.add(a_field + "\t" + a_plural_data);
         }else{
-                a_post_data.add(a_colName + "\t");
+            if (request.getParameter(a_field) != null){
+                String a_val = HtmlEncode(request.getParameter(a_field));
+                if (a_val.length()>0){
+                    a_post_data.add(a_field + "\t" + a_val);
+                }else{
+                    a_post_data.add(a_field + "\t");
+                }
+            }else{
+                    a_post_data.add(a_field + "\t");
+            }
         }
     }
 
@@ -59,7 +101,7 @@
         String[] a_split = a_coldefs.get(a_iCnt).split("\t");
         String[] a_edit = a_post_data.get(a_iCnt).split("\t");
         String a_val = "";
-        if (a_edit.length>1){
+        if (a_edit.length > 1){
             a_val = a_edit[1];
         }
         //splitは値が入っている所までしかlengthが返らない[2017.07.31]
@@ -69,7 +111,7 @@
             out.print("<font color='#ffff00'>*</font>");
         }
         out.print("</td>");
-        out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
+        out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, false, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
         out.print("</tr>");
     }
 

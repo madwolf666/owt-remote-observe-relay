@@ -1,64 +1,65 @@
-カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
-usercode,usercode,usercode	newcustomermanage,pbxremotecustomer,remotemonitoringcustomer	a	s	n	6	n	ユーザコード
-username	newcustomermanage	y	s	n	88	n	名称
-maintel	newcustomermanage	n	s	n	32	n	代表電話番号
-postcode	newcustomermanage	n	s	n	8	n	郵便番号
-useraddr	newcustomermanage	n	s	n	50	n	住所
-chargename	newcustomermanage	n	s	n	32	n	ユーザ担当者
-userchargepart	pbxremotecustomer	n	s	n	32	n	ユーザ担当部署
-chargetel	newcustomermanage	n	s	n	32	n	ユーザ担当者電話番号
-remotesin,r_sin	newcustomermanage,pbxremotecustomer	n	date	n	10	n	リモートSIN年月日
-remotecontract,remotecontract	newcustomermanage,customerstation	y	s	n	1	y	リモート契約
-diagnose,diagnose	newcustomermanage,customerstation	y	s	n	1	y	診断
-remoteclass,patrolclass,remoteclass	newcustomermanage,pbxremotecustomer,customerstation	y	s	n	8	y	リモート契約クラス
-patrolmethod	pbxremotecustomer	y	s	n	4	y	定期診断方法
-patroldayofweek	pbxremotecustomer	y	s	n	8	y	週1の診断曜日
-command1	pbxremotecustomer	n	s	n	80	n	定期診断コマンド1
-command2	pbxremotecustomer	m	s	m	80	n	定期診断コマンド2
-monthreport,monthreport	newcustomermanage,customerstation	y	s	n	1	y	月報
-reportclass	customerstation	n	s	n	6	y	月報クラス
-usercode1,stationid,stationid,satelitename	pbxremotecustomer,remotemonitoringcustomer,customerstation,customerstation	y	s	n	6	y	管轄部署
-usercode2	pbxremotecustomer	n	s	n	6	n	登録番号
-remotesetid,remotesetid	remotemonitoringcustomer,customerstation	y	n	n	1	y	SET
-usernumber,usernumber	remotemonitoringcustomer,customerstation	y	n	n	32	l	REC
-machinename	remotemonitoringcustomer	n	s	n	24	n	機種名
-version	remotemonitoringcustomer	n	s	n	20	n	Version
-filever	pbxremotecustomer	n	s	n	8	n	ファイルVersion
-nodecode	remotemonitoringcustomer	y	s	n	2	y	機種コード
-idcode	remotemonitoringcustomer	y	s	n	64	n	ユーザIDコード
-maintenancecenter	pbxremotecustomer	n	s	n	6	n	保守契約センタ
-maintenancegroup	pbxremotecustomer	n	s	n	6	n	保守契約G長
-maintenancedirect	pbxremotecustomer	n	s	n	20	n	保守契約担当
-comment	pbxremotecustomer	n	s	n	20	n	コメント
-notes	pbxremotecustomer	n	s	n	26	n	注意事項
-urgentreportid	remotemonitoringcustomer	y	n	n	10	l	緊急連絡体制表No.
-termcode	pbxremotecustomer	n	s	n	8	n	端末番号
-termname	pbxremotecustomer	y	s	n	10	y	RMI種別
-passwordorg	pbxremotecustomer	n	s	n	4	n	RMI旧パスワード
-passwordnew	pbxremotecustomer	n	s	n	4	n	RMI新パスワード
-syspass	pbxremotecustomer	n	s	n	10	n	システムパス
-linetel	newcustomermanage	n	s	n	32	n	回線番号
-circuitclass	pbxremotecustomer	y	s	n	1	y	Dp/Pb
-patrolmethod1	pbxremotecustomer	n	s	n	6	y	接続方式
-patrolmethod2	pbxremotecustomer	n	s	n	9	y	接続方法
-comatr	pbxremotecustomer	y	s	n	10	y	通信属性
-ctbt	pbxremotecustomer	y	s	n	2	y	CT/BT
-terminalline	pbxremotecustomer	n	s	n	6	y	回線所有
-iocsel	pbxremotecustomer	n	s	n	12	y	IOC/SEL所有
-rmi	pbxremotecustomer	n	s	n	12	y	RMI所有
-autoalarmreset	remotemonitoringcustomer	n	n	n	1	y	自動アラームリセット
-retransflg	customerstation	n	s	n	1	y	再転送有無
-retransfernumber	customerstation	n	n	n	10	n	再転送No
-termdf1	pbxremotecustomer	n	s	n	20	n	発報端子1
-termdf2	pbxremotecustomer	n	s	n	20	n	発報端子2
-termdf3	pbxremotecustomer	n	s	n	20	n	発報端子3
-termdf4	pbxremotecustomer	n	s	n	20	n	発報端子4
-termdf5	pbxremotecustomer	n	s	n	20	n	発報端子5
-termdf6	pbxremotecustomer	n	s	n	20	n	発報端子6
-syscomment	pbxremotecustomer	n	s	n	50	n	システムコメント
-verhigh	pbxremotecustomer	n	s	n	1	n	バージョン情報(high)
-rev1st	pbxremotecustomer	n	s	n	1	n	バージョン情報(1st)
-rev2nd	pbxremotecustomer	n	s	n	1	n	バージョン情報(2nd)
-rev3rd	pbxremotecustomer	n	s	n	1	n	バージョン情報(3rd)
-reserve	pbxremotecustomer	n	s	n	17	n	予約1
-reserve1	pbxremotecustomer	n	s	n	72	n	予約2
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/list/plural）	コメント
+usercode	usercode:usercode:usercode	newcustomermanage:pbxremotecustomer:remotemonitoringcustomer	a	s	n	6	n	ユーザコード
+username	username	newcustomermanage	y	s	n	88	n	名称
+maintel	maintel	newcustomermanage	n	s	n	32	n	代表電話番号
+postcode	postcode	newcustomermanage	n	s	n	8	n	郵便番号
+useraddr	useraddr	newcustomermanage	n	s	n	50	n	住所
+chargename	chargename	newcustomermanage	n	s	n	32	n	ユーザ担当者
+userchargepart	userchargepart	pbxremotecustomer	n	s	n	32	n	ユーザ担当部署
+chargetel	chargetel	newcustomermanage	n	s	n	32	n	ユーザ担当者電話番号
+remotesin	remotesin:r_sin	newcustomermanage:pbxremotecustomer	n	date	n	10	n	リモートSIN年月日
+remotecontract	remotecontract:remotecontract	newcustomermanage:customerstation	y	s	n	1	y	リモート契約
+diagnose	diagnose:diagnose	newcustomermanage:customerstation	y	s	n	1	y	診断
+remoteclass	remoteclass:patrolclass:remoteclass	newcustomermanage:pbxremotecustomer:customerstation	y	s	n	8	y	リモート契約クラス
+patrolmethod	patrolmethod	pbxremotecustomer	y	s	n	4	y	定期診断方法
+patroldayofweek	patroldayofweek	pbxremotecustomer	y	s	n	8	y	週1の診断曜日
+command1	command1	pbxremotecustomer	n	s	n	80	n	定期診断コマンド1
+command2	command2	pbxremotecustomer	m	s	m	80	n	定期診断コマンド2
+monthreport	monthreport:monthreport	newcustomermanage:customerstation	y	s	n	1	y	月報
+reportclass	reportclass	customerstation	n	s	n	6	y	月報クラス
+usercode1	usercode1:stationid:stationid:satelitename	pbxremotecustomer:remotemonitoringcustomer:customerstation:customerstation	y	s	n	6	y	管轄部署
+usercode2	usercode2	pbxremotecustomer	n	s	n	6	n	登録番号
+remotesetid	remotesetid:remotesetid	remotemonitoringcustomer:customerstation	y	n	n	1	y	SET
+usernumber	usernumber:usernumber	remotemonitoringcustomer:customerstation	y	n	n	32	l	REC
+machinename	machinename	remotemonitoringcustomer	n	s	n	24	n	機種名
+version	version	remotemonitoringcustomer	n	s	n	20	n	Version
+filever	filever	pbxremotecustomer	n	s	n	8	n	ファイルVersion
+nodecode	nodecode	remotemonitoringcustomer	y	s	n	2	y	機種コード
+idcode	idcode	remotemonitoringcustomer	y	s	n	64	n	ユーザIDコード
+maintenancecenter	maintenancecenter	pbxremotecustomer	n	s	n	6	n	保守契約センタ
+maintenancegroup	maintenancegroup	pbxremotecustomer	n	s	n	6	n	保守契約G長
+maintenancedirect	maintenancedirect	pbxremotecustomer	n	s	n	20	n	保守契約担当
+comment	comment	pbxremotecustomer	n	s	n	20	n	コメント
+notes	notes	pbxremotecustomer	n	s	n	26	n	注意事項
+urgentreportid	urgentreportid	remotemonitoringcustomer	y	n	n	10	l	緊急連絡体制表No.
+termcode	termcode	pbxremotecustomer	n	s	n	8	n	端末番号
+termname	termname	pbxremotecustomer	y	s	n	10	y	RMI種別
+passwordorg	passwordorg	pbxremotecustomer	n	s	n	4	n	RMI旧パスワード
+passwordnew	passwordnew	pbxremotecustomer	n	s	n	4	n	RMI新パスワード
+syspass	syspass	pbxremotecustomer	n	s	n	10	n	システムパス
+linetel	linetel	newcustomermanage	n	s	n	32	n	回線番号
+circuitclass	circuitclass	pbxremotecustomer	y	s	n	1	y	Dp/Pb
+patrolmethod1	patrolmethod1	pbxremotecustomer	n	s	n	6	y	接続方式
+patrolmethod2	patrolmethod2	pbxremotecustomer	n	s	n	9	y	接続方法
+comatr	comatr	pbxremotecustomer	y	s	n	10	y	通信属性
+ctbt	ctbt	pbxremotecustomer	y	s	n	2	y	CT/BT
+terminalline	terminalline	pbxremotecustomer	n	s	n	6	y	回線所有
+iocsel	iocsel	pbxremotecustomer	n	s	n	12	y	IOC/SEL所有
+rmi	rmi	pbxremotecustomer	n	s	n	12	y	RMI所有
+autoalarmreset	autoalarmreset	remotemonitoringcustomer	n	n	n	1	y	自動アラームリセット
+retransflg	retransflg	customerstation	n	s	n	1	y	再転送有無
+retransfernumber	retransfernumber	customerstation	n	n	n	10	n	再転送No
+termdf1	termdf1	pbxremotecustomer	n	s	n	20	n	発報端子1
+termdf2	termdf2	pbxremotecustomer	n	s	n	20	n	発報端子2
+termdf3	termdf3	pbxremotecustomer	n	s	n	20	n	発報端子3
+termdf4	termdf4	pbxremotecustomer	n	s	n	20	n	発報端子4
+termdf5	termdf5	pbxremotecustomer	n	s	n	20	n	発報端子5
+termdf6	termdf6	pbxremotecustomer	n	s	n	20	n	発報端子6
+syscomment	syscomment	pbxremotecustomer	n	s	n	50	n	システムコメント
+verhigh	verhigh	pbxremotecustomer	n	s	n	1	n	バージョン情報(high)
+rev1st	rev1st	pbxremotecustomer	n	s	n	1	n	バージョン情報(1st)
+rev2nd	rev2nd	pbxremotecustomer	n	s	n	1	n	バージョン情報(2nd)
+rev3rd	rev3rd	pbxremotecustomer	n	s	n	1	n	バージョン情報(3rd)
+reserve	reserve	pbxremotecustomer	n	s	n	17	n	予約1
+reserve1	reserve1	pbxremotecustomer	n	s	n	72	n	予約2
+prt_status	prt_status	table	n	s	n	10	p	PRT使用状況

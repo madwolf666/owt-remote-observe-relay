@@ -992,3 +992,25 @@ function select_show_list(h_selectKey, h_selectVal){
     //alert(h_selectKey + "," + h_selectVal);
     $('#' + h_selectKey).val(h_selectVal);
 }
+
+//フィールドの追加
+function append_field(h_table_id, h_idx, h_colNames){
+    alert('append_field--->' + h_colNames);
+    var a_iCnt = 0;
+    var a_colName = h_colNames.split(":");
+    alert(a_colName.length);
+    var a_field = "<tr>";
+    for (a_iCnt=0; a_iCnt<a_colName.length; a_iCnt++){
+        alert(a_colName[a_iCnt]);
+        a_field += "<td bgcolor='transparent' style='text-align:left;'>";
+        a_field += "<input type='text' value='' style='width:100%;'>"
+        a_field += "</td>";
+    }
+    a_field += "</tr>";
+    
+    alert(h_table_id + "_div" + h_idx);
+    alert($("#" + h_table_id + "_div" + h_idx));
+    $("#" + h_table_id + "_div" + h_idx).hide();
+
+    $("#" + h_table_id).append(a_field);
+}

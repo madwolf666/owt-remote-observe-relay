@@ -1,0 +1,8 @@
+カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
+num	num	ss9100provtrbinfo	a	n	n	1	n	項番
+msgid	msgid	ss9100provtrbinfo	y	s	n	5	n	MSGID
+flttitle	flttitle	ss9100provtrbinfo	n	s	n	128	n	タイトル
+class	class	ss9100provtrbinfo	n	s	n	1	y	障害レベル
+summary	summary	ss9100provtrbinfo	n	s	n	1024	n	概要
+action	action	ss9100provtrbinfo	n	s	n	1024	n	対策
+commentary	commentary	ss9100provtrbinfo	n	s	n	256	n	備考

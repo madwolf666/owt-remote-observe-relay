@@ -21,7 +21,7 @@
     String[] a_column_split = null;
     if (a_Mnt_Table != ""){
         a_table_split = a_Mnt_Table.split("\t");
-        a_column_split = a_table_split[1].split(",");
+        a_column_split = a_table_split[1].split(":");
     }
 
     //POSTデータを取得
@@ -31,17 +31,18 @@
     for (int a_iCnt=0; a_iCnt<a_coldefs.size(); a_iCnt++){
         String[] a_split = a_coldefs.get(a_iCnt).split("\t");
         //カラム名を取得：0番目をメインとする
-        String[] a_colNames = a_split[COLUMN_DEF_NAME].split(",");
+        String[] a_colNames = a_split[COLUMN_DEF_NAME].split(":");
         String a_colName = a_colNames[0];
-        if (request.getParameter(a_colName) != null){
-            String a_val = request.getParameter(a_colName);
+        String a_field = a_split[COLUMN_DEF_FIELD];
+        if (request.getParameter(a_field) != null){
+            String a_val = request.getParameter(a_field);
             if (a_val.length()>0){
-                a_post_data.add(a_colName + "\t" + a_val);
+                a_post_data.add(a_field + "\t" + a_val);
             }else{
-                a_post_data.add(a_colName + "\t");
+                a_post_data.add(a_field + "\t");
             }
         }else{
-                a_post_data.add(a_colName + "\t");
+                a_post_data.add(a_field + "\t");
         }
     }
     

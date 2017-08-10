@@ -52,14 +52,17 @@ String OutCopyRight(){
 }
 
 //入力項目の定義
-static int COLUMN_DEF_NAME = 0;         //カラム名（複数）
-static int COLUMN_DEF_TABLE_NAME = 1;   //テーブル名（複数）
-static int COLUMN_DEF_NESS = 2;         //必須有無（a/n/y）
-static int COLUMN_DEF_TYPE = 3;         //型（n/s/time/date）
-static int COLUMN_DEF_TIME = 4;         //時刻指定（n/y）
-static int COLUMN_DEF_LENGTH = 5;       //MAX桁
-static int COLUMN_DEF_PULLDOWN = 6;     //プルダウン（n/y）
-static int COLUMN_DEF_COMMENT = 7;      //コメント
+static int COLUMN_DEF_FIELD = 0;        //入力フィールド
+static int COLUMN_DEF_NAME = 1;         //カラム名（複数）
+static int COLUMN_DEF_TABLE_NAME = 2;   //テーブル名（複数）
+static int COLUMN_DEF_NESS = 3;         //必須有無（a/n/y）
+static int COLUMN_DEF_TYPE = 4;         //型（n/s/time/date）
+static int COLUMN_DEF_TIME = 5;         //時刻指定（n/y）
+static int COLUMN_DEF_LENGTH = 6;       //MAX桁
+static int COLUMN_DEF_PULLDOWN = 7;     //プルダウン（n/y）
+static int COLUMN_DEF_COMMENT = 8;      //コメント
+static int COLUMN_DEF_INIT = 9;         //初期値
+static int COLUMN_DEF_ACTION = 10;      //入力時の動作
 
 //DBテーブルのキー定義
 static int DB_TABLE_KEY_DEF_NAME = 0;           //キーのカラム名
@@ -81,6 +84,39 @@ String g_JScript_Program = "";  //javascriptコードの出力
 String g_JScript_IsNumeric = "";
 String g_JScript_IsRequired = "";
 String g_Post_Data = "";
+
+//プルダウン表示
+String[] GetDef_PullDown(
+    String h_pulldown,
+    String h_col_name
+    ){
+    String[] a_pull_def = null;
+    try{
+        FileInputStream a_fs = new FileInputStream(h_pulldown);
+        InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
+        BufferedReader a_br = new BufferedReader(a_isr);
+        String a_line = "";
+        int a_rec = 0;
+        while ((a_line = a_br.readLine())!=null){
+            //1行目はタイトル
+            if (a_rec > 0){
+                a_pull_def = a_line.split("\t");
+                if (a_pull_def[0].equals(h_col_name) == true){
+                    break;
+                }
+            }
+            a_rec++;
+        }
+        a_br.close();
+        a_isr.close();
+        a_fs.close();
+
+    }catch(Exception e){
+
+    }
+
+    return a_pull_def;
+}
 
 //リスト表示
 String[] GetDef_ShowList(
@@ -115,6 +151,71 @@ String[] GetDef_ShowList(
     return a_show_def;
 }
 
+//複数入力表示
+ArrayList<String> GetDef_Plurals(
+    String h_plural
+    ){
+    ArrayList<String> a_plural_def = null;
+    try{
+        FileInputStream a_fs = new FileInputStream(h_plural);
+        InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
+        BufferedReader a_br = new BufferedReader(a_isr);
+        String a_line = "";
+        int a_rec = 0;
+        while ((a_line = a_br.readLine())!=null){
+            //1行目はタイトル
+            if (a_rec > 0){
+                a_plural_def.add(a_line);
+            }else{
+                a_plural_def = new ArrayList<String>();
+            }
+            a_rec++;
+        }
+        a_br.close();
+        a_isr.close();
+        a_fs.close();
+
+    }catch(Exception e){
+
+    }
+
+    return a_plural_def;
+}
+
+//特殊文字の変換
+// HTMLエンコードする
+String HtmlEncode(String original)
+{
+    StringBuffer retVal = new StringBuffer();
+
+    // 1文字ずつループ処理する
+    for (int i = 0; i < original.length(); i++)
+    {
+        char c = original.charAt(i);
+        switch (c)
+        {
+            case '<':
+                retVal.append("&lt;");
+                break;
+            case '>':
+                retVal.append("&gt;");
+                break;
+            case '&':
+                retVal.append("&#38;");
+                break;
+            case '\"':
+                retVal.append("&#34;");
+                break;
+            case '\'':
+                retVal.append("&#39;");
+                break;
+            default:
+                retVal.append(c);
+        }
+    }
+
+    return retVal.toString();
+}
 
 //  h_isEdit    true:編集、false:参照
 //  h_act   
@@ -124,7 +225,9 @@ String[] GetDef_ShowList(
 //  h_showlist  リスト表示定義ファイル名
 //  h_val       DB登録値
 String Make_Tag_Mnt(
+    String h_envPath,
     boolean h_isEdit,
+    boolean h_isFirst,
     String h_act,
     String[] h_coldef,
     String[] h_key,
@@ -137,20 +240,99 @@ String Make_Tag_Mnt(
     boolean a_IsNess = false;
 
     //カラム名を取得：0番目をメインとする
-    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
     String a_colName = a_colNames[0];
-    /*String[] a_vals = h_vals.split("\t");
-    String a_val = "";
-    if (a_vals.length>1){
-        a_val = a_vals[1];
-    }*/
+    String a_field = h_coldef[COLUMN_DEF_FIELD];
+
+    //複数入力
+    if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("p") >= 0){
+        String a_plural = h_envPath + a_field + ".def";
+        ArrayList<String> a_plurals = GetDef_Plurals(a_plural);
+        String[] a_plural_datas = h_val.split("\f\f");
+        if (a_plurals != null){
+            String a_table_id = "tbl_list_" + a_field;
+            a_sRet += "<table id='" + a_table_id + "' border='1' cellspacing='0' cellpadding='0' style='width:auto;'>";
+
+            String a_append = "";
+            for (int a_iCnt=0; a_iCnt<a_plurals.size(); a_iCnt++){
+                String[] a_split = a_plurals.get(a_iCnt).split("\t");
+                String[] a_split2 = a_split[COLUMN_DEF_FIELD].split(":");
+                a_sRet += "<tr>";
+                if (a_iCnt == 0){
+                    //ヘッダー
+                    if (a_split2.length > 1){
+                        a_append = a_split2[0];
+                        for (int a_iCnt2=1; a_iCnt2<a_split2.length; a_iCnt2++){
+                            a_sRet += "<td bgcolor='#003366' style='text-align:center;'><font color='#ffffff'>" + a_split2[a_iCnt2] + "</font></td>";
+                        }
+                        if (a_append.indexOf("a") >= 0){
+                            a_sRet += "<td bgcolor='#003366' style='text-align:center;'><font color='#ffffff'></td>";
+                        }
+                    }
+                }else{
+                    String[] a_now_split = null;
+                    for (int a_iCnt2=0; a_iCnt2<a_split2.length; a_iCnt2++){
+                        //該当番目の定義を組み立て
+                        a_now_split = new String[COLUMN_DEF_ACTION + 1];
+                        for (int a_iCnt3=0; a_iCnt3<COLUMN_DEF_ACTION + 1; a_iCnt3++){
+                            String[] a_split3 = a_split[a_iCnt3].split(":");
+                            a_now_split[a_iCnt3] = "";
+                            if (a_split3.length > a_iCnt2){
+                                a_now_split[a_iCnt3] = a_split3[a_iCnt2];
+                            }
+                        }
+                        if (a_now_split[COLUMN_DEF_COMMENT].equals("") == false){
+                            a_sRet += "<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>" + a_now_split[COLUMN_DEF_COMMENT] + "</font>";
+                        }else{
+                        }
+                        if (a_now_split[COLUMN_DEF_NESS].indexOf("y")>=0){
+                            a_sRet += "<font color='#ffff00'>*</font>";
+                        }
+                        if (a_now_split[COLUMN_DEF_COMMENT].equals("") == false){
+                            a_sRet += "</td>";
+                        }else{
+                        }
+
+                        String a_val = "";
+                        for (int a_iCnt3=0; a_iCnt3<a_plural_datas.length; a_iCnt3++){
+                            String[] a_data = a_plural_datas[a_iCnt3].split("\f");
+                            if (a_data[0].equals(a_now_split[COLUMN_DEF_FIELD]) == true){
+                                if (a_data.length > 1){
+                                    a_val = a_data[1];
+                                }
+                                break;
+                            }
+                        }
+                        //初期値
+                        if (h_isFirst == true){
+                            a_val = a_now_split[COLUMN_DEF_INIT];
+                        }
+                        a_sRet += "<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(h_envPath, h_isEdit, h_isFirst, h_act, a_now_split, h_key, h_pulldown, h_showlist, a_val) + "</font></td>";
+                    }
+                    if (a_append.indexOf("a") >= 0){
+                        a_sRet += "<td bgcolor='transparent' style='text-align:center;'>";
+                        a_sRet += "<div name='" + a_table_id + "_div" + a_iCnt + "' id='" + a_table_id + "_div" + a_iCnt + "'>";
+                        a_sRet += "<input type='button' value='追加' onclick='append_field(\"" + a_table_id + "\",\"" + a_iCnt + "\",\"" + a_split[COLUMN_DEF_NAME] + "\");'>";
+                        a_sRet += "</div>";
+                        a_sRet += "</td>";
+                    }
+                }
+                a_sRet += "</tr>";
+            }
+
+            a_sRet += "</table>";
+        }
+        return a_sRet;
+    }
+
+    //String a_val = String.valueOf(h_val);
 
     if (h_coldef[COLUMN_DEF_NESS].equals("a")){
         //自動更新
         g_JScript_Val_Auto += "," + a_colName;
         a_sRet = h_val;
-        a_sRet += "<input type='hidden' name='"+ a_colName + "' id='" + a_colName + "' style='' value='" + h_val + "'>";
-        g_Post_Data += "            ,'" + a_colName + "': $('#" + a_colName + "').val()";
+        a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='' value='" + h_val + "'>";
+        g_Post_Data += "            ,'" + a_field + "': $('#" + a_field + "').val()";
         return a_sRet;
     }else if (h_coldef[COLUMN_DEF_NESS].equals("y")){
         //必須入力
@@ -160,7 +342,7 @@ String Make_Tag_Mnt(
     a_isTime = h_coldef[COLUMN_DEF_TIME];
 
     if (a_IsNess == true){
-        g_JScript_IsRequired += "    if (!check_IsRequired(\"#" + a_colName + "\", \"" + a_colName + "は必須入力です！\")){return false;}";
+        g_JScript_IsRequired += "    if (!check_IsRequired(\"#" + a_field + "\", \"" + a_field + "は必須入力です！\")){return false;}";
     }
 
     if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("n") >= 0){
@@ -168,7 +350,7 @@ String Make_Tag_Mnt(
             //data_precisionが整数桁、data_scaleが小数桁
             a_sRet += Make_Input_Tag_Mnt_Numeric(h_isEdit, h_coldef, "width:100%;", h_val);
             //g_JScript_IsNumeric += "    alert($(\"#" + h_column[1] + "\"));";
-            g_JScript_IsNumeric += "    if (!check_IsNumeric(\"#" + a_colName + "\", \"" + a_colName + "は数値入力です！\")){return false;}";
+            g_JScript_IsNumeric += "    if (!check_IsNumeric(\"#" + a_field + "\", \"" + a_field + "は数値入力です！\")){return false;}";
         }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("s") >= 0){
             //data_lengthがMAX桁数
             a_sRet += Make_Input_Tag_Mnt_String(h_isEdit, h_coldef, "width:100%;", h_val);
@@ -180,29 +362,9 @@ String Make_Tag_Mnt(
         }
     }else if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("y") >= 0){
         //該当テーブルの定義情報を読み込む
-        try{
-            FileInputStream a_fs = new FileInputStream(h_pulldown);
-            InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
-            BufferedReader a_br = new BufferedReader(a_isr);
-            String a_line = "";
-            int a_rec = 0;
-            while ((a_line = a_br.readLine())!=null){
-                //1行目はタイトル
-                if (a_rec > 0){
-                    String[] a_split1 = a_line.split("\t");
-                    if (a_split1[0].equals(a_colName) == true){
-                        a_sRet += Make_Input_Tag_Mnt_Option(h_isEdit, a_split1, "width:100%;", h_val);
-                        break;
-                    }
-                }
-                a_rec++;
-            }
-            a_br.close();
-            a_isr.close();
-            a_fs.close();
-
-        }catch(Exception e){
-
+        String [] a_pull_def = GetDef_PullDown(h_pulldown, a_colName);
+        if (a_pull_def != null){
+            a_sRet += Make_Input_Tag_Mnt_Option(h_isEdit, h_coldef, a_pull_def, "width:100%;", h_val);
         }
     }else if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("l") >= 0){
         //該当テーブルの定義情報を読み込む
@@ -210,9 +372,20 @@ String Make_Tag_Mnt(
         if (a_show_def != null){
             a_sRet += Make_Input_Tag_Mnt_ShowList(h_isEdit, h_coldef, a_show_def, "width:auto;", h_val);
         }   
+    }else if (h_coldef[COLUMN_DEF_PULLDOWN].equals("") == true){
+        if (h_isEdit == false){
+            a_sRet += h_val;
+        }
+        a_sRet += "<input type='";
+        if (h_isEdit == true){
+            a_sRet += "text";
+        }else{
+            a_sRet += "hidden";
+        }
+        a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='width:200px;' value='" + h_val + "' readonly='true'>";
     }
 
-    g_Post_Data += "            ,'" + a_colName + "': $('#" + a_colName + "').val()";
+    g_Post_Data += "            ,'" + a_field + "': $('#" + a_field + "').val()";
     
     /*
 〇nullable
@@ -241,8 +414,9 @@ String Make_Input_Tag_Mnt_Numeric(
     int a_max_len = 10;
     
     //カラム名を取得：0番目をメインとする
-    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
     String a_colName = a_colNames[0];
+    String a_field = h_coldef[COLUMN_DEF_FIELD];
 
     a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
 
@@ -256,8 +430,16 @@ String Make_Input_Tag_Mnt_Numeric(
     }else{
         a_sRet += "hidden";
     }
-    a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
-    
+    a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'";
+
+    if (h_coldef.length > COLUMN_DEF_ACTION){
+        if (h_coldef[COLUMN_DEF_ACTION].equals("") == false){
+            a_sRet += " onKeyPress='" + h_coldef[COLUMN_DEF_ACTION] + ";'";
+        }
+    }
+
+    a_sRet += ">";
+
     return a_sRet;
 }
 
@@ -272,8 +454,9 @@ String Make_Input_Tag_Mnt_String(
     int a_max_len = 0;
 
     //カラム名を取得：0番目をメインとする
-    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
     String a_colName = a_colNames[0];
+    String a_field = h_coldef[COLUMN_DEF_FIELD];
 
     a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
     
@@ -281,11 +464,11 @@ String Make_Input_Tag_Mnt_String(
         a_sRet += h_val;
     }
 
-    if (a_max_len > 128){
+    if (a_max_len > 256){
         if (h_isEdit == true){
-            a_sRet += "<textarea name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
+            a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
         }else{
-            a_sRet += "<input type='hidden' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+            a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
         }
     }else{
         a_sRet += "<input type='";
@@ -294,7 +477,7 @@ String Make_Input_Tag_Mnt_String(
         }else{
             a_sRet += "hidden";
         }
-        a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
+        a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
     }
 
     return a_sRet;
@@ -312,8 +495,9 @@ String Make_Input_Tag_Mnt_TimeStamp(
     int a_max_len = 10 + 1 + 8;
 
     //カラム名を取得：0番目をメインとする
-    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
     String a_colName = a_colNames[0];
+    String a_field = h_coldef[COLUMN_DEF_FIELD];
 
     if (h_isEdit == false){
         a_sRet += h_val;
@@ -325,17 +509,17 @@ String Make_Input_Tag_Mnt_TimeStamp(
     }else{
         a_sRet += "hidden";
     }
-    a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
+    a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
 
     //g_JScript_Out += "$('#d_" + h_column[1] + "').datepicker({});";
     //g_JScript_Out += "$('#t_" + h_column[1] + "').datepicker({format:'H:i', datepicker:false, lang:'ja', step:1});";
     //g_JScript_Out += "$('#" + h_column[1] + "').datetimepicker({dateFormat:'Y/m/d', showSecond: true, timeFormat:'hh:mm:ss', lang:'ja', step:0.1});";
     if (h_isTime.equals("y")){
         a_max_len = 10 + 1 + 8;
-        g_JScript_Program += "$('#" + a_colName + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+        g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
     }else{
         a_max_len = 10;
-        g_JScript_Program += "$('#" + a_colName + "').datepicker({});";
+        g_JScript_Program += "$('#" + a_field + "').datepicker({});";
     }
 
     a_sRet +=  String.valueOf(a_max_len) + "'>";
@@ -355,8 +539,9 @@ String Make_Input_Tag_Mnt_Date(
     int a_max_len = 10;
 
     //カラム名を取得：0番目をメインとする
-    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(",");
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
     String a_colName = a_colNames[0];
+    String a_field = h_coldef[COLUMN_DEF_FIELD];
 
     if (h_isEdit == false){
         a_sRet += h_val;
@@ -368,14 +553,14 @@ String Make_Input_Tag_Mnt_Date(
     }else{
         a_sRet += "hidden";
     }
-    a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
+    a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
 
     if (h_isTime.equals("y")){
         a_max_len = 10 + 1 + 8;
-        g_JScript_Program += "$('#" + a_colName + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+        g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
     }else{
         a_max_len = 10;
-        g_JScript_Program += "$('#" + a_colName + "').datepicker({});";
+        g_JScript_Program += "$('#" + a_field + "').datepicker({});";
     }
 
     a_sRet +=  String.valueOf(a_max_len) + "'>";
@@ -386,6 +571,7 @@ String Make_Input_Tag_Mnt_Date(
 //optionタグ生成
 String Make_Input_Tag_Mnt_Option(
     boolean h_isEdit,
+    String[] h_coldef,
     String[] h_option,
     String h_style,
     String h_val
@@ -393,6 +579,11 @@ String Make_Input_Tag_Mnt_Option(
     String a_sRet = "";
     String[] a_split1 = null;
     String[] a_split2 = null;
+
+    //カラム名を取得：0番目をメインとする
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
+    String a_colName = a_colNames[0];
+    String a_field = h_coldef[COLUMN_DEF_FIELD];
 
     a_split1 = h_option[1].split(",");
 
@@ -407,7 +598,7 @@ String Make_Input_Tag_Mnt_Option(
     }
 
     if (h_isEdit == true){
-        a_sRet += "<select id='" + h_option[0] + "' name='" + h_option[0] + "' style='" + h_style + "'>";
+        a_sRet += "<select id='" + a_field + "' name='" + a_field + "' style='" + h_style + "'>";
         a_sRet += "<option value=''></option>";
 
         for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
@@ -420,7 +611,7 @@ String Make_Input_Tag_Mnt_Option(
         }
         a_sRet += "</select>";
     }else{
-        a_sRet += "<input type='hidden' name='"+ h_option[0] + "' id='" + h_option[0]  + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+        a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field  + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
     }
 
     return a_sRet;
@@ -439,7 +630,10 @@ String Make_Input_Tag_Mnt_ShowList(
     //String[] a_split2 = null;
     int a_max_len = 0;
 
-    String a_colName = h_option[SHOWLIST_COLUMN_NAME];
+    //カラム名を取得：0番目をメインとする
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
+    String a_colName = a_colNames[0];
+    String a_field = h_coldef[COLUMN_DEF_FIELD];
 
     a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
     
@@ -449,9 +643,9 @@ String Make_Input_Tag_Mnt_ShowList(
 
     if (a_max_len > 128){
         if (h_isEdit == true){
-            a_sRet += "<textarea name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
+            a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
         }else{
-            a_sRet += "<input type='hidden' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+            a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
         }
     }else{
         a_sRet += "<input type='";
@@ -460,14 +654,14 @@ String Make_Input_Tag_Mnt_ShowList(
         }else{
             a_sRet += "hidden";
         }
-        a_sRet += "' name='"+ a_colName + "' id='" + a_colName + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
+        a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
     }
 
     if (h_isEdit == true){
-        a_sRet += "<input type='hidden' name='show_col_name_" + a_colName + "' id='show_col_name_" + a_colName + "' value='" + a_colName + "'>";
-        a_sRet += "<input type='hidden' name='show_find_key_" + a_colName + "' id='show_find_key_" + a_colName + "' value='" + h_option[SHOWLIST_FIND_KEY_NAME] + "'>";
+        a_sRet += "<input type='hidden' name='show_col_name_" + a_field + "' id='show_col_name_" + a_field + "' value='" + a_field + "'>";
+        a_sRet += "<input type='hidden' name='show_find_key_" + a_field + "' id='show_find_key_" + a_field + "' value='" + h_option[SHOWLIST_FIND_KEY_NAME] + "'>";
         a_sRet += "&nbsp;&nbsp;<input type='button' value='" + h_option[SHOWLIST_BUTTON_NAME] + "' onclick='make_show_list(1";
-        a_sRet += ",\"" + a_colName + "\"";
+        a_sRet += ",\"" + a_field + "\"";
         /*a_sRet += ",\"" + h_option[SHOWLIST_FIND_KEY_NAME] + "\"";
         a_sRet += ",\"" + h_option[SHOWLIST_SELECT_KEY_NAME] + "\"";
         a_sRet += ",\"" + h_option[SHOWLIST_FIND_SQL] + "\"";*/

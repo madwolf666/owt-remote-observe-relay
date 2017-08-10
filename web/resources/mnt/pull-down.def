@@ -24,3 +24,6 @@ ext	0:外線,1:内線
 linetype	0:DP,1:PB,2:ISDN
 inboundtype	0:直通,1:DIL,2:PBD-DID,3:追加番号-DID
 ftpsend	0:無,1:有
+flttype	E 異常:E 異常,F 致命的:F 致命的,I 情報:I 情報,W 注意:W 注意,運用ログ:運用ログ
+modulde	Generic Trap:Generic Trap,SNMPc Event:SNMPc Event
+class	0:発報しない,1:MN,2:MJ,3:一般
