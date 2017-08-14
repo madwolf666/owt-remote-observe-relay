@@ -15,9 +15,13 @@
     String a_mainPath = GetMainPath(SCRIPT_NAME);
     String a_realPath = application.getRealPath(a_mainPath);
     String a_envPath = "";
+    String a_pulldown = "";
+    String a_showlist = "";
 
     Environ.SetRealPath(a_realPath);
     a_envPath = Environ.GetEnvironValue("mnt_env_path");
+    a_pulldown = a_envPath + Environ.GetEnvironValue("mnt_pulldown_info");
+    a_showlist = a_envPath + Environ.GetEnvironValue("mnt_showlist_info");
 
     //セッション変数
     String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
@@ -68,27 +72,32 @@
     //一覧データを取得
     ArrayList<String> a_arrayList = SetDB.FindMnt(a_Mnt_Table, a_PageNo, a_coldefs);
     if (a_arrayList != null){
-        /*
         out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
         //ヘッダ部
         out.print("<tr bgcolor='#003366'>");
-        for (int a_iCnt=0; a_iCnt<a_columns.size(); a_iCnt++){
-            String[] a_split = a_columns.get(a_iCnt).split("\t");
-            out.print("<td style='text-align:center;'><font color='#ffffff'>" + a_split[1] + "</font></td>");
+        out.print("<td style='text-align:center;'><font color='#ffffff'>No.</font></td>");
+        for (int a_iCnt=0; a_iCnt<a_coldefs.size(); a_iCnt++){
+            String[] a_split = a_coldefs.get(a_iCnt).split("\t");
+            out.print("<td style='text-align:center;'><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font></td>");
         }
         out.print("</tr>");
         
         //データ部
         for (int a_iCnt=0; a_iCnt<a_arrayList.size(); a_iCnt++){
-            String[] a_split = a_arrayList.get(a_iCnt).split("\t");
+            String[] a_data = a_arrayList.get(a_iCnt).split("\t");
             if ((a_iCnt % 2)==0){
                 out.print("<tr bgcolor='#ffffff'>");
             }else{
                 out.print("<tr bgcolor='#fffff0'>");
             }
-            for (int a_iCnt2=0; a_iCnt2<a_columns.size(); a_iCnt2++){
-                if (a_split.length > a_iCnt2){
-                    out.print("<td>" + a_split[a_iCnt2] + "</td>");
+            out.print("<td>" + String.valueOf((a_PageNo-1)*Integer.valueOf(Environ.GetEnvironValue("max_line_page")) + a_iCnt + 1) + "</td>");
+            for (int a_iCnt2=0; a_iCnt2<a_coldefs.size(); a_iCnt2++){
+                String[] a_split = a_coldefs.get(a_iCnt2).split("\t");
+                if (a_data.length > a_iCnt2){
+                    out.print("<td>");
+                    out.print(Make_Tag_Mnt(a_envPath, false, false, "l", a_split, a_column_split, a_pulldown, a_showlist, a_data[a_iCnt2]));
+                    //out.print(a_data[a_iCnt2]);
+                    out.print("</td>");
                 }else{
                     out.print("<td>&nbsp;</td>");
                 }
@@ -97,7 +106,6 @@
         }
 
         out.print("</table>");
-        */
     }
 
     out.print(OutCopyRight());

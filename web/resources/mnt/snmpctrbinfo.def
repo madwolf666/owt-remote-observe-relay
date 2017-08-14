@@ -1,8 +1,8 @@
-カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
 num	num	snmpctrbinfo	a	n	n	1	n	項番
 trapcode	trapcode	snmpctrbinfo	y	s	n	512	n	トラップコード
 trapname	trapname	snmpctrbinfo	n	s	n	256	n	障害名称
-modulde	modulde	snmpctrbinfo	n	s	n	32	y	検出モジュール
+module	module	snmpctrbinfo	n	s	n	32	y	検出モジュール
 class	class	snmpctrbinfo	n	s	n	1	y	障害レベル
 system	system	snmpctrbinfo	n	s	n	128	n	障害内容
 action	action	snmpctrbinfo	n	s	n	128	n	対策

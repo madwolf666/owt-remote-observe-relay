@@ -6,7 +6,7 @@ patrolmethod	自動:自動,手動:手動
 patroldayofweek	sun:日,mon:月,tue:火,wed:水,thu:木,fri:金,sat:土
 monthreport	1:有,0:無
 reportclass	A:毎日,B:週1,C:月1,D:常駐,E:監視,F:地域,*:地方
-usercode1	01:本店,02:関西,03:中国,04:九州,05:中部,06:東北,07:横浜,08:首都圏,09:札幌,10:その他
+usercode1	テクノ:テクノ,関西:関西,中国:中国,九州:九州,中部:中部,東北:東北,横浜:横浜,北関東:北関東,千葉:千葉,北海道:北海道
 remotesetid	0:A-SET,1:B-SET,2:C-SET,3:D-SET,4:E-SET,5:F-SET,6:G-SET,7:H-SET,8:I-SET,9:J-SET
 nodecode	1:DISCOVERYneo,2:SS9100,3:CROSCORE,4:CTSTAGE,9:その他
 termname	RMI/PB-RMI:RMI/PB-RMI,RMI/MB-RMI:RMI/MB-RMI,RMI/LG2002:RMI/LG2002,Modem:Modem
@@ -25,5 +25,5 @@ linetype	0:DP,1:PB,2:ISDN
 inboundtype	0:直通,1:DIL,2:PBD-DID,3:追加番号-DID
 ftpsend	0:無,1:有
 flttype	E 異常:E 異常,F 致命的:F 致命的,I 情報:I 情報,W 注意:W 注意,運用ログ:運用ログ
-modulde	Generic Trap:Generic Trap,SNMPc Event:SNMPc Event
+module	Generic Trap:Generic Trap,SNMPc Event:SNMPc Event
 class	0:発報しない,1:MN,2:MJ,3:一般

@@ -29,7 +29,7 @@
     String[] a_column_split = null;
     if (a_Mnt_Table != ""){
         a_table_split = a_Mnt_Table.split("\t");
-        a_column_split = a_table_split[1].split(":");
+        a_column_split = a_table_split[1].split(",");
     }
 
     //POSTデータを取得
@@ -51,7 +51,7 @@
                     String[] a_split2 = a_plurals.get(a_iCnt2).split("\t");
                     String[] a_split3 = a_split2[COLUMN_DEF_FIELD].split(":");
                     if (a_iCnt2 > 1){
-                        a_plural_data += "\f\f";
+                        a_plural_data += "\b\b\b";
                     }
                     for (int a_iCnt3=0; a_iCnt3<a_split3.length; a_iCnt3++){
                         //該当番目の定義を組み立て
@@ -64,18 +64,18 @@
                             }
                         }
                         if (a_iCnt3 > 0){
-                            a_plural_data += "\f\f";
+                            a_plural_data += "\b\b";
                         }
                         a_field = a_now_split[COLUMN_DEF_FIELD];
                         if (request.getParameter(a_field) != null){
                             String a_val = HtmlEncode(request.getParameter(a_field));
                             if (a_val.length()>0){
-                                a_plural_data += a_field + "\f" + a_val;
+                                a_plural_data += a_field + "\b" + a_val;
                             }else{
-                                a_plural_data += a_field + "\f";
+                                a_plural_data += a_field + "\b ";
                             }
                         }else{
-                                a_plural_data += a_field + "\f";
+                                a_plural_data += a_field + "\b ";
                         }
                     }
                 }

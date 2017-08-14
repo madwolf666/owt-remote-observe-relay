@@ -1,4 +1,4 @@
-カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
 num	num	ssclustertrbinfo	a	n	n	1	n	項番
 msgid	msgid	ssclustertrbinfo	y	s	n	5	n	MSGID
 flttitle	flttitle	ssclustertrbinfo	n	s	n	128	n	タイトル

@@ -92,11 +92,17 @@ public class SetDB implements Serializable {
     public String EnteryMnt(
         String h_table,
         ArrayList<String> h_coldefs,
-        String[] h_column_split,
         String h_act,
         String h_idx,
         ArrayList<String> h_post_data
         ) throws Exception{
+        String[] a_table_split = null;
+        String[] a_column_split = null;
+        String[] a_any_split = null;
+        String[] a_key = null;
+        String[] a_type = null;
+        String[] a_auto = null;
+
         String a_sRet = "";
         Connection a_con = null;
         PreparedStatement a_ps = null;
@@ -117,8 +123,25 @@ public class SetDB implements Serializable {
         ArrayList<String> a_table_sql_t = new ArrayList<String>();
         ArrayList<String> a_table_sql_v = new ArrayList<String>();
         String a_userCode = "";
+        boolean a_isAuto = false;
+        boolean a_isOK = true;
         boolean a_isFound = false;
         try{
+            a_table_split = h_table.split("\t");
+            if (a_table_split.length<2){
+                return a_sRet;
+            }
+            a_column_split = a_table_split[1].split(",");
+            a_key = new String[a_column_split.length];
+            a_type = new String[a_column_split.length];
+            a_auto = new String[a_column_split.length];
+            for (int a_iCnt=0; a_iCnt<a_column_split.length; a_iCnt++){
+                a_any_split = a_column_split[a_iCnt].split(":");
+                a_key[a_iCnt] = a_any_split[0];
+                a_type[a_iCnt] = a_any_split[1];
+                a_auto[a_iCnt] = a_any_split[3];
+            }
+            
             Class.forName (_db_driver);
             // データベースとの接続
             a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
@@ -139,44 +162,85 @@ public class SetDB implements Serializable {
                 }
                 for (int a_iCnt2=0; a_iCnt2<a_tableNames.length; a_iCnt2++){
                     a_tableName = a_tableNames[a_iCnt2];
-                    a_isFound = false;
-                    for(int a_iCnt3=0; a_iCnt3<a_table_list.size(); a_iCnt3++){
-                        String a_sVal = a_table_list.get(a_iCnt3);
-                        if (a_sVal.equals(a_tableName) == true){
-                            a_isFound = true;
-                            if (h_act.equals("n")){
-                                a_sql = a_table_sql_f.get(a_iCnt3);
-                                a_sql += "," + a_colNames[a_iCnt2];
-                                a_table_sql_f.set(a_iCnt3, a_sql);
-                                a_sql = a_table_sql_p.get(a_iCnt3);
-                                a_sql += ",?";
-                                a_table_sql_p.set(a_iCnt3, a_sql);
-                            }else{
-                                a_sql = a_table_sql_p.get(a_iCnt3);
-                                a_sql += "," + a_colNames[a_iCnt2] + "=?";
-                                a_table_sql_p.set(a_iCnt3, a_sql);
+                    a_isAuto = false;
+                    a_isOK = true;
+                    if (a_tableName.equals(a_table_split[0]) == true){
+                        //キーでかつ自動採番のものは除外
+                        for (int a_iCnt4=0; a_iCnt4<a_key.length; a_iCnt4++){
+                            if ((a_key[a_iCnt4].equals(a_colNames[a_iCnt2]) == true)
+                             && (a_auto[a_iCnt4].equals("y") == true)){
+                                a_isAuto = true;
+                                break;
                             }
-                            a_sql = a_table_sql_t.get(a_iCnt3);
-                            a_sql += "\t" + a_split[_Environ.COLUMN_DEF_TYPE];
-                            a_table_sql_t.set(a_iCnt3, a_sql);
-                            a_sql = a_table_sql_v.get(a_iCnt3);
-                            a_sql += "\t" + a_post_val;
-                            a_table_sql_v.set(a_iCnt3, a_sql);
-                            break;
+                        }
+                        if (h_act.equals("n")){
+                        }else{
+                            if (a_isAuto == true){
+                                a_isOK = false;
+                            }
                         }
                     }
-                    if (a_isFound == false){
-                        a_table_list.add(a_tableName);
-                        if (h_act.equals("n")){
-                            a_sql = a_colNames[a_iCnt2];
-                            a_table_sql_f.add(a_sql);
-                            a_table_sql_p.add("?");
-                        }else{
-                            a_sql = a_colNames[a_iCnt2] + "=?";
-                            a_table_sql_p.add(a_sql);
+                    if (a_isOK == true){
+                        a_isFound = false;
+                        for(int a_iCnt3=0; a_iCnt3<a_table_list.size(); a_iCnt3++){
+                            String a_sVal = a_table_list.get(a_iCnt3);
+                            if (a_sVal.equals(a_tableName) == true){
+                                a_isFound = true;
+                                if (h_act.equals("n")){
+                                    a_sql = a_table_sql_f.get(a_iCnt3);
+                                    a_sql += "," + a_colNames[a_iCnt2];
+                                    a_table_sql_f.set(a_iCnt3, a_sql);
+                                    a_sql = a_table_sql_p.get(a_iCnt3);
+                                    if (a_isAuto == false){
+                                        a_sql += ",?";
+                                    }else{
+                                        a_sql += "";
+                                    }
+                                    a_table_sql_p.set(a_iCnt3, a_sql);
+                                }else{
+                                    a_sql = a_table_sql_p.get(a_iCnt3);
+                                    a_sql += "," + a_colNames[a_iCnt2] + "=?";
+                                    a_table_sql_p.set(a_iCnt3, a_sql);
+                                }
+                                a_sql = a_table_sql_t.get(a_iCnt3);
+                                if (a_isAuto == false){
+                                    a_sql += "\t" + a_split[_Environ.COLUMN_DEF_TYPE];
+                                }else{
+                                    a_sql += "\t";
+                                }
+                                a_table_sql_t.set(a_iCnt3, a_sql);
+                                a_sql = a_table_sql_v.get(a_iCnt3);
+                                if (a_isAuto == false){
+                                    a_sql += "\t" + a_post_val;
+                                }else{
+                                    a_sql += "\t";
+                                }
+                                a_table_sql_v.set(a_iCnt3, a_sql);
+                                break;
+                            }
                         }
-                        a_table_sql_t.add(a_split[_Environ.COLUMN_DEF_TYPE]);
-                        a_table_sql_v.add(a_post_val);
+                        if (a_isFound == false){
+                            a_table_list.add(a_tableName);
+                            if (h_act.equals("n")){
+                                a_sql = a_colNames[a_iCnt2];
+                                a_table_sql_f.add(a_sql);
+                                if (a_isAuto == false){
+                                    a_table_sql_p.add("?");
+                                }else{
+                                    a_table_sql_p.add("");
+                                }                                    
+                            }else{
+                                a_sql = a_colNames[a_iCnt2] + "=?";
+                                a_table_sql_p.add(a_sql);
+                            }
+                            if (a_isAuto == false){
+                                a_table_sql_t.add(a_split[_Environ.COLUMN_DEF_TYPE]);
+                                a_table_sql_v.add(a_post_val);
+                            }else{
+                                a_table_sql_t.add("");
+                                a_table_sql_v.add("");
+                            }
+                        }
                     }
                 }
             }
@@ -218,13 +282,28 @@ public class SetDB implements Serializable {
                             a_sql += "(SELECT COALESCE(MAX(ID),0)+1 FROM " + a_tableName + "),";
                         }
                     }
+                    if ((a_tableName.equals("discoveryneotrbinfo") == true)
+                        || (a_tableName.equals("discoverytrbinfo") == true)
+                        || (a_tableName.equals("ss9100trbinfo") == true)
+                        || (a_tableName.equals("ss9100provtrbinfo") == true)
+                        || (a_tableName.equals("ssclustertrbinfo") == true)
+                        || (a_tableName.equals("croscoretrbinfo") == true)
+                        || (a_tableName.equals("snmpctrbinfo") == true)
+                        || (a_tableName.equals("raspingtrbinfo") == true)
+                            ){
+                        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                            a_sql += "(SELECT NVL(MAX(NUM),0)+1 FROM " + a_tableName + ")";
+                        }else if (_db_driver.equals("org.postgresql.Driver")){
+                            a_sql += "(SELECT COALESCE(MAX(NUM),0)+1 FROM " + a_tableName + ")";
+                        }
+                    }
                     if (a_tableName.equals("customerstation") == true){
                         a_sql += "(SELECT ID FROM pbxremotecustomer WHERE USERCODE='" + a_userCode + "'),";
                     }
                     if (a_tableName.equals("newcustomermanage") == true){
-                        if (h_table.equals("pbxremotecustomer") == true){
+                        if (a_table_split[0].equals("pbxremotecustomer") == true){
                             a_sql += "0,";
-                        }else if (h_table.equals("irmsremotecustomer") == true){
+                        }else if (a_table_split[0].equals("irmsremotecustomer") == true){
                             a_sql += "1,";
                         }
                     }
@@ -233,80 +312,88 @@ public class SetDB implements Serializable {
                     }
                     a_sql += a_table_sql_p.get(a_iCnt) + ")";
                 }else{
-                    a_sql = "UPDATE " + a_tableName + " SET " + a_table_sql_p.get(a_iCnt) + "WHERE";
+                    a_sql = "UPDATE " + a_tableName + " SET " + a_table_sql_p.get(a_iCnt) + " WHERE ";
                     //WHERE句キーのSQL組み立て
                     a_sql_w = "";
-                    String[] a_split_idxs = h_idx.split("\t");
+                    String[] a_split_idxs = h_idx.split(",");
                     for (int a_iCnt2=0; a_iCnt2<a_split_idxs.length; a_iCnt2++){
-                        String[] a_idx = a_split_idxs[a_iCnt2].split(":");
                         if (a_sql_w != ""){
                             a_sql_w += " AND ";
                         }
-                        a_sql_w += "(" + a_idx[0] + "="; 
-                        if (a_idx[0].equals("n") == true){
+                        //キーでかつ自動採番のものはWHERE句
+                        a_sql_w += "(" + a_key[a_iCnt2] + "="; 
+                        if (a_type[0].equals("n") == true){
                             //数値の場合
-                            a_sql_w += a_idx[0];
+                            a_sql_w += a_split_idxs[a_iCnt2];
                         }else{
                             //数値以外の場合
-                            a_sql_w += "'"  + a_idx[0] + "'";
+                            a_sql_w += "'"  + a_split_idxs[a_iCnt2] + "'";
                         }
                         a_sql_w += ")";
                     }
+                    a_sql += a_sql_w;
                 }
                 
-                a_sql = a_sql.replace(",comment", ",\"COMMENT\"");
+                if (a_tableName.equals("pbxremotecustomer") == true){
+                    a_sql = a_sql.replace(",comment", ",\"COMMENT\"");
+                }
+                
                 a_ps = a_con.prepareStatement(a_sql);
 
                 a_sql_t = a_table_sql_t.get(a_iCnt).split("\t");
                 a_sql_v = a_table_sql_v.get(a_iCnt).split("\t");
                 
                 //登録値のSQLを組み立て
+                int a_idx = 0;
                 for (int a_iCnt2=0; a_iCnt2<a_sql_t.length; a_iCnt2++){
                     String a_sType = a_sql_t[a_iCnt2];
                     String a_sVal = "";
                     if (a_sql_v.length > a_iCnt2){
                         a_sVal = a_sql_v[a_iCnt2].trim();
                     }
-                    if (a_sType.indexOf("n") >= 0){
-                        //数値の場合
-                        if (a_sVal.equals("") == false){
-                            a_ps.setInt(a_iCnt2 + 1, Integer.valueOf(a_sVal));
-                        }else{
-                            a_ps.setNull(a_iCnt2 + 1, java.sql.Types.NUMERIC);
-                        }
-                    }else if (a_sType.indexOf("time") >= 0){
-                        //timestamp
-                        if (a_sVal.equals("") == false){
-                            java.sql.Timestamp a_ts = null;
-                            SimpleDateFormat a_sdf = null;
-                            if (a_sVal.indexOf(" ") >= 0){
-                                a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    if (a_sType.equals("") == false){
+                        a_idx++;
+                        if (a_sType.indexOf("n") >= 0){
+                            //数値の場合
+                            if (a_sVal.equals("") == false){
+                                a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
                             }else{
-                                a_sdf = new SimpleDateFormat("yyyy/MM/dd");
+                                a_ps.setNull(a_idx, java.sql.Types.NUMERIC);
                             }
-                            a_ts = new java.sql.Timestamp(a_sdf.parse(a_sVal).getTime());
-                            a_ps.setTimestamp(a_iCnt2 + 1, a_ts);
-                        }else{
-                            a_ps.setNull(a_iCnt2 + 1, java.sql.Types.TIMESTAMP);
-                        }
-                    }else if (a_sType.indexOf("date") >= 0){
-                        //date
-                        if (a_sVal.equals("") == false){
-                            java.sql.Date a_dt = null;
-                            SimpleDateFormat a_sdf = null;
-                            if (a_sVal.indexOf(" ") >= 0){
-                                a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        }else if (a_sType.indexOf("time") >= 0){
+                            //timestamp
+                            if (a_sVal.equals("") == false){
+                                java.sql.Timestamp a_ts = null;
+                                SimpleDateFormat a_sdf = null;
+                                if (a_sVal.indexOf(" ") >= 0){
+                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                }else{
+                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd");
+                                }
+                                a_ts = new java.sql.Timestamp(a_sdf.parse(a_sVal).getTime());
+                                a_ps.setTimestamp(a_idx, a_ts);
                             }else{
-                                a_sdf = new SimpleDateFormat("yyyy/MM/dd");
+                                a_ps.setNull(a_idx, java.sql.Types.TIMESTAMP);
                             }
-                            a_dt = new java.sql.Date(a_sdf.parse(a_sVal).getTime());
-                            a_ps.setDate(a_iCnt2 + 1, a_dt);
+                        }else if (a_sType.indexOf("date") >= 0){
+                            //date
+                            if (a_sVal.equals("") == false){
+                                java.sql.Date a_dt = null;
+                                SimpleDateFormat a_sdf = null;
+                                if (a_sVal.indexOf(" ") >= 0){
+                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                }else{
+                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd");
+                                }
+                                a_dt = new java.sql.Date(a_sdf.parse(a_sVal).getTime());
+                                a_ps.setDate(a_idx, a_dt);
+                            }else{
+                                a_ps.setNull(a_idx, java.sql.Types.DATE);
+                            }
                         }else{
-                            a_ps.setNull(a_iCnt2 + 1, java.sql.Types.DATE);
+                            //文字列
+                            a_ps.setString(a_idx, a_sVal);
                         }
-                    }else{
-                        //文字列
-                        a_ps.setString(a_iCnt2 + 1, a_sVal);
                     }
                 }
 
@@ -459,7 +546,7 @@ public class SetDB implements Serializable {
             if (a_table_split.length < 2){
                 return a_arrayRet;
             }
-            a_column_split = a_table_split[1].split(":");
+            a_column_split = a_table_split[1].split(",");
             a_key = new String[a_column_split.length];
             for (int a_iCnt=0; a_iCnt<a_column_split.length; a_iCnt++){
                 a_any_split = a_column_split[a_iCnt].split(":");
@@ -503,30 +590,25 @@ public class SetDB implements Serializable {
                 a_rs = a_ps.executeQuery();
                 while(a_rs.next()){
                     a_sRet = "";
-                    /*
-                    for (int a_iCnt=0; a_iCnt<h_columns.size(); a_iCnt++){
-                        String[] a_split2 = h_columns.get(a_iCnt).split("\t");
-                        a_sVal = _Environ.ExistDBString(a_rs,a_split2[_Environ.DB_COLUMN_DEF_NAME]);
+                    for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
+                        String[] a_split2 = h_coldefs.get(a_iCnt).split("\t");
+                        a_sVal = _Environ.ExistDBString(a_rs, a_split2[_Environ.COLUMN_DEF_NAME]);
+                        String a_sTmp1 = a_sVal;
 
                         if (a_sVal != ""){
-                            if ((a_split2[_Environ.DB_COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.DB_COLUMN_DEF_TYPE].indexOf("date") >= 0)){
+                            if ((a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0)){
                                 //日付
                                 a_sVal = a_sVal.replace("-", "/");
-                                for (int a_iCnt2=0; a_iCnt2<h_coldefs.size(); a_iCnt2++){
-                                    String[] a_split3 = h_coldefs.get(a_iCnt2).split(":");
-                                    if (a_split3[_Environ.DB_COLUMN_EDIT_DEF_NAME].equals(a_split2[_Environ.DB_COLUMN_DEF_NAME]) == true){
-                                        //カラム一致
-                                        if (a_split3[_Environ.DB_COLUMN_EDIT_DEF_TIME].equals("n")){
-                                            //時刻指定なし
-                                            a_sVal = a_sVal.substring(0, 10);
-                                        }
-                                    }
+                                if (a_split2[_Environ.COLUMN_DEF_TIME].equals("n")){
+                                    //時刻指定なし
+                                    a_sVal = a_sVal.substring(0, 10);
                                 }
                             }
                         }
                         
-                        String a_sTmp1 = a_sVal;
-                        if (a_split2[_Environ.DB_COLUMN_DEF_NAME].equals(a_key[0]) == true){
+                        if (a_iCnt > 0){
+                            a_sRet += "\t";
+                        }else{
                             a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
                             for (int a_iCnt2=1; a_iCnt2<a_key.length; a_iCnt2++){
                                 String a_sTmp2 = _Environ.ExistDBString(a_rs,a_key[a_iCnt2]);
@@ -534,12 +616,8 @@ public class SetDB implements Serializable {
                             }
                             a_sVal += "');\">" + a_sTmp1 + "</a>";
                         }
-                        if (a_iCnt>0){
-                            a_sRet += "\t";
-                        }
                         a_sRet += a_sVal;
                     }
-                    */
                     a_arrayRet.add(a_sRet);
                 }
                 a_rs.close();
@@ -586,7 +664,7 @@ public class SetDB implements Serializable {
             if (a_table_split.length<2){
                 return a_arrayRet;
             }
-            a_column_split = a_table_split[1].split(":");
+            a_column_split = a_table_split[1].split(",");
             a_type = new String[a_column_split.length];
             a_key = new String[a_column_split.length];
             for (int a_iCnt=0; a_iCnt<a_column_split.length; a_iCnt++){
@@ -619,31 +697,24 @@ public class SetDB implements Serializable {
 
             a_rs = a_ps.executeQuery();
             while(a_rs.next()){
-                /*
-                for (int a_iCnt=0; a_iCnt<h_columns.size(); a_iCnt++){
-                    String[] a_split2 = h_columns.get(a_iCnt).split("\t");
-                    a_sVal = _Environ.ExistDBString(a_rs,a_split2[_Environ.DB_COLUMN_DEF_NAME]);
+                for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
+                    String[] a_split2 = h_coldefs.get(a_iCnt).split("\t");
+                    String a_sTmp = a_split2[_Environ.COLUMN_DEF_NAME];
+                    a_sVal = _Environ.ExistDBString(a_rs, a_split2[_Environ.COLUMN_DEF_NAME]);
                     
                     if (a_sVal != ""){
-                        if ((a_split2[_Environ.DB_COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.DB_COLUMN_DEF_TYPE].indexOf("date") >= 0)){
+                        if ((a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0)){
                             //日付
                             a_sVal = a_sVal.replace("-", "/");
-                            for (int a_iCnt2=0; a_iCnt2<h_coldefs.size(); a_iCnt2++){
-                                String[] a_split3 = h_coldefs.get(a_iCnt2).split(":");
-                                if (a_split3[_Environ.DB_COLUMN_EDIT_DEF_NAME].equals(a_split2[_Environ.DB_COLUMN_DEF_NAME]) == true){
-                                    //カラム一致
-                                    if (a_split3[_Environ.DB_COLUMN_EDIT_DEF_TIME].equals("n")){
-                                        //時刻指定なし
-                                        a_sVal = a_sVal.substring(0, 10);
-                                    }
-                                }
+                            if (a_split2[_Environ.COLUMN_DEF_TIME].equals("n")){
+                                //時刻指定なし
+                                a_sVal = a_sVal.substring(0, 10);
                             }
                         }
                     }
                     
-                    a_arrayRet.add(a_sVal);
+                    a_arrayRet.add(a_sTmp + "\t" + a_sVal);
                 }
-                */
             }
             a_rs.close();
             a_ps.close();

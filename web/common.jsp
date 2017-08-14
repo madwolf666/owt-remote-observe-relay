@@ -244,85 +244,93 @@ String Make_Tag_Mnt(
     String a_colName = a_colNames[0];
     String a_field = h_coldef[COLUMN_DEF_FIELD];
 
-    //複数入力
-    if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("p") >= 0){
-        String a_plural = h_envPath + a_field + ".def";
-        ArrayList<String> a_plurals = GetDef_Plurals(a_plural);
-        String[] a_plural_datas = h_val.split("\f\f");
-        if (a_plurals != null){
-            String a_table_id = "tbl_list_" + a_field;
-            a_sRet += "<table id='" + a_table_id + "' border='1' cellspacing='0' cellpadding='0' style='width:auto;'>";
+    if (h_act.equals("l") == false){
+        //複数入力
+        if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("p") >= 0){
+            String a_plural = h_envPath + a_field + ".def";
+            ArrayList<String> a_plurals = GetDef_Plurals(a_plural);
+            String[] a_plural_datas = h_val.split("\b\b\b");
+            if (a_plurals != null){
+                String a_table_id = "tbl_list_" + a_field;
+                a_sRet += "<table id='" + a_table_id + "' border='1' cellspacing='0' cellpadding='0' style='width:auto;'>";
 
-            String a_append = "";
-            for (int a_iCnt=0; a_iCnt<a_plurals.size(); a_iCnt++){
-                String[] a_split = a_plurals.get(a_iCnt).split("\t");
-                String[] a_split2 = a_split[COLUMN_DEF_FIELD].split(":");
-                a_sRet += "<tr>";
-                if (a_iCnt == 0){
-                    //ヘッダー
-                    if (a_split2.length > 1){
-                        a_append = a_split2[0];
-                        for (int a_iCnt2=1; a_iCnt2<a_split2.length; a_iCnt2++){
-                            a_sRet += "<td bgcolor='#003366' style='text-align:center;'><font color='#ffffff'>" + a_split2[a_iCnt2] + "</font></td>";
+                String a_append = "";
+                for (int a_iCnt=0; a_iCnt<a_plurals.size(); a_iCnt++){
+                    String[] a_split = a_plurals.get(a_iCnt).split("\t");
+                    String[] a_split2 = a_split[COLUMN_DEF_FIELD].split(":");
+                    a_sRet += "<tr>";
+                    if (a_iCnt == 0){
+                        //ヘッダー
+                        if (a_split2.length > 1){
+                            a_append = a_split2[0];
+                            for (int a_iCnt2=1; a_iCnt2<a_split2.length; a_iCnt2++){
+                                a_sRet += "<td bgcolor='#003366' style='text-align:center;'><font color='#ffffff'>" + a_split2[a_iCnt2] + "</font></td>";
+                            }
+                            if (a_append.indexOf("a") >= 0){
+                                a_sRet += "<td bgcolor='#003366' style='text-align:center;'><font color='#ffffff'></td>";
+                            }
+                        }
+                    }else{
+                        String[] a_plural_data  = null;
+                        if (a_plural_datas.length > (a_iCnt - 1)){
+                            a_plural_data  = a_plural_datas[a_iCnt - 1].split("\b\b");
+                        }
+                        String[] a_now_split = null;
+                        for (int a_iCnt2=0; a_iCnt2<a_split2.length; a_iCnt2++){
+                            //該当番目の定義を組み立て
+                            a_now_split = new String[COLUMN_DEF_ACTION + 1];
+                            for (int a_iCnt3=0; a_iCnt3<COLUMN_DEF_ACTION + 1; a_iCnt3++){
+                                String[] a_split3 = a_split[a_iCnt3].split(":");
+                                a_now_split[a_iCnt3] = "";
+                                if (a_split3.length > a_iCnt2){
+                                    a_now_split[a_iCnt3] = a_split3[a_iCnt2];
+                                }
+                            }
+                            if (a_now_split[COLUMN_DEF_COMMENT].equals("") == false){
+                                a_sRet += "<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>" + a_now_split[COLUMN_DEF_COMMENT] + "</font>";
+                            }else{
+                            }
+                            if (a_now_split[COLUMN_DEF_NESS].indexOf("y")>=0){
+                                a_sRet += "<font color='#ffff00'>*</font>";
+                            }
+                            if (a_now_split[COLUMN_DEF_COMMENT].equals("") == false){
+                                a_sRet += "</td>";
+                            }else{
+                            }
+
+                            String a_val = "";
+                            if (a_plural_data != null){
+                                for (int a_iCnt3=0; a_iCnt3<a_plural_data.length; a_iCnt3++){
+                                    String[] a_data = a_plural_data[a_iCnt3].split("\b");
+                                    if (a_data[0].equals(a_now_split[COLUMN_DEF_FIELD]) == true){
+                                        if (a_data.length > 1){
+                                            a_val = a_data[1].trim();
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            //初期値
+                            if (h_isFirst == true){
+                                a_val = a_now_split[COLUMN_DEF_INIT];
+                            }
+                            a_sRet += "<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(h_envPath, h_isEdit, h_isFirst, h_act, a_now_split, h_key, h_pulldown, h_showlist, a_val) + "</font></td>";
                         }
                         if (a_append.indexOf("a") >= 0){
-                            a_sRet += "<td bgcolor='#003366' style='text-align:center;'><font color='#ffffff'></td>";
-                        }
-                    }
-                }else{
-                    String[] a_now_split = null;
-                    for (int a_iCnt2=0; a_iCnt2<a_split2.length; a_iCnt2++){
-                        //該当番目の定義を組み立て
-                        a_now_split = new String[COLUMN_DEF_ACTION + 1];
-                        for (int a_iCnt3=0; a_iCnt3<COLUMN_DEF_ACTION + 1; a_iCnt3++){
-                            String[] a_split3 = a_split[a_iCnt3].split(":");
-                            a_now_split[a_iCnt3] = "";
-                            if (a_split3.length > a_iCnt2){
-                                a_now_split[a_iCnt3] = a_split3[a_iCnt2];
-                            }
-                        }
-                        if (a_now_split[COLUMN_DEF_COMMENT].equals("") == false){
-                            a_sRet += "<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>" + a_now_split[COLUMN_DEF_COMMENT] + "</font>";
-                        }else{
-                        }
-                        if (a_now_split[COLUMN_DEF_NESS].indexOf("y")>=0){
-                            a_sRet += "<font color='#ffff00'>*</font>";
-                        }
-                        if (a_now_split[COLUMN_DEF_COMMENT].equals("") == false){
+                            a_sRet += "<td bgcolor='transparent' style='text-align:center;'>";
+                            a_sRet += "<div name='" + a_table_id + "_div" + a_iCnt + "' id='" + a_table_id + "_div" + a_iCnt + "'>";
+                            a_sRet += "<input type='button' value='追加' onclick='append_field(\"" + a_table_id + "\",\"" + a_iCnt + "\",\"" + a_split[COLUMN_DEF_NAME] + "\");'>";
+                            a_sRet += "</div>";
                             a_sRet += "</td>";
-                        }else{
                         }
-
-                        String a_val = "";
-                        for (int a_iCnt3=0; a_iCnt3<a_plural_datas.length; a_iCnt3++){
-                            String[] a_data = a_plural_datas[a_iCnt3].split("\f");
-                            if (a_data[0].equals(a_now_split[COLUMN_DEF_FIELD]) == true){
-                                if (a_data.length > 1){
-                                    a_val = a_data[1];
-                                }
-                                break;
-                            }
-                        }
-                        //初期値
-                        if (h_isFirst == true){
-                            a_val = a_now_split[COLUMN_DEF_INIT];
-                        }
-                        a_sRet += "<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(h_envPath, h_isEdit, h_isFirst, h_act, a_now_split, h_key, h_pulldown, h_showlist, a_val) + "</font></td>";
                     }
-                    if (a_append.indexOf("a") >= 0){
-                        a_sRet += "<td bgcolor='transparent' style='text-align:center;'>";
-                        a_sRet += "<div name='" + a_table_id + "_div" + a_iCnt + "' id='" + a_table_id + "_div" + a_iCnt + "'>";
-                        a_sRet += "<input type='button' value='追加' onclick='append_field(\"" + a_table_id + "\",\"" + a_iCnt + "\",\"" + a_split[COLUMN_DEF_NAME] + "\");'>";
-                        a_sRet += "</div>";
-                        a_sRet += "</td>";
-                    }
+                    a_sRet += "</tr>";
                 }
-                a_sRet += "</tr>";
-            }
 
-            a_sRet += "</table>";
+                a_sRet += "</table>";
+            }
+            return a_sRet;
         }
-        return a_sRet;
     }
 
     //String a_val = String.valueOf(h_val);
@@ -330,8 +338,14 @@ String Make_Tag_Mnt(
     if (h_coldef[COLUMN_DEF_NESS].equals("a")){
         //自動更新
         g_JScript_Val_Auto += "," + a_colName;
-        a_sRet = h_val;
-        a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='' value='" + h_val + "'>";
+        if (h_val.equals("") == true){
+            a_sRet = "<font color='#ff0000'>自動付与されます</font>";
+        }else{
+            a_sRet = h_val;
+        }
+        if (h_act.equals("l") == false){
+            a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='' value='" + h_val + "'>";
+        }
         g_Post_Data += "            ,'" + a_field + "': $('#" + a_field + "').val()";
         return a_sRet;
     }else if (h_coldef[COLUMN_DEF_NESS].equals("y")){
@@ -348,23 +362,23 @@ String Make_Tag_Mnt(
     if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("n") >= 0){
         if (h_coldef[COLUMN_DEF_TYPE].indexOf("n") >= 0){
             //data_precisionが整数桁、data_scaleが小数桁
-            a_sRet += Make_Input_Tag_Mnt_Numeric(h_isEdit, h_coldef, "width:100%;", h_val);
+            a_sRet += Make_Input_Tag_Mnt_Numeric(h_isEdit, h_act, h_coldef, "width:100%;", h_val);
             //g_JScript_IsNumeric += "    alert($(\"#" + h_column[1] + "\"));";
             g_JScript_IsNumeric += "    if (!check_IsNumeric(\"#" + a_field + "\", \"" + a_field + "は数値入力です！\")){return false;}";
         }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("s") >= 0){
             //data_lengthがMAX桁数
-            a_sRet += Make_Input_Tag_Mnt_String(h_isEdit, h_coldef, "width:100%;", h_val);
+            a_sRet += Make_Input_Tag_Mnt_String(h_isEdit, h_act, h_coldef, "width:100%;", h_val);
         }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("time") >= 0){
             //ミリ秒まで扱う？
-            a_sRet += Make_Input_Tag_Mnt_TimeStamp(h_isEdit, h_coldef, "width:100%;", a_isTime, h_val);
+            a_sRet += Make_Input_Tag_Mnt_TimeStamp(h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
         }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("date") >= 0){
-            a_sRet += Make_Input_Tag_Mnt_Date(h_isEdit, h_coldef, "width:100%;", a_isTime, h_val);
+            a_sRet += Make_Input_Tag_Mnt_Date(h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
         }
     }else if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("y") >= 0){
         //該当テーブルの定義情報を読み込む
         String [] a_pull_def = GetDef_PullDown(h_pulldown, a_colName);
         if (a_pull_def != null){
-            a_sRet += Make_Input_Tag_Mnt_Option(h_isEdit, h_coldef, a_pull_def, "width:100%;", h_val);
+            a_sRet += Make_Input_Tag_Mnt_Option(h_isEdit, h_act, h_coldef, a_pull_def, "width:100%;", h_val);
         }
     }else if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("l") >= 0){
         //該当テーブルの定義情報を読み込む
@@ -376,13 +390,15 @@ String Make_Tag_Mnt(
         if (h_isEdit == false){
             a_sRet += h_val;
         }
-        a_sRet += "<input type='";
-        if (h_isEdit == true){
-            a_sRet += "text";
-        }else{
-            a_sRet += "hidden";
+        if (h_act.equals("l") == false){
+            a_sRet += "<input type='";
+            if (h_isEdit == true){
+                a_sRet += "text";
+            }else{
+                a_sRet += "hidden";
+            }
+            a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='width:200px;' value='" + h_val + "' readonly='true'>";
         }
-        a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='width:200px;' value='" + h_val + "' readonly='true'>";
     }
 
     g_Post_Data += "            ,'" + a_field + "': $('#" + a_field + "').val()";
@@ -406,6 +422,7 @@ String Make_Tag_Mnt(
 //inputタグ生成（数値）
 String Make_Input_Tag_Mnt_Numeric(
     boolean h_isEdit,
+    String h_act,
     String[] h_coldef,
     String h_style,
     String h_val
@@ -424,21 +441,23 @@ String Make_Input_Tag_Mnt_Numeric(
         a_sRet += h_val;
     }
 
-    a_sRet += "<input type='";
-    if (h_isEdit == true){
-        a_sRet += "text";
-    }else{
-        a_sRet += "hidden";
-    }
-    a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'";
-
-    if (h_coldef.length > COLUMN_DEF_ACTION){
-        if (h_coldef[COLUMN_DEF_ACTION].equals("") == false){
-            a_sRet += " onKeyPress='" + h_coldef[COLUMN_DEF_ACTION] + ";'";
+    if (h_act.equals("l") == false){
+        a_sRet += "<input type='";
+        if (h_isEdit == true){
+            a_sRet += "text";
+        }else{
+            a_sRet += "hidden";
         }
-    }
+        a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'";
 
-    a_sRet += ">";
+        if (h_coldef.length > COLUMN_DEF_ACTION){
+            if (h_coldef[COLUMN_DEF_ACTION].equals("") == false){
+                a_sRet += " onKeyPress='" + h_coldef[COLUMN_DEF_ACTION] + ";'";
+            }
+        }
+
+        a_sRet += ">";
+    }
 
     return a_sRet;
 }
@@ -446,6 +465,7 @@ String Make_Input_Tag_Mnt_Numeric(
 //inputタグ生成（文字）
 String Make_Input_Tag_Mnt_String(
     boolean h_isEdit,
+    String h_act,
     String[] h_coldef,
     String h_style,
     String h_val
@@ -464,20 +484,22 @@ String Make_Input_Tag_Mnt_String(
         a_sRet += h_val;
     }
 
-    if (a_max_len > 256){
-        if (h_isEdit == true){
-            a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
+    if (h_act.equals("l") == false){
+        if (a_max_len > 256){
+            if (h_isEdit == true){
+                a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
+            }else{
+                a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+            }
         }else{
-            a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+            a_sRet += "<input type='";
+            if (h_isEdit == true){
+                a_sRet += "text";
+            }else{
+                a_sRet += "hidden";
+            }
+            a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
         }
-    }else{
-        a_sRet += "<input type='";
-        if (h_isEdit == true){
-            a_sRet += "text";
-        }else{
-            a_sRet += "hidden";
-        }
-        a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
     }
 
     return a_sRet;
@@ -486,6 +508,7 @@ String Make_Input_Tag_Mnt_String(
 //inputタグ生成（タイムスタンプ）
 String Make_Input_Tag_Mnt_TimeStamp(
     boolean h_isEdit,
+    String h_act,
     String[] h_coldef,
     String h_style,
     String h_isTime,
@@ -503,26 +526,28 @@ String Make_Input_Tag_Mnt_TimeStamp(
         a_sRet += h_val;
     }
 
-    a_sRet += "<input type='";
-    if (h_isEdit == true){
-        a_sRet += "text";
-    }else{
-        a_sRet += "hidden";
-    }
-    a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
+    if (h_act.equals("l") == false){
+        a_sRet += "<input type='";
+        if (h_isEdit == true){
+            a_sRet += "text";
+        }else{
+            a_sRet += "hidden";
+        }
+        a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
 
-    //g_JScript_Out += "$('#d_" + h_column[1] + "').datepicker({});";
-    //g_JScript_Out += "$('#t_" + h_column[1] + "').datepicker({format:'H:i', datepicker:false, lang:'ja', step:1});";
-    //g_JScript_Out += "$('#" + h_column[1] + "').datetimepicker({dateFormat:'Y/m/d', showSecond: true, timeFormat:'hh:mm:ss', lang:'ja', step:0.1});";
-    if (h_isTime.equals("y")){
-        a_max_len = 10 + 1 + 8;
-        g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
-    }else{
-        a_max_len = 10;
-        g_JScript_Program += "$('#" + a_field + "').datepicker({});";
-    }
+        //g_JScript_Out += "$('#d_" + h_column[1] + "').datepicker({});";
+        //g_JScript_Out += "$('#t_" + h_column[1] + "').datepicker({format:'H:i', datepicker:false, lang:'ja', step:1});";
+        //g_JScript_Out += "$('#" + h_column[1] + "').datetimepicker({dateFormat:'Y/m/d', showSecond: true, timeFormat:'hh:mm:ss', lang:'ja', step:0.1});";
+        if (h_isTime.equals("y")){
+            a_max_len = 10 + 1 + 8;
+            g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+        }else{
+            a_max_len = 10;
+            g_JScript_Program += "$('#" + a_field + "').datepicker({});";
+        }
 
-    a_sRet +=  String.valueOf(a_max_len) + "'>";
+        a_sRet +=  String.valueOf(a_max_len) + "'>";
+    }
 
     return a_sRet;
 }
@@ -530,6 +555,7 @@ String Make_Input_Tag_Mnt_TimeStamp(
 //inputタグ生成（日付）
 String Make_Input_Tag_Mnt_Date(
     boolean h_isEdit,
+    String h_act,
     String[] h_coldef,
     String h_style,
     String h_isTime,
@@ -547,23 +573,25 @@ String Make_Input_Tag_Mnt_Date(
         a_sRet += h_val;
     }
 
-    a_sRet += "<input type='";
-    if (h_isEdit == true){
-        a_sRet += "text";
-    }else{
-        a_sRet += "hidden";
-    }
-    a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
+    if (h_act.equals("l") == false){
+        a_sRet += "<input type='";
+        if (h_isEdit == true){
+            a_sRet += "text";
+        }else{
+            a_sRet += "hidden";
+        }
+        a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
 
-    if (h_isTime.equals("y")){
-        a_max_len = 10 + 1 + 8;
-        g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
-    }else{
-        a_max_len = 10;
-        g_JScript_Program += "$('#" + a_field + "').datepicker({});";
-    }
+        if (h_isTime.equals("y")){
+            a_max_len = 10 + 1 + 8;
+            g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+        }else{
+            a_max_len = 10;
+            g_JScript_Program += "$('#" + a_field + "').datepicker({});";
+        }
 
-    a_sRet +=  String.valueOf(a_max_len) + "'>";
+        a_sRet +=  String.valueOf(a_max_len) + "'>";
+    }
 
     return a_sRet;
 }
@@ -571,6 +599,7 @@ String Make_Input_Tag_Mnt_Date(
 //optionタグ生成
 String Make_Input_Tag_Mnt_Option(
     boolean h_isEdit,
+    String h_act,
     String[] h_coldef,
     String[] h_option,
     String h_style,
@@ -597,21 +626,23 @@ String Make_Input_Tag_Mnt_Option(
         }
     }
 
-    if (h_isEdit == true){
-        a_sRet += "<select id='" + a_field + "' name='" + a_field + "' style='" + h_style + "'>";
-        a_sRet += "<option value=''></option>";
+    if (h_act.equals("l") == false){
+        if (h_isEdit == true){
+            a_sRet += "<select id='" + a_field + "' name='" + a_field + "' style='" + h_style + "'>";
+            a_sRet += "<option value=''></option>";
 
-        for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
-            a_split2 = a_split1[a_iCnt].split(":");
-            a_sRet += "<option value='" + a_split2[0] + "'";
-            if (a_split2[0].equals(h_val) == true){
-                a_sRet += " selected";
+            for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
+                a_split2 = a_split1[a_iCnt].split(":");
+                a_sRet += "<option value='" + a_split2[0] + "'";
+                if (a_split2[0].equals(h_val) == true){
+                    a_sRet += " selected";
+                }
+                a_sRet += ">" + a_split2[1] + "</option>";
             }
-            a_sRet += ">" + a_split2[1] + "</option>";
+            a_sRet += "</select>";
+        }else{
+            a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field  + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
         }
-        a_sRet += "</select>";
-    }else{
-        a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field  + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
     }
 
     return a_sRet;

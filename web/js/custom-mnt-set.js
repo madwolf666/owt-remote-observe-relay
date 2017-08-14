@@ -209,24 +209,31 @@ function show_equipmenttype_name(h_id, h_name){
     //alert('show_equipmenttype_name');
     if (window.event.keyCode == 13){
         //alert("enter押下！");
+        //alert($("#" + h_id).val());
         //enter押下
-        $.ajax({
-            url: m_parentURL + "get_equipmenttype_name.jsp",
-            type: 'POST',
-            dataType: "html",
-            async: false,
-            data:{
-                'id': $("#" + h_id).val()
-            },
-            success: function(data, dataType){
-                $("#" + h_name).val(data.trim());
-                //$("#" + h_name).empty().append(data.trim());
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(errorThrown.message);
-            },
-           complete: function (data) {
+        var a_h_id = $("#" + h_id).val();
+        if (a_h_id != null){
+            if (a_h_id != ""){
+                $.ajax({
+                    url: m_parentURL + "get_equipmenttype_name.jsp",
+                    type: 'POST',
+                    dataType: "html",
+                    async: false,
+                    data:{
+                        'id': a_h_id
+                    },
+                    success: function(data, dataType){
+                        //alert(data);
+                        $("#" + h_name).val(data.trim());
+                        //$("#" + h_name).empty().append(data.trim());
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(errorThrown.message);
+                    },
+                   complete: function (data) {
+                   }
+               });
            }
-       });	
+       }
     }
 }
