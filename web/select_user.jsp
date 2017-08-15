@@ -29,7 +29,7 @@
     //一覧データを取得
     ArrayList<String> a_arrayList = RemoteTrouble.FindUser(a_PageNo);
     if (a_arrayList != null){
-        out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
+        out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' width='100%'>");
         //ヘッダ部
         out.print("<tr bgcolor='#003366'>");
         out.print("<td style='text-align:center;'><font color='#ffffff'>ユーザコード</font></td>");

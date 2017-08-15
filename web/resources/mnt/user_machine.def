@@ -1,0 +1,12 @@
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
+p_usercode	usercode	usernode	a	s	n	6	n	ユーザコード
+p_nodetype	nodetype	usernode	n	s	n	1	y	機器種別
+p_nodeportno	nodeportno	usernode	y	n	n	5	n	ポートナンバー
+p_watchtype	watchtype	usernode	n	s	n	1	y	監視種別
+p_nodecode	nodecode	usernode	n	s	n	4	n	機器コード
+p_usernodename	usernodename	usernode	n	s	n	40	n	ユーザノード名
+p_useripaddr	useripaddr	usernode	y	s	n	15	n	IPアドレス
+p_logonname	logonname	usernode	n	s	n	32	n	ログオン名
+p_nodepass	nodepass	usernode	n	s	n	16	n	パスワード
+p_trap	trap	usernode	n	s	n	1	y	トラップ発報フラグ
+p_nodesin	nodesin	usernode	n	date	n	10	n	機器Sin年月日

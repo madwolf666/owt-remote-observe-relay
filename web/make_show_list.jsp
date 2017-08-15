@@ -48,7 +48,7 @@
     
     //一覧データを取得
     if (a_arrayList != null){
-        out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
+        out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' width='100%'>");
         //ヘッダ部
         out.print("<tr bgcolor='#003366'>");
         String[] a_items = a_show_def[SHOWLIST_ITEM_NAME].split(",");

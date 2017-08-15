@@ -101,6 +101,14 @@
     
     //DBの更新
     String a_sRet = SetDB.EnteryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
+    if (a_sRet.equals("") == true){
+        if (a_table_split[0].equals("irmsremotecustomer") == true){
+            session.setAttribute("Mnt_Data_LTIC_TN", null);
+            session.setAttribute("Mnt_Data_User_Machine", null);
+            session.setAttribute("Mnt_Data_Machine_Code", null);
+        }
+    }
+
     out.print(a_sRet);
 %>
 

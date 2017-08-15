@@ -8,6 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ include file="/common.jsp" %>
 <jsp:useBean id="Environ" scope="page" class="common.Environ" />
+<jsp:useBean id="SetDB" scope="page" class="maintenance.SetDB" />
 <%
     //パスを取得
     String SCRIPT_NAME = request.getServletPath();
@@ -16,25 +17,44 @@
     String a_envPath = "";
     String a_pulldown = "";
     String a_showlist = "";
-
+    
     Environ.SetRealPath(a_realPath);
     a_envPath = Environ.GetEnvironValue("mnt_env_path");
     a_pulldown = a_envPath + Environ.GetEnvironValue("mnt_pulldown_info");
     a_showlist = a_envPath + Environ.GetEnvironValue("mnt_showlist_info");
-    
+
     //セッション変数
     String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
-    ArrayList<String> a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs");
     String[] a_table_split = null;
     String[] a_column_split = null;
+    ArrayList<String> a_coldefs = null;
     if (a_Mnt_Table != ""){
         a_table_split = a_Mnt_Table.split("\t");
         a_column_split = a_table_split[1].split(",");
     }
 
     //POSTデータを取得
-    String a_ACT = request.getParameter("ACT");
-    String a_IDX = request.getParameter("IDX");
+    String a_mode = request.getParameter("mode");
+    String a_is_edit = request.getParameter("is_edit");
+    String a_user_code = request.getParameter("user_code");
+    String a_seq = request.getParameter("seq");
+    if (a_seq == null){
+        a_seq = "-1";
+    }
+
+    //Beansへの値引渡し
+    SetDB.SetRealPath(a_realPath);
+
+    if (a_table_split[0].equals("irmsremotecustomer") == true){
+        if (a_mode.equals("1") == true){
+            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
+        }else if (a_mode.equals("2") == true){
+            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
+        }else if (a_mode.equals("3") == true){
+            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");
+        }
+    }
+
     ArrayList<String> a_post_data = new ArrayList<String>();
     for (int a_iCnt=0; a_iCnt<a_coldefs.size(); a_iCnt++){
         String[] a_split = a_coldefs.get(a_iCnt).split("\t");
@@ -51,7 +71,7 @@
                     String[] a_split2 = a_plurals.get(a_iCnt2).split("\t");
                     String[] a_split3 = a_split2[COLUMN_DEF_FIELD].split(":");
                     if (a_iCnt2 > 1){
-                        a_plural_data += "\b\b\b";
+                        a_plural_data += "\f\f";
                     }
                     for (int a_iCnt3=0; a_iCnt3<a_split3.length; a_iCnt3++){
                         //該当番目の定義を組み立て
@@ -64,18 +84,18 @@
                             }
                         }
                         if (a_iCnt3 > 0){
-                            a_plural_data += "\b\b";
+                            a_plural_data += "\f\f";
                         }
                         a_field = a_now_split[COLUMN_DEF_FIELD];
                         if (request.getParameter(a_field) != null){
                             String a_val = HtmlEncode(request.getParameter(a_field));
                             if (a_val.length()>0){
-                                a_plural_data += a_field + "\b" + a_val;
+                                a_plural_data += a_field + "\f" + a_val;
                             }else{
-                                a_plural_data += a_field + "\b ";
+                                a_plural_data += a_field + "\f";
                             }
                         }else{
-                                a_plural_data += a_field + "\b ";
+                                a_plural_data += a_field + "\f";
                         }
                     }
                 }
@@ -95,61 +115,51 @@
         }
     }
 
-    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
-    
-    String a_user_code = "";
-    for (int a_iCnt=0; a_iCnt<a_coldefs.size(); a_iCnt++){
-        String[] a_split = a_coldefs.get(a_iCnt).split("\t");
-        String[] a_edit = a_post_data.get(a_iCnt).split("\t");
-        String[] a_colNames = a_split[0].split(":");
-        String a_colName = a_colNames[0];
-        String a_val = "";
-        if (a_edit.length > 1){
-            a_val = a_edit[1];
+    String a_sRet = "";
+    ArrayList<String>[] a_arrayList_src = null;
+    ArrayList<String>[] a_arrayList_dst = null;
+    if (a_user_code.equals("") == false){
+        //DBの更新
+        //String a_sRet = SetDB.EnteryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
+    }else{
+        if (a_mode.equals("1") == true){
+            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");
+        }else if (a_mode.equals("2") == true){
+            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
+        }else if (a_mode.equals("3") == true){
+            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");
         }
-        if ((a_colName.equals("usercode") == true) && a_split[COLUMN_DEF_NESS].equals("a") == true){
-            a_user_code = a_val;
+        
+        if (a_seq.equals("-1") == false){
+            //更新
+            a_arrayList_dst = new ArrayList[a_arrayList_src.length];
+            for (int a_iCnt=0; a_iCnt<a_arrayList_src.length; a_iCnt++){
+                a_arrayList_dst[a_iCnt] = a_arrayList_src[a_iCnt];
+            }
+            a_arrayList_dst[Integer.valueOf(a_seq)] = a_post_data;
+        }else{
+            //追加
+            if (a_arrayList_src != null){
+                a_arrayList_dst = new ArrayList[a_arrayList_src.length + 1];
+                for (int a_iCnt=0; a_iCnt<a_arrayList_src.length; a_iCnt++){
+                    a_arrayList_dst[a_iCnt] = a_arrayList_src[a_iCnt];
+                }
+            }else{
+                a_arrayList_dst = new ArrayList[1];
+            }
+            a_arrayList_dst[a_arrayList_dst.length - 1] = a_post_data;
         }
-        //splitは値が入っている所までしかlengthが返らない[2017.07.31]
-        out.print("<tr>");
-        out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
-        if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
-            out.print("<font color='#ffff00'>*</font>");
+        
+        if (a_mode.equals("1") == true){
+            session.setAttribute("Mnt_Data_LTIC_TN", a_arrayList_dst);
+        }else if (a_mode.equals("2") == true){
+            session.setAttribute("Mnt_Data_User_Machine", a_arrayList_dst);
+        }else if (a_mode.equals("3") == true){
+            session.setAttribute("Mnt_Data_Machine_Code", a_arrayList_dst);
         }
-        out.print("</td>");
-        out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, false, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
-        out.print("</tr>");
     }
-    if (a_table_split[0].equals("irmsremotecustomer") == true){
-        //IRMSユーザ管理
-        out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>LTIC・TN拠点設定</font></td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='拠点設定' onclick='set_irms_plural(\"1\", \"0\", \"" + a_user_code + "\");'></td>");
-            out.print("</tr>");
-            out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>ユーザ機器登録</font></td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='機器設定' onclick='set_irms_plural(\"2\", \"0\", \"" + a_user_code + "\");'></td>");
-            out.print("</tr>");
-            out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>機器コード設定</font></td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='機器コード登録' onclick='set_irms_plural(\"3\", \"0\", \"" + a_user_code + "\");'></td>");
-        out.print("</tr>");
-    }
-
-    out.print("</table>");
     
-    out.print(OutCopyRight());
-    
-    //java script
-    out.print("<script type='text/javascript'>");
-    out.print("resize_tbl_list();");
-    out.print("var g_val_auto = '" + g_JScript_Val_Auto + "';");
-    //out.print("var g_val_ness = '" + g_JScript_Val_Ness + "';" );
-    out.print(g_JScript_Program);
-    //out.print("alert(g_val_auto);");
-    //out.print("alert(g_val_ness);");
-    out.print(Make_Entry_Table_Mnt(a_ACT, a_IDX));
-    out.print("</script>");
+    out.print(a_sRet);
 %>
 
     

@@ -85,6 +85,43 @@ String g_JScript_IsNumeric = "";
 String g_JScript_IsRequired = "";
 String g_Post_Data = "";
 
+String g_JScript_Val_Auto_Plural = "";  //javascript変数の出力
+String g_JScript_Program_Plural = "";  //javascriptコードの出力
+String g_JScript_IsNumeric_Plural = "";
+String g_JScript_IsRequired_Plural = "";
+String g_Post_Data_Plural = "";
+
+//定義情報の読み込み
+ArrayList<String> GetDef_Field(
+    String h_fname
+    ){
+    ArrayList<String> a_field_def = null;
+    try{
+        FileInputStream a_fs = new FileInputStream(h_fname);
+        InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
+        BufferedReader a_br = new BufferedReader(a_isr);
+        String a_line = "";
+        int a_rec = 0;
+        while ((a_line = a_br.readLine())!=null){
+            //1行目はタイトル
+            if (a_rec > 0){
+                a_field_def.add(a_line);
+            }else{
+                a_field_def = new ArrayList<String>();
+            }
+            a_rec++;
+        }
+        a_br.close();
+        a_isr.close();
+        a_fs.close();
+
+    }catch(Exception e){
+
+    }
+
+    return a_field_def;
+}
+
 //プルダウン表示
 String[] GetDef_PullDown(
     String h_pulldown,
@@ -226,6 +263,7 @@ String HtmlEncode(String original)
 //  h_val       DB登録値
 String Make_Tag_Mnt(
     String h_envPath,
+    boolean h_isMain,
     boolean h_isEdit,
     boolean h_isFirst,
     String h_act,
@@ -243,6 +281,7 @@ String Make_Tag_Mnt(
     String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
     String a_colName = a_colNames[0];
     String a_field = h_coldef[COLUMN_DEF_FIELD];
+    String a_comment = h_coldef[COLUMN_DEF_COMMENT];
 
     if (h_act.equals("l") == false){
         //複数入力
@@ -314,7 +353,7 @@ String Make_Tag_Mnt(
                             if (h_isFirst == true){
                                 a_val = a_now_split[COLUMN_DEF_INIT];
                             }
-                            a_sRet += "<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(h_envPath, h_isEdit, h_isFirst, h_act, a_now_split, h_key, h_pulldown, h_showlist, a_val) + "</font></td>";
+                            a_sRet += "<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(h_envPath, h_isMain, h_isEdit, h_isFirst, h_act, a_now_split, h_key, h_pulldown, h_showlist, a_val) + "</font></td>";
                         }
                         if (a_append.indexOf("a") >= 0){
                             a_sRet += "<td bgcolor='transparent' style='text-align:center;'>";
@@ -337,7 +376,11 @@ String Make_Tag_Mnt(
 
     if (h_coldef[COLUMN_DEF_NESS].equals("a")){
         //自動更新
-        g_JScript_Val_Auto += "," + a_colName;
+        if (h_isMain == true){
+            g_JScript_Val_Auto += "," + a_colName;
+        }else{
+            g_JScript_Val_Auto_Plural += "," + a_colName;
+        }
         if (h_val.equals("") == true){
             a_sRet = "<font color='#ff0000'>自動付与されます</font>";
         }else{
@@ -346,7 +389,11 @@ String Make_Tag_Mnt(
         if (h_act.equals("l") == false){
             a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='' value='" + h_val + "'>";
         }
-        g_Post_Data += "            ,'" + a_field + "': $('#" + a_field + "').val()";
+        if (h_isMain == true){
+            g_Post_Data += "            ,'" + a_field + "': $('#" + a_field + "').val()";
+        }else{
+            g_Post_Data_Plural += "            ,'" + a_field + "': $('#" + a_field + "').val()";
+        }
         return a_sRet;
     }else if (h_coldef[COLUMN_DEF_NESS].equals("y")){
         //必須入力
@@ -356,7 +403,11 @@ String Make_Tag_Mnt(
     a_isTime = h_coldef[COLUMN_DEF_TIME];
 
     if (a_IsNess == true){
-        g_JScript_IsRequired += "    if (!check_IsRequired(\"#" + a_field + "\", \"" + a_field + "は必須入力です！\")){return false;}";
+        if (h_isMain == true){
+            g_JScript_IsRequired += "    if (!check_IsRequired(\"#" + a_field + "\", \"" + a_comment + "は必須入力です！\")){return false;}";
+        }else{
+            g_JScript_IsRequired_Plural += "    if (!check_IsRequired(\"#" + a_field + "\", \"" + a_comment + "は必須入力です！\")){return false;}";
+        }
     }
 
     if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("n") >= 0){
@@ -364,15 +415,19 @@ String Make_Tag_Mnt(
             //data_precisionが整数桁、data_scaleが小数桁
             a_sRet += Make_Input_Tag_Mnt_Numeric(h_isEdit, h_act, h_coldef, "width:100%;", h_val);
             //g_JScript_IsNumeric += "    alert($(\"#" + h_column[1] + "\"));";
-            g_JScript_IsNumeric += "    if (!check_IsNumeric(\"#" + a_field + "\", \"" + a_field + "は数値入力です！\")){return false;}";
+            if (h_isMain == true){
+                g_JScript_IsNumeric += "    if (!check_IsNumeric(\"#" + a_field + "\", \"" + a_comment + "は数値入力です！\")){return false;}";
+            }else{
+                g_JScript_IsNumeric_Plural += "    if (!check_IsNumeric(\"#" + a_field + "\", \"" + a_comment + "は数値入力です！\")){return false;}";
+            }
         }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("s") >= 0){
             //data_lengthがMAX桁数
             a_sRet += Make_Input_Tag_Mnt_String(h_isEdit, h_act, h_coldef, "width:100%;", h_val);
         }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("time") >= 0){
             //ミリ秒まで扱う？
-            a_sRet += Make_Input_Tag_Mnt_TimeStamp(h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
+            a_sRet += Make_Input_Tag_Mnt_TimeStamp(h_isMain, h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
         }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("date") >= 0){
-            a_sRet += Make_Input_Tag_Mnt_Date(h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
+            a_sRet += Make_Input_Tag_Mnt_Date(h_isMain, h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
         }
     }else if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("y") >= 0){
         //該当テーブルの定義情報を読み込む
@@ -401,7 +456,11 @@ String Make_Tag_Mnt(
         }
     }
 
-    g_Post_Data += "            ,'" + a_field + "': $('#" + a_field + "').val()";
+    if (h_isMain == true){
+        g_Post_Data += "            ,'" + a_field + "': $('#" + a_field + "').val()";
+    }else{
+        g_Post_Data_Plural += "            ,'" + a_field + "': $('#" + a_field + "').val()";
+    }
     
     /*
 〇nullable
@@ -507,6 +566,7 @@ String Make_Input_Tag_Mnt_String(
 
 //inputタグ生成（タイムスタンプ）
 String Make_Input_Tag_Mnt_TimeStamp(
+    boolean h_isMain,
     boolean h_isEdit,
     String h_act,
     String[] h_coldef,
@@ -540,10 +600,18 @@ String Make_Input_Tag_Mnt_TimeStamp(
         //g_JScript_Out += "$('#" + h_column[1] + "').datetimepicker({dateFormat:'Y/m/d', showSecond: true, timeFormat:'hh:mm:ss', lang:'ja', step:0.1});";
         if (h_isTime.equals("y")){
             a_max_len = 10 + 1 + 8;
-            g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+            if (h_isMain == true){
+                g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+            }else{
+                g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+            }
         }else{
             a_max_len = 10;
-            g_JScript_Program += "$('#" + a_field + "').datepicker({});";
+            if (h_isMain == true){
+                g_JScript_Program += "$('#" + a_field + "').datepicker({});";
+            }else{
+                g_JScript_Program_Plural += "$('#" + a_field + "').datepicker({});";
+            }
         }
 
         a_sRet +=  String.valueOf(a_max_len) + "'>";
@@ -554,6 +622,7 @@ String Make_Input_Tag_Mnt_TimeStamp(
 
 //inputタグ生成（日付）
 String Make_Input_Tag_Mnt_Date(
+    boolean h_isMain,
     boolean h_isEdit,
     String h_act,
     String[] h_coldef,
@@ -584,10 +653,18 @@ String Make_Input_Tag_Mnt_Date(
 
         if (h_isTime.equals("y")){
             a_max_len = 10 + 1 + 8;
-            g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+            if (h_isMain == true){
+                g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+            }else{
+                g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+            }
         }else{
             a_max_len = 10;
-            g_JScript_Program += "$('#" + a_field + "').datepicker({});";
+            if (h_isMain == true){
+                g_JScript_Program += "$('#" + a_field + "').datepicker({});";
+            }else{
+                g_JScript_Program_Plural += "$('#" + a_field + "').datepicker({});";
+            }
         }
 
         a_sRet +=  String.valueOf(a_max_len) + "'>";
@@ -691,8 +768,8 @@ String Make_Input_Tag_Mnt_ShowList(
     if (h_isEdit == true){
         a_sRet += "<input type='hidden' name='show_col_name_" + a_field + "' id='show_col_name_" + a_field + "' value='" + a_field + "'>";
         a_sRet += "<input type='hidden' name='show_find_key_" + a_field + "' id='show_find_key_" + a_field + "' value='" + h_option[SHOWLIST_FIND_KEY_NAME] + "'>";
-        a_sRet += "&nbsp;&nbsp;<input type='button' value='" + h_option[SHOWLIST_BUTTON_NAME] + "' onclick='make_show_list(1";
-        a_sRet += ",\"" + a_field + "\"";
+        a_sRet += "&nbsp;&nbsp;<input type='button' value='" + h_option[SHOWLIST_BUTTON_NAME] + "' onclick='set_select_show_list(\"" + a_field + "\");make_show_list(1";
+       // a_sRet += ",\"" + a_field + "\"";
         /*a_sRet += ",\"" + h_option[SHOWLIST_FIND_KEY_NAME] + "\"";
         a_sRet += ",\"" + h_option[SHOWLIST_SELECT_KEY_NAME] + "\"";
         a_sRet += ",\"" + h_option[SHOWLIST_FIND_SQL] + "\"";*/
@@ -717,9 +794,9 @@ String Make_Confirm_Table_Mnt(String h_act, String h_idx){
     a_sRet += g_JScript_IsNumeric;
     
     //必須入力チェック
-    if (h_act.equals("n")){
+    //if (h_act.equals("n")){
         a_sRet += g_JScript_IsRequired;
-    }
+    //}
 
     //a_sRet += "alert($(\"#ext\").val());";
 
@@ -849,6 +926,105 @@ String Make_Entry_Table_Mnt(String h_act, String h_idx){
     
    return a_sRet;
 }
+
+String Make_Entry_Plural_Mnt(String h_mode, String h_is_edit, String h_user_code, String h_seq){
+    String a_sRet = "" ;
+   
+    a_sRet = "function entry_plural_mnt(){";
+   
+    /*
+    a_sRet += " var a_act = $(\"#txt_act\").val();";
+    a_sRet += " var a_idx = $(\"#txt_idx\").val();";
+    */
+    //数値入力チェック
+    a_sRet += g_JScript_IsNumeric_Plural;
+    
+    //必須入力チェック
+    a_sRet += g_JScript_IsRequired_Plural;
+    
+    a_sRet += " if (!confirm(\"登録します。よろしいですか？\")){";
+    a_sRet += "     return false;";
+    a_sRet += " }";
+
+    a_sRet += " $.ajax({";
+    a_sRet += "     url: m_parentURL + \"entry_plural_mnt.jsp\",";
+    a_sRet += "     type: 'POST',";
+    a_sRet += "     dataType: \"html\",";
+    a_sRet += "     async: false,";
+    a_sRet += "     data:{";
+    a_sRet += "         'mode': \"" + h_mode + "\"";
+    a_sRet += "         ,'is_edit': \"" + h_is_edit + "\"";
+    a_sRet += "         ,'user_code': \"" + h_user_code + "\"";
+    a_sRet += "         ,'seq': \"" + h_seq + "\"";
+    
+    //入力カラム数分、セットする
+    a_sRet += g_Post_Data_Plural;
+        
+    a_sRet += "     },";
+    a_sRet += "     success: function(data, dataType){";
+    a_sRet += "         var a_result = data.trim();";
+    a_sRet += "         set_irms_plural(\"" + h_mode + "\",\"" + h_is_edit + "\",\"" + h_user_code + "\");";
+    a_sRet += "     },";
+    a_sRet += "     error: function (XMLHttpRequest, textStatus, errorThrown) {";
+    a_sRet += "         alert(errorThrown.message);";
+    a_sRet += "     },";
+    a_sRet += "     complete: function (data) {";
+    a_sRet += "     }";
+    a_sRet += " });";
+
+    a_sRet += " return true;";
+    a_sRet += "}";
+    
+   return a_sRet;
+}
+//LTIC・TN拠点設定
+String Make_Tag_Mnt_LTIC_TN(
+    String h_envPath,
+    boolean h_isEdit,
+    boolean h_isFirst,
+    String h_act,
+    ArrayList<String> h_coldef,
+    String[] h_key,
+    String h_pulldown,
+    String h_showlist
+    ){
+    String a_sRet = "";
+
+    return a_sRet;
+}
+
+//ユーザ機器登録
+String Make_Tag_Mnt_User_Machine(
+    String h_envPath,
+    boolean h_isEdit,
+    boolean h_isFirst,
+    String h_act,
+    ArrayList<String> h_coldef,
+    String[] h_key,
+    String h_pulldown,
+    String h_showlist
+    ){
+    String a_sRet = "";
+
+    return a_sRet;
+}
+
+//機器コード設定
+String Make_Tag_Mnt_Machine_Code(
+    String h_envPath,
+    boolean h_isEdit,
+    boolean h_isFirst,
+    String h_act,
+    ArrayList<String> h_coldef,
+    String[] h_key,
+    String h_pulldown,
+    String h_showlist
+    ){
+    String a_sRet = "";
+
+    return a_sRet;
+}
+
 %>
 
     

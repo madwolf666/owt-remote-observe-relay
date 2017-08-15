@@ -127,18 +127,12 @@
 
     //データ部
     if (a_arrayList != null){
-        String a_user_code = "";
         for (int a_iCnt=0; a_iCnt<a_coldefs.size(); a_iCnt++){
             String[] a_split = a_coldefs.get(a_iCnt).split("\t");
             String[] a_edit = a_arrayList.get(a_iCnt).split("\t");
-            String[] a_colNames = a_split[0].split(":");
-            String a_colName = a_colNames[0];
             String a_val = "";
             if (a_edit.length > 1){
                 a_val = a_edit[1];
-            }
-            if ((a_colName.equals("usercode") == true) && a_split[COLUMN_DEF_NESS].equals("a") == true){
-                a_user_code = a_val;
             }
             out.print("<tr>");
             out.print("<td bgcolor='#003366' style='text-align:left;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
@@ -146,22 +140,7 @@
                 out.print("<font color='#ffff00'>*</font>");
             }
             out.print("</td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
-            out.print("</tr>");
-        }
-        if (a_table_split[0].equals("irmsremotecustomer") == true){
-            //IRMSユーザ管理
-            out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>LTIC・TN拠点設定</font></td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='拠点設定' onclick='set_irms_plural(\"1\", \"1\", \"" + a_user_code + "\");'></td>");
-            out.print("</tr>");
-            out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>ユーザ機器登録</font></td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='機器設定' onclick='set_irms_plural(\"2\", \"1\", \"" + a_user_code + "\");'></td>");
-            out.print("</tr>");
-            out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>機器コード設定</font></td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='機器コード登録' onclick='set_irms_plural(\"3\", \"1\", \"" + a_user_code + "\");'></td>");
+            out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
             out.print("</tr>");
         }
     }else{
@@ -183,22 +162,7 @@
                 out.print("<font color='#ffff00'>*</font>");
             }
             out.print("</td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, true, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
-            out.print("</tr>");
-        }
-        if (a_table_split[0].equals("irmsremotecustomer") == true){
-            //IRMSユーザ管理
-            out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>LTIC・TN拠点設定</font></td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='拠点設定' onclick='set_irms_plural(\"1\", \"1\", \"\");'></td>");
-            out.print("</tr>");
-            out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>ユーザ機器登録</font></td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='機器設定' onclick='set_irms_plural(\"2\", \"1\", \"\");'></td>");
-            out.print("</tr>");
-            out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>機器コード設定</font></td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='機器コード登録' onclick='set_irms_plural(\"3\", \"1\", \"\");'></td>");
+            out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
             out.print("</tr>");
         }
     }

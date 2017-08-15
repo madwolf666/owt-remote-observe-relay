@@ -487,7 +487,13 @@ public class SetDB implements Serializable {
                 return a_sRet;
             }
 
-            a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0];
+            if (a_table_split[0].equals("pbxremotecustomer") == true){
+                a_sql = "SELECT COUNT(*) AS REC_SUM FROM remotemonitoringcustomer WHERE (usercode like '0%')";
+            }else if (a_table_split[0].equals("irmsremotecustomer") == true){
+                a_sql = "SELECT COUNT(*) AS REC_SUM FROM remotemonitoringcustomer WHERE (usercode like '1%') AND (remotesetid=4)";
+            }else{
+                a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0];
+            }
 
             Class.forName (_db_driver);
             // データベースとの接続
@@ -557,7 +563,13 @@ public class SetDB implements Serializable {
                 a_key[a_iCnt] = a_any_split[0];
             }
             
-            a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0];
+            if (a_table_split[0].equals("pbxremotecustomer") == true){
+                a_sql = "SELECT COUNT(*) AS REC_SUM FROM remotemonitoringcustomer WHERE (usercode like '0%')";
+            }else if (a_table_split[0].equals("irmsremotecustomer") == true){
+                a_sql = "SELECT COUNT(*) AS REC_SUM FROM remotemonitoringcustomer WHERE (usercode like '1%') AND (remotesetid=4)";
+            }else{
+                a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0];
+            }
             
             Class.forName (_db_driver);
             // データベースとの接続
@@ -579,10 +591,46 @@ public class SetDB implements Serializable {
                 int a_end_idx = (h_pageNo*_max_line_page);
                 
                 if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
-                    a_sql = "SELECT * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+                    if (a_table_split[0].equals("pbxremotecustomer") == true){
+                        a_sql = "SELECT t1.remotesetid,t1.usernumber,t2.username,t1.usercode FROM ";
+                        a_sql += " (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '0%')) t1";
+                        a_sql += " LEFT JOIN";
+                        a_sql += " newcustomermanage t2";
+                        a_sql += " ON";
+                        a_sql += " (t1.usercode=t2.usercode)";
+                        a_sql += " ORDER BY t1.usercode,t1.usernumber";
+                    }else if (a_table_split[0].equals("irmsremotecustomer") == true){
+                        a_sql = "SELECT t1.remotesetid,t1.usernumber,t2.username,t1.usercode FROM ";
+                        a_sql += " (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '1%') AND (remotesetid=4)) t1";
+                        a_sql += " LEFT JOIN";
+                        a_sql += " newcustomermanage t2";
+                        a_sql += " ON";
+                        a_sql += " (t1.usercode=t2.usercode)";
+                        a_sql += " ORDER BY t1.usercode,t1.usernumber";
+                    }else{
+                        a_sql = "SELECT * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+                    }
                     a_sql = "SELECT s1.* FROM (" + a_sql + ") s1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }else if (_db_driver.equals("org.postgresql.Driver")){
-                    a_sql = "SELECT row_number() over(ORDER BY " + a_fields + "), * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+                    if (a_table_split[0].equals("pbxremotecustomer") == true){
+                        a_sql = "SELECT row_number() over(ORDER BY t1.remotesetid,t1.usernumber), t1.remotesetid,t1.usernumber,t2.username,t1.usercode FROM ";
+                        a_sql += " (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '0%')) t1";
+                        a_sql += " LEFT JOIN";
+                        a_sql += " newcustomermanage t2";
+                        a_sql += " ON";
+                        a_sql += " (t1.usercode=t2.usercode)";
+                        a_sql += " ORDER BY t1.usercode,t1,usernumber";
+                    }else if (a_table_split[0].equals("irmsremotecustomer") == true){
+                        a_sql = "SELECT row_number() over(ORDER BY t1.remotesetid,t1.usernumber), t1.remotesetid,t1.usernumber,t2.username,t1.usercode FROM ";
+                        a_sql += " (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '1%') AND (remotesetid=4)) t1";
+                        a_sql += " LEFT JOIN";
+                        a_sql += " newcustomermanage t2";
+                        a_sql += " ON";
+                        a_sql += " (t1.usercode=t2.usercode)";
+                        a_sql += " ORDER BY t1.usercode,t1,usernumber";
+                    }else{
+                        a_sql = "SELECT row_number() over(ORDER BY " + a_fields + "), * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+                    }
                     a_sql = "SELECT * FROM (" + a_sql + ") s1 WHERE (s1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }
 
@@ -590,35 +638,68 @@ public class SetDB implements Serializable {
                 a_rs = a_ps.executeQuery();
                 while(a_rs.next()){
                     a_sRet = "";
-                    for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
-                        String[] a_split2 = h_coldefs.get(a_iCnt).split("\t");
-                        a_sVal = _Environ.ExistDBString(a_rs, a_split2[_Environ.COLUMN_DEF_NAME]);
-                        String a_sTmp1 = a_sVal;
+                    /*
+                    if (a_table_split[0].equals("pbxremotecustomer") == true){
+                        a_sVal = _Environ.ExistDBString(a_rs, "remotesetid");
+                        a_sRet += a_sVal;
+                        a_sRet += "\t";
+                        a_sVal = _Environ.ExistDBString(a_rs, "usernumber");
+                        a_sRet += a_sVal;
+                        a_sRet += "\t";
+                        a_sVal = _Environ.ExistDBString(a_rs, "username");
+                        a_sRet += a_sVal;
+                        a_sRet += "\t";
+                        String a_sTmp1 = _Environ.ExistDBString(a_rs, "usercode");
+                        a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
+                        a_sVal += "');\">" + a_sTmp1 + "</a>";
+                        a_sRet += a_sVal;
+                        a_arrayRet.add(a_sRet);
+                    }else if (a_table_split[0].equals("irmsremotecustomer") == true){
+                    }else{
+                    */
+                        for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
+                            String[] a_split2 = h_coldefs.get(a_iCnt).split("\t");
+                            a_sVal = _Environ.ExistDBString(a_rs, a_split2[_Environ.COLUMN_DEF_NAME]);
+                            String a_sTmp1 = a_sVal;
 
-                        if (a_sVal != ""){
-                            if ((a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0)){
-                                //日付
-                                a_sVal = a_sVal.replace("-", "/");
-                                if (a_split2[_Environ.COLUMN_DEF_TIME].equals("n")){
-                                    //時刻指定なし
-                                    a_sVal = a_sVal.substring(0, 10);
+                            if (a_sVal != ""){
+                                if ((a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0)){
+                                    //日付
+                                    a_sVal = a_sVal.replace("-", "/");
+                                    if (a_split2[_Environ.COLUMN_DEF_TIME].equals("n")){
+                                        //時刻指定なし
+                                        a_sVal = a_sVal.substring(0, 10);
+                                    }
                                 }
                             }
-                        }
-                        
-                        if (a_iCnt > 0){
-                            a_sRet += "\t";
-                        }else{
-                            a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
-                            for (int a_iCnt2=1; a_iCnt2<a_key.length; a_iCnt2++){
-                                String a_sTmp2 = _Environ.ExistDBString(a_rs,a_key[a_iCnt2]);
-                                a_sVal += "," + a_sTmp2;
+
+                            if (a_iCnt > 0){
+                                a_sRet += "\t";
+                                if ((a_table_split[0].equals("pbxremotecustomer") == true) ||
+                                    (a_table_split[0].equals("irmsremotecustomer") == true)){
+                                    if (a_split2[_Environ.COLUMN_DEF_NAME].equals("usercode") == true){
+                                        a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
+                                        a_sVal += "');\">" + a_sTmp1 + "</a>";
+                                    }
+                                }
+                            }else{
+                                if ((a_table_split[0].equals("pbxremotecustomer") == true) ||
+                                    (a_table_split[0].equals("irmsremotecustomer") == true)){
+                                }else{
+                                    a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
+                                    for (int a_iCnt2=1; a_iCnt2<a_key.length; a_iCnt2++){
+                                        String a_sTmp2 = _Environ.ExistDBString(a_rs,a_key[a_iCnt2]);
+                                        a_sVal += "," + a_sTmp2;
+                                    }
+                                    a_sVal += "');\">" + a_sTmp1 + "</a>";
+                                }
                             }
-                            a_sVal += "');\">" + a_sTmp1 + "</a>";
+                            a_sRet += a_sVal;
                         }
-                        a_sRet += a_sVal;
+                        a_arrayRet.add(a_sRet);
+                    /*
                     }
-                    a_arrayRet.add(a_sRet);
+                    */
                 }
                 a_rs.close();
                 a_ps.close();
@@ -985,5 +1066,126 @@ public class SetDB implements Serializable {
         _Environ._MyLogger.info("*** GetEquipmentTypeName is finished. ***");
 
         return a_sRet;
+    }
+    
+    public  ArrayList<String> GetPluralMnt(
+        String h_table,
+        ArrayList<String> h_coldefs,
+        String h_user_code
+        ) throws Exception{
+        String[] a_table_split = null;
+        String[] a_column_split = null;
+        String[] a_any_split = null;
+        String a_fields = "";
+        String[] a_key = null;
+        
+        ArrayList<String> a_arrayRet = null;
+        int a_iSum = 0;
+        Connection a_con = null;
+        PreparedStatement a_ps = null;
+        ResultSet a_rs = null;
+        String a_sql = "";
+        //int a_iRet = 0;
+        try{
+            a_table_split = h_table.split("\t");
+            if (a_table_split.length < 2){
+                return a_arrayRet;
+            }
+            a_column_split = a_table_split[1].split(",");
+            a_key = new String[a_column_split.length];
+            for (int a_iCnt=0; a_iCnt<a_column_split.length; a_iCnt++){
+                a_any_split = a_column_split[a_iCnt].split(":");
+                if (a_iCnt > 0){
+                    a_fields += ",";
+                }
+                a_fields += a_any_split[0];
+                a_key[a_iCnt] = a_any_split[0];
+            }
+            
+            a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0];
+            
+            Class.forName (_db_driver);
+            // データベースとの接続
+            a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
+            a_ps = a_con.prepareStatement(a_sql);
+            a_rs = a_ps.executeQuery();
+            while(a_rs.next()){
+                a_iSum = a_rs.getInt("REC_SUM");
+            }
+            a_rs.close();
+            a_ps.close();
+            
+            if (a_iSum > 0){
+                a_arrayRet = new ArrayList<String>();
+                String a_sVal = "";
+                int a_iVal = 0;
+                String a_sRet = "";
+                /*
+                int a_start_idx = ((h_pageNo-1)*_max_line_page) + 1;
+                int a_end_idx = (h_pageNo*_max_line_page);
+                
+                if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                    a_sql = "SELECT * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+                    a_sql = "SELECT s1.* FROM (" + a_sql + ") s1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                }else if (_db_driver.equals("org.postgresql.Driver")){
+                    a_sql = "SELECT row_number() over(ORDER BY " + a_fields + "), * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+                    a_sql = "SELECT * FROM (" + a_sql + ") s1 WHERE (s1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                }
+                */
+                a_sql = "SELECT * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+
+                a_ps = a_con.prepareStatement(a_sql);
+                a_rs = a_ps.executeQuery();
+                while(a_rs.next()){
+                    a_sRet = "";
+                    for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
+                        String[] a_split2 = h_coldefs.get(a_iCnt).split("\t");
+                        a_sVal = _Environ.ExistDBString(a_rs, a_split2[_Environ.COLUMN_DEF_NAME]);
+                        String a_sTmp1 = a_sVal;
+
+                        if (a_sVal != ""){
+                            if ((a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0)){
+                                //日付
+                                a_sVal = a_sVal.replace("-", "/");
+                                if (a_split2[_Environ.COLUMN_DEF_TIME].equals("n")){
+                                    //時刻指定なし
+                                    a_sVal = a_sVal.substring(0, 10);
+                                }
+                            }
+                        }
+                        
+                        if (a_iCnt > 0){
+                            a_sRet += "\t";
+                        }else{
+                            a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
+                            for (int a_iCnt2=1; a_iCnt2<a_key.length; a_iCnt2++){
+                                String a_sTmp2 = _Environ.ExistDBString(a_rs,a_key[a_iCnt2]);
+                                a_sVal += "," + a_sTmp2;
+                            }
+                            a_sVal += "');\">" + a_sTmp1 + "</a>";
+                        }
+                        a_sRet += a_sVal;
+                    }
+                    a_arrayRet.add(a_sRet);
+                }
+                a_rs.close();
+                a_ps.close();
+            }
+            
+        } catch (SQLException e) {
+            _Environ._MyLogger.severe("[GetPluralMnt]" + e.getMessage());
+        } catch (ClassNotFoundException ex) {
+            _Environ._MyLogger.severe("[GetPluralMnt]" + ex.getMessage());
+        } finally{
+            if (a_ps != null){
+                a_ps.close();
+            }
+            if (a_con != null){
+                a_con.close();
+            }
+        }
+        _Environ._MyLogger.info("*** GetPluralMnt is finished. ***");
+        
+        return a_arrayRet;
     }
 }

@@ -28,33 +28,30 @@
     String[] a_table_split = null;
     String[] a_column_split = null;
     ArrayList<String> a_coldefs = new ArrayList<String>();
+    ArrayList<String> a_coldefs_ltic_tn = new ArrayList<String>();
+    ArrayList<String> a_coldefs_user_machine = new ArrayList<String>();
+    ArrayList<String> a_coldefs_machine_code = new ArrayList<String>();
     if (a_Mnt_Table != ""){
         a_table_split = a_Mnt_Table.split("\t");
         a_column_split = a_table_split[1].split(",");
-        
-        //該当テーブルの定義情報を読み込む
-        try{
-            FileInputStream a_fs = new FileInputStream(a_envPath + a_table_split[0] + ".def");
-            InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
-            BufferedReader a_br = new BufferedReader(a_isr);
-            String a_line = "";
-            int a_rec = 0;
-            while ((a_line = a_br.readLine())!=null){
-                //1行目はタイトル
-                if (a_rec > 0){
-                    a_coldefs.add(a_line);
-                }
-                a_rec++;
-            }
-            a_br.close();
-            a_isr.close();
-            a_fs.close();
+        a_coldefs = GetDef_Field(a_envPath + a_table_split[0] + ".def");
 
-        }catch(Exception e){
-
+        if (a_table_split[0].equals("irmsremotecustomer") == true){
+            a_coldefs_ltic_tn = GetDef_Field(a_envPath + "ltic_tn.def");
+            a_coldefs_user_machine = GetDef_Field(a_envPath + "user_machine.def");
+            a_coldefs_machine_code = GetDef_Field(a_envPath + "machine_code.def");
         }
     }
     session.setAttribute("Mnt_Coldefs", a_coldefs);
+    
+    if (a_table_split[0].equals("irmsremotecustomer") == true){
+        session.setAttribute("Mnt_Coldefs_LTIC_TN", a_coldefs_ltic_tn);
+        session.setAttribute("Mnt_Coldefs_User_Machine", a_coldefs_user_machine);
+        session.setAttribute("Mnt_Coldefs_Machine_Code", a_coldefs_machine_code);
+        session.setAttribute("Mnt_Data_LTIC_TN", null);
+        session.setAttribute("Mnt_Data_User_Machine", null);
+        session.setAttribute("Mnt_Data_Machine_Code", null);
+    }
 
     //POSTデータを取得
     int a_PageNo = Integer.valueOf(request.getParameter("PageNo"));
@@ -70,7 +67,13 @@
     SetDB.SetRealPath(a_realPath);
 
     //一覧データを取得
-    ArrayList<String> a_arrayList = SetDB.FindMnt(a_Mnt_Table, a_PageNo, a_coldefs);
+    ArrayList<String> a_arrayList = null;
+    if ((a_table_split[0].equals("pbxremotecustomer") == true) || (a_table_split[0].equals("irmsremotecustomer") == true)){
+        a_coldefs = GetDef_Field(a_envPath + a_table_split[0] + "_find.def");
+    }else{
+    }
+    a_arrayList = SetDB.FindMnt(a_Mnt_Table, a_PageNo, a_coldefs);
+    
     if (a_arrayList != null){
         out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
         //ヘッダ部
@@ -95,7 +98,7 @@
                 String[] a_split = a_coldefs.get(a_iCnt2).split("\t");
                 if (a_data.length > a_iCnt2){
                     out.print("<td>");
-                    out.print(Make_Tag_Mnt(a_envPath, false, false, "l", a_split, a_column_split, a_pulldown, a_showlist, a_data[a_iCnt2]));
+                    out.print(Make_Tag_Mnt(a_envPath, true, false, false, "l", a_split, a_column_split, a_pulldown, a_showlist, a_data[a_iCnt2]));
                     //out.print(a_data[a_iCnt2]);
                     out.print("</td>");
                 }else{

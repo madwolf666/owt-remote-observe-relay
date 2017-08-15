@@ -933,14 +933,22 @@ function test_Alarm(){
 }
 
 //リスト表示
+function set_select_show_list(h_colName){
+    //alert(h_colName);
+    $('#select-show-key').val(h_colName);
+}
+
 //function make_show_list(h_pageNo, h_colName, h_find_key, h_select_key, h_find_sql){
-function make_show_list(h_pageNo, h_colName){
+function make_show_list(h_pageNo){
+    //alert($('#select-show-key').val());
     //alert('show_list--->' + h_pageNo + "," + h_colName + "," + h_find_key + "," + h_select_key + "," + h_find_sql);
     //alert('show_list--->' + h_pageNo + "," + $('#show_col_name_' + h_colName).val() + "," + $('#show_find_key_' + h_colName).val());
+    var a_colName = $('#select-show-key').val();
+    //alert(a_colName);
     var a_find_key = '';
     var a_result = '';
-    if ($('#' + $('#show_find_key_' + h_colName).val()).val() != null){
-        a_find_key = $('#' + $('#show_find_key_' + h_colName).val()).val();
+    if ($('#' + $('#show_find_key_' + a_colName).val()).val() != null){
+        a_find_key = $('#' + $('#show_find_key_' + a_colName).val()).val();
     }
     //alert(a_find_key);
     $.ajax({
@@ -950,7 +958,7 @@ function make_show_list(h_pageNo, h_colName){
         async: false,
         data:{
             'PageNo': h_pageNo,
-            'col_name': $('#show_col_name_' + h_colName).val(),
+            'col_name': $('#show_col_name_' + a_colName).val(),
             'find_key': a_find_key
         },
         success: function(data, dataType){

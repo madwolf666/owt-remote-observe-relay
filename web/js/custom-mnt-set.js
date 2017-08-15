@@ -237,3 +237,115 @@ function show_equipmenttype_name(h_id, h_name){
        }
     }
 }
+
+//LTIC・TN拠点設定
+//ユーザ機器登録
+//機器コード設定
+function set_irms_plural(h_mode, h_is_edit, h_user_code){
+    $.ajax({
+        url: m_parentURL + "make_table_plural_mnt.jsp",
+        type: 'POST',
+        dataType: "html",
+        async: false,
+        data:{
+            'mode': h_mode,
+            'is_edit': h_is_edit,
+            'user_code': h_user_code
+        },
+        success: function(data, dataType){
+            a_result = data.trim();
+            $("#show-list").empty().append(data);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown.message);
+        },
+       complete: function (data) {
+       }
+    });
+    
+    var $popup = $("#popup1");
+
+    //alert($popup);
+    // ポップアップの幅と高さからmarginを計算する
+    var mT = ($popup.outerHeight() / 2) * (-1) + 'px';
+    var mL = ($popup.outerWidth() / 2) * (-1) + 'px';
+    //alert(mT + "," + mL);
+    // marginを設定して表示
+    $('.popup').hide();
+    $popup.css({
+            'margin-top': mT,
+            'margin-left': mL
+    }).show();
+    return false;
+}
+
+function select_plural_list(h_mode, h_is_edit, h_user_code, h_seq){
+    $.ajax({
+        url: m_parentURL + "make_table_plural_mnt.jsp",
+        type: 'POST',
+        dataType: "html",
+        async: false,
+        data:{
+            'mode': h_mode,
+            'is_edit': h_is_edit,
+            'user_code': h_user_code,
+            'seq': h_seq
+        },
+        success: function(data, dataType){
+            a_result = data.trim();
+            $("#show-list").empty().append(data);
+            $("#select-plural-seq").val(h_seq);
+            $("#delete-plural-mnt").show();
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown.message);
+        },
+       complete: function (data) {
+       }
+    });
+    
+    var $popup = $("#popup1");
+
+    //alert($popup);
+    // ポップアップの幅と高さからmarginを計算する
+    var mT = ($popup.outerHeight() / 2) * (-1) + 'px';
+    var mL = ($popup.outerWidth() / 2) * (-1) + 'px';
+    //alert(mT + "," + mL);
+    // marginを設定して表示
+    $('.popup').hide();
+    $popup.css({
+            'margin-top': mT,
+            'margin-left': mL
+    }).show();
+    return false;
+}
+
+function delete_plural_mnt(h_mode, h_is_edit, h_user_code){
+    var a_seq = $("#select-plural-seq").val();
+
+    if (!confirm("削除します。よろしいですか？")){
+        return false;
+    }
+
+    $.ajax({
+        url: m_parentURL + "delete_plural_mnt.jsp",
+        type: 'POST',
+        dataType: "html",
+        async: false,
+        data:{
+            'mode': h_mode,
+            'is_edit': h_is_edit,
+            'user_code': h_user_code,
+            'seq': a_seq
+        },
+        success: function(data, dataType){
+            a_result = data.trim();
+            set_irms_plural(h_mode, h_is_edit, h_user_code);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown.message);
+        },
+       complete: function (data) {
+       }
+    });
+}
