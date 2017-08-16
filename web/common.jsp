@@ -71,12 +71,25 @@ static int DB_TABLE_KEY_DEF_EDITABLE = 2;       //修正可否（n/y）
 static int DB_TABLE_KEY_DEF_AUTOINCREMENT = 3;  //自動採番（n/y）
 
 //リスト表示
-static int SHOWLIST_COLUMN_NAME = 0;        //カラム名
-static int SHOWLIST_BUTTON_NAME = 1;        //ボタン名
-static int SHOWLIST_FIND_KEY_NAME = 2;      //検索キー
-static int SHOWLIST_SELECT_KEY_NAME = 3;    //選択キー
-static int SHOWLIST_FIND_SQL = 4;           //取得SQL
-static int SHOWLIST_ITEM_NAME = 5;          //項目表示
+static int SHOWLIST_FIELD_NAME = 0;         //入力フィールド名
+static int SHOWLIST_COLUMN_NAME = 1;        //カラム名
+static int SHOWLIST_COLUMN_TYPE = 2;        //型（n/s/time/date）
+static int SHOWLIST_COLUMN_PULLDOWN = 3;    //プルダウン（n/y）
+static int SHOWLIST_BUTTON_NAME = 4;        //ボタン名
+static int SHOWLIST_FIND_KEY_NAME = 5;      //検索キー
+static int SHOWLIST_SELECT_KEY_NAME = 6;    //選択キー
+static int SHOWLIST_FIND_SQL = 7;           //取得SQL
+static int SHOWLIST_ITEM_NAME = 8;          //項目表示
+
+//一覧表示
+static int FINDLIST_TABLE_NAME = 0;         //テーブル名
+static int FINDLIST_COLUMN_NAME = 1;        //カラム名
+static int FINDLIST_COLUMN_TYPE = 2;        //型（n/s/time/date）
+static int FINDLIST_COLUMN_PULLDOWN = 3;    //プルダウン（n/y）
+static int FINDLIST_FIND_KEY_NAME = 4;      //検索カラム
+static int FINDLIST_SELECT_KEY_NAME = 5;    //選択キー
+static int FINDLIST_FIND_SQL = 6;           //取得SQL
+static int FINDLIST_ITEM_NAME = 7;          //項目表示
 
 //JavaScript生成
 String g_JScript_Val_Auto = "";  //javascript変数の出力
@@ -171,7 +184,7 @@ String[] GetDef_ShowList(
             //1行目はタイトル
             if (a_rec > 0){
                 a_show_def = a_line.split("\t");
-                if (a_show_def[SHOWLIST_COLUMN_NAME].equals(h_col_name) == true){
+                if (a_show_def[SHOWLIST_FIELD_NAME].equals(h_col_name) == true){
                     break;
                 }
             }
@@ -186,6 +199,39 @@ String[] GetDef_ShowList(
     }
 
     return a_show_def;
+}
+
+//一覧表示
+String[] GetDef_FindList(
+    String h_findlist,
+    String h_table_name
+    ){
+    String[] a_find_def = null;
+    try{
+        FileInputStream a_fs = new FileInputStream(h_findlist);
+        InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
+        BufferedReader a_br = new BufferedReader(a_isr);
+        String a_line = "";
+        int a_rec = 0;
+        while ((a_line = a_br.readLine())!=null){
+            //1行目はタイトル
+            if (a_rec > 0){
+                a_find_def = a_line.split("\t");
+                if (a_find_def[FINDLIST_TABLE_NAME].equals(h_table_name) == true){
+                    break;
+                }
+            }
+            a_rec++;
+        }
+        a_br.close();
+        a_isr.close();
+        a_fs.close();
+
+    }catch(Exception e){
+
+    }
+
+    return a_find_def;
 }
 
 //複数入力表示
@@ -493,8 +539,10 @@ String Make_Input_Tag_Mnt_Numeric(
     String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
     String a_colName = a_colNames[0];
     String a_field = h_coldef[COLUMN_DEF_FIELD];
-
-    a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
+   
+    if (h_coldef[COLUMN_DEF_LENGTH].equals("") == false){
+        a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
+    }
 
     if (h_isEdit == false){
         a_sRet += h_val;
@@ -537,8 +585,10 @@ String Make_Input_Tag_Mnt_String(
     String a_colName = a_colNames[0];
     String a_field = h_coldef[COLUMN_DEF_FIELD];
 
-    a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
-    
+    if (h_coldef[COLUMN_DEF_LENGTH].equals("") == false){
+        a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
+    }
+
     if (h_isEdit == false){
         a_sRet += h_val;
     }
@@ -720,6 +770,8 @@ String Make_Input_Tag_Mnt_Option(
         }else{
             a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field  + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
         }
+    }else{
+
     }
 
     return a_sRet;

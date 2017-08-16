@@ -20,10 +20,12 @@
     String a_realPath = application.getRealPath(a_mainPath);
     String a_envPath = "";
     String a_showlist = "";
+    String a_findlist = "";
 
     Environ.SetRealPath(a_realPath);
     a_envPath = Environ.GetEnvironValue("mnt_env_path");
     a_showlist = a_envPath + Environ.GetEnvironValue("mnt_showlist_info");
+    a_findlist = a_envPath + Environ.GetEnvironValue("mnt_findlist_info");
 
     //POSTデータを取得
     int a_Kind = Integer.valueOf(request.getParameter("Kind"));
@@ -141,15 +143,21 @@
             a_sOut = RemoteTrouble.MakePagerUser(a_Kind, a_PageNo);
             break;
         case 7: //リモートDB設定[2017.07.27]
+            String[] a_table_split = null;
             Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
-            //[2017.07.28]
+            if (Mnt_Table != ""){
+                a_table_split = Mnt_Table.split("\t");
+            }
             if (a_PageNo < 0){
                 if (GetSessionValue(session.getAttribute("Mnt_pageNo")) != ""){
                     a_PageNo = Integer.valueOf(GetSessionValue(session.getAttribute("Mnt_pageNo")));
                 }
             }
             SetDB.SetRealPath(a_realPath);
-            a_sOut = SetDB.MakePagerMnt(a_Kind, a_PageNo, Mnt_Table);
+            //定義情報の読み込み
+            String[] a_find_def = GetDef_FindList(a_findlist, a_table_split[0]);
+
+            a_sOut = SetDB.MakePagerMnt(a_Kind, a_PageNo, a_find_def, "");
             session.setAttribute("Mnt_pageNo", a_PageNo);   //[2017.07.28]
             break;
         case 8: //保全[2017.08.02]

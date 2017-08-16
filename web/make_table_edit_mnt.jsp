@@ -122,32 +122,61 @@
     g_JScript_IsRequired = "";
     g_Post_Data = "";
     
-    //out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:800px;'>");
     out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:auto;'>");
+    //out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:768px;'>");
 
+    String a_monitoring_id = "";
+    String[] a_prt_status_def = null;
     //データ部
     if (a_arrayList != null){
         String a_user_code = "";
         for (int a_iCnt=0; a_iCnt<a_coldefs.size(); a_iCnt++){
+            boolean a_isOK = true;
             String[] a_split = a_coldefs.get(a_iCnt).split("\t");
             String[] a_edit = a_arrayList.get(a_iCnt).split("\t");
-            String[] a_colNames = a_split[0].split(":");
+            String[] a_colNames = a_split[COLUMN_DEF_NAME].split(":");
             String a_colName = a_colNames[0];
             String a_val = "";
             if (a_edit.length > 1){
                 a_val = a_edit[1];
             }
-            if ((a_colName.equals("usercode") == true) && a_split[COLUMN_DEF_NESS].equals("a") == true){
-                a_user_code = a_val;
+            if (a_table_split[0].equals("pbxremotecustomer") == true){
+                if ((a_ACT.equals("e") == true) && (a_DB.equals("1") == true)){
+                    if (a_colName.equals("prt_status") == true){
+                        a_prt_status_def = a_split;
+                        a_isOK = false;
+                    }
+                    if ((a_iCnt+1)>=a_coldefs.size()){
+                        a_monitoring_id = a_val;
+                        break;
+                    }
+                }
             }
-            out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
-            if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
-                out.print("<font color='#ffff00'>*</font>");
+            if (a_isOK == true){
+                if ((a_colName.equals("usercode") == true) && a_split[COLUMN_DEF_NESS].equals("a") == true){
+                    a_user_code = a_val;
+                }
+                out.print("<tr>");
+                out.print("<td bgcolor='#003366' style='text-align:left;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
+                if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
+                    out.print("<font color='#ffff00'>*</font>");
+                }
+                out.print("</td>");
+                out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
+                out.print("</tr>");
             }
-            out.print("</td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
-            out.print("</tr>");
+        }
+        if (a_table_split[0].equals("pbxremotecustomer") == true){
+            if ((a_ACT.equals("e") == true) && (a_DB.equals("1") == true)){
+                //PBXユーザ管理
+                //RPT使用状況
+                ArrayList<String> a_plurals = GetDef_Plurals(a_envPath + "prt_status.def");
+                String a_prt_status_data = SetDB.GetRPTMnt(a_plurals, a_monitoring_id);
+                out.print("<tr>");
+                out.print("<td bgcolor='#003366' style='text-align:left;' nowrap><font color='#ffffff'>" + a_prt_status_def[COLUMN_DEF_COMMENT] + "</font>");
+                out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, false, a_ACT, a_prt_status_def, a_column_split, a_pulldown, a_showlist, a_prt_status_data) + "</font></td>");
+                out.print("</tr>");
+            }
         }
         if (a_table_split[0].equals("irmsremotecustomer") == true){
             //IRMSユーザ管理
@@ -169,7 +198,7 @@
             String[] a_split = a_coldefs.get(a_iCnt).split("\t");
             //splitは値が入っている所までしかlengthが返らない[2017.07.31]
             //カラム名を取得：0番目をメインとする
-            String[] a_colNames = a_split[0].split(":");
+            String[] a_colNames = a_split[COLUMN_DEF_NAME].split(":");
             String a_colName = a_colNames[0];
             String a_val = "";
             if ((a_colName.equals("usercode") == true) && a_split[COLUMN_DEF_NESS].equals("a") == true){

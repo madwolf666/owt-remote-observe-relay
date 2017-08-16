@@ -1,11 +1,11 @@
 カラム名	選択内容
 remotecontract	1:有,0:無
 diagnose	1:有,0:無
-remoteclass	A:毎日,B:週1,C:月1,D:常駐,E:監視,F:地域,*:地方
+remoteclass	A-毎日:A-毎日,B-週１:B-週１,C-月１:C-月１,D-常駐:D-常駐,E-監視:E-監視,F-地域:F-地域,*-地方:*-地方
 patrolmethod	自動:自動,手動:手動
-patroldayofweek	sun:日,mon:月,tue:火,wed:水,thu:木,fri:金,sat:土
+patroldayofweek	sun=日:sun=日,mon=月:mon=月,tue=火:tue=火,wed=水:wed=水,thu=木:thu=木,fri=金:fri=金,sat=土:sat=土
 monthreport	1:有,0:無
-reportclass	A:毎日,B:週1,C:月1,D:常駐,E:監視,F:地域,*:地方
+reportclass	A-毎日:A-毎日,B-週１:B-週１,C-月１:C-月１,D-常駐:D-常駐,E-監視:E-監視,F-地域:F-地域,*-地方:*-地方
 usercode1	テクノ:テクノ,関西:関西,中国:中国,九州:九州,中部:中部,東北:東北,横浜:横浜,北関東:北関東,千葉:千葉,北海道:北海道
 remotesetid	0:A-SET,1:B-SET,2:C-SET,3:D-SET,4:E-SET,5:F-SET,6:G-SET,7:H-SET,8:I-SET,9:J-SET
 nodecode	1:DISCOVERYneo,2:SS9100,3:CROSCORE,4:CTSTAGE,9:その他

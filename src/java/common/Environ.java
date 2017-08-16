@@ -66,12 +66,25 @@ public class Environ {
     public static int DB_TABLE_KEY_DEF_AUTOINCREMENT = 3;  //自動採番（n/y）
 
     //リスト表示
-    public static int SHOWLIST_COLUMN_NAME = 0;        //カラム名
-    public static int SHOWLIST_BUTTON_NAME = 1;        //ボタン名
-    public static int SHOWLIST_FIND_KEY_NAME = 2;      //検索キー
-    public static int SHOWLIST_SELECT_KEY_NAME = 3;    //選択キー
-    public static int SHOWLIST_FIND_SQL = 4;           //取得SQL
-    public static int SHOWLIST_ITEM_NAME = 5;          //項目表示
+    public static int SHOWLIST_FIELD_NAME = 0;         //入力フィールド名
+    public static int SHOWLIST_COLUMN_NAME = 1;        //カラム名
+    public static int SHOWLIST_COLUMN_TYPE = 2;        //型（n/s/time/date）
+    public static int SHOWLIST_COLUMN_PULLDOWN = 3;    //プルダウン（n/y）
+    public static int SHOWLIST_BUTTON_NAME = 4;        //ボタン名
+    public static int SHOWLIST_FIND_KEY_NAME = 5;      //検索キー
+    public static int SHOWLIST_SELECT_KEY_NAME = 6;    //選択キー
+    public static int SHOWLIST_FIND_SQL = 7;           //取得SQL
+    public static int SHOWLIST_ITEM_NAME = 8;          //項目表示
+
+    //一覧表示
+    public static int FINDLIST_TABLE_NAME = 0;         //テーブル名
+    public static int FINDLIST_COLUMN_NAME = 1;        //カラム名
+    public static int FINDLIST_COLUMN_TYPE = 2;        //型（n/s/time/date）
+    public static int FINDLIST_COLUMN_PULLDOWN = 3;    //プルダウン（n/y）
+    public static int FINDLIST_FIND_KEY_NAME = 4;      //検索カラム
+    public static int FINDLIST_SELECT_KEY_NAME = 5;    //選択キー
+    public static int FINDLIST_FIND_SQL = 6;           //取得SQL
+    public static int FINDLIST_ITEM_NAME = 7;          //項目表示
 
     public Environ(){
         //-------------------------------------------------------------------

@@ -308,7 +308,7 @@ public class SetDB implements Serializable {
                         }
                     }
                     if (a_tableName.equals("remotemonitoringcustomer") == true){
-                        a_sql += "0,";
+                        a_sql += "-1,";
                     }
                     a_sql += a_table_sql_p.get(a_iCnt) + ")";
                 }else{
@@ -467,7 +467,8 @@ public class SetDB implements Serializable {
     public String MakePagerMnt(
         int h_kind,
         int h_pageNo,
-        String h_table
+        String[] h_find_def,
+        String h_find_key
         ) throws Exception{
         String[] a_table_split = null;
         Connection a_con = null;
@@ -482,18 +483,7 @@ public class SetDB implements Serializable {
         int a_iSum = -1;
         String a_sRet = "";
         try{
-            a_table_split = h_table.split("\t");
-            if (a_table_split.length<2){
-                return a_sRet;
-            }
-
-            if (a_table_split[0].equals("pbxremotecustomer") == true){
-                a_sql = "SELECT COUNT(*) AS REC_SUM FROM remotemonitoringcustomer WHERE (usercode like '0%')";
-            }else if (a_table_split[0].equals("irmsremotecustomer") == true){
-                a_sql = "SELECT COUNT(*) AS REC_SUM FROM remotemonitoringcustomer WHERE (usercode like '1%') AND (remotesetid=4)";
-            }else{
-                a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0];
-            }
+            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1";
 
             Class.forName (_db_driver);
             // データベースとの接続
@@ -530,51 +520,27 @@ public class SetDB implements Serializable {
     }
     
     public  ArrayList<String> FindMnt(
-        String h_table,
         int h_pageNo,
-        ArrayList<String> h_coldefs
+        String[] h_find_def,
+        String h_find_key
         ) throws Exception{
-        String[] a_table_split = null;
-        String[] a_column_split = null;
-        String[] a_any_split = null;
-        String a_fields = "";
-        String[] a_key = null;
-        
         ArrayList<String> a_arrayRet = null;
         int a_iSum = 0;
         Connection a_con = null;
         PreparedStatement a_ps = null;
         ResultSet a_rs = null;
         String a_sql = "";
+        String[] a_columns = h_find_def[_Environ.FINDLIST_COLUMN_NAME].split(":");
+        String[] a_items = h_find_def[_Environ.FINDLIST_ITEM_NAME].split(":");
         //int a_iRet = 0;
         try{
-            a_table_split = h_table.split("\t");
-            if (a_table_split.length < 2){
-                return a_arrayRet;
-            }
-            a_column_split = a_table_split[1].split(",");
-            a_key = new String[a_column_split.length];
-            for (int a_iCnt=0; a_iCnt<a_column_split.length; a_iCnt++){
-                a_any_split = a_column_split[a_iCnt].split(":");
-                if (a_iCnt > 0){
-                    a_fields += ",";
-                }
-                a_fields += a_any_split[0];
-                a_key[a_iCnt] = a_any_split[0];
-            }
-            
-            if (a_table_split[0].equals("pbxremotecustomer") == true){
-                a_sql = "SELECT COUNT(*) AS REC_SUM FROM remotemonitoringcustomer WHERE (usercode like '0%')";
-            }else if (a_table_split[0].equals("irmsremotecustomer") == true){
-                a_sql = "SELECT COUNT(*) AS REC_SUM FROM remotemonitoringcustomer WHERE (usercode like '1%') AND (remotesetid=4)";
-            }else{
-                a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0];
-            }
+            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1";
             
             Class.forName (_db_driver);
             // データベースとの接続
             a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
             a_ps = a_con.prepareStatement(a_sql);
+
             a_rs = a_ps.executeQuery();
             while(a_rs.next()){
                 a_iSum = a_rs.getInt("REC_SUM");
@@ -591,120 +557,36 @@ public class SetDB implements Serializable {
                 int a_end_idx = (h_pageNo*_max_line_page);
                 
                 if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
-                    if (a_table_split[0].equals("pbxremotecustomer") == true){
-                        a_sql = "SELECT t1.remotesetid,t1.usernumber,t2.username,t1.usercode FROM ";
-                        a_sql += " (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '0%')) t1";
-                        a_sql += " LEFT JOIN";
-                        a_sql += " newcustomermanage t2";
-                        a_sql += " ON";
-                        a_sql += " (t1.usercode=t2.usercode)";
-                        a_sql += " ORDER BY t1.usercode,t1.usernumber";
-                    }else if (a_table_split[0].equals("irmsremotecustomer") == true){
-                        a_sql = "SELECT t1.remotesetid,t1.usernumber,t2.username,t1.usercode FROM ";
-                        a_sql += " (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '1%') AND (remotesetid=4)) t1";
-                        a_sql += " LEFT JOIN";
-                        a_sql += " newcustomermanage t2";
-                        a_sql += " ON";
-                        a_sql += " (t1.usercode=t2.usercode)";
-                        a_sql += " ORDER BY t1.usercode,t1.usernumber";
-                    }else{
-                        a_sql = "SELECT * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
-                    }
-                    a_sql = "SELECT s1.* FROM (" + a_sql + ") s1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                    a_sql = "SELECT t1.* FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }else if (_db_driver.equals("org.postgresql.Driver")){
-                    if (a_table_split[0].equals("pbxremotecustomer") == true){
-                        a_sql = "SELECT row_number() over(ORDER BY t1.remotesetid,t1.usernumber), t1.remotesetid,t1.usernumber,t2.username,t1.usercode FROM ";
-                        a_sql += " (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '0%')) t1";
-                        a_sql += " LEFT JOIN";
-                        a_sql += " newcustomermanage t2";
-                        a_sql += " ON";
-                        a_sql += " (t1.usercode=t2.usercode)";
-                        a_sql += " ORDER BY t1.usercode,t1,usernumber";
-                    }else if (a_table_split[0].equals("irmsremotecustomer") == true){
-                        a_sql = "SELECT row_number() over(ORDER BY t1.remotesetid,t1.usernumber), t1.remotesetid,t1.usernumber,t2.username,t1.usercode FROM ";
-                        a_sql += " (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '1%') AND (remotesetid=4)) t1";
-                        a_sql += " LEFT JOIN";
-                        a_sql += " newcustomermanage t2";
-                        a_sql += " ON";
-                        a_sql += " (t1.usercode=t2.usercode)";
-                        a_sql += " ORDER BY t1.usercode,t1,usernumber";
-                    }else{
-                        a_sql = "SELECT row_number() over(ORDER BY " + a_fields + "), * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
-                    }
-                    a_sql = "SELECT * FROM (" + a_sql + ") s1 WHERE (s1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                    a_sql = "SELECT t1.* FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1 WHERE (t1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }
 
                 a_ps = a_con.prepareStatement(a_sql);
+                
                 a_rs = a_ps.executeQuery();
                 while(a_rs.next()){
                     a_sRet = "";
-                    /*
-                    if (a_table_split[0].equals("pbxremotecustomer") == true){
-                        a_sVal = _Environ.ExistDBString(a_rs, "remotesetid");
-                        a_sRet += a_sVal;
-                        a_sRet += "\t";
-                        a_sVal = _Environ.ExistDBString(a_rs, "usernumber");
-                        a_sRet += a_sVal;
-                        a_sRet += "\t";
-                        a_sVal = _Environ.ExistDBString(a_rs, "username");
-                        a_sRet += a_sVal;
-                        a_sRet += "\t";
-                        String a_sTmp1 = _Environ.ExistDBString(a_rs, "usercode");
-                        a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
-                        a_sVal += "');\">" + a_sTmp1 + "</a>";
-                        a_sRet += a_sVal;
-                        a_arrayRet.add(a_sRet);
-                    }else if (a_table_split[0].equals("irmsremotecustomer") == true){
-                    }else{
-                    */
-                        for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
-                            String[] a_split2 = h_coldefs.get(a_iCnt).split("\t");
-                            a_sVal = _Environ.ExistDBString(a_rs, a_split2[_Environ.COLUMN_DEF_NAME]);
-                            String a_sTmp1 = a_sVal;
-
-                            if (a_sVal != ""){
-                                if ((a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0)){
-                                    //日付
-                                    a_sVal = a_sVal.replace("-", "/");
-                                    if (a_split2[_Environ.COLUMN_DEF_TIME].equals("n")){
-                                        //時刻指定なし
-                                        a_sVal = a_sVal.substring(0, 10);
-                                    }
-                                }
+                    //先頭は番号
+                    for (int a_iCnt=0; a_iCnt<a_items.length + 1; a_iCnt++){
+                        if (a_iCnt>0){
+                            //a_sVal = a_rs.getString(a_columns[a_iCnt - 1]);
+                            a_sVal = _Environ.ExistDBString(a_rs, a_columns[a_iCnt - 1]);
+                            if (a_sVal.equals("") == true){
+                                a_sVal += " ";
                             }
-
-                            if (a_iCnt > 0){
-                                a_sRet += "\t";
-                                if ((a_table_split[0].equals("pbxremotecustomer") == true) ||
-                                    (a_table_split[0].equals("irmsremotecustomer") == true)){
-                                    if (a_split2[_Environ.COLUMN_DEF_NAME].equals("usercode") == true){
-                                        a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
-                                        a_sVal += "');\">" + a_sTmp1 + "</a>";
-                                    }
-                                }
-                            }else{
-                                if ((a_table_split[0].equals("pbxremotecustomer") == true) ||
-                                    (a_table_split[0].equals("irmsremotecustomer") == true)){
-                                }else{
-                                    a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
-                                    for (int a_iCnt2=1; a_iCnt2<a_key.length; a_iCnt2++){
-                                        String a_sTmp2 = _Environ.ExistDBString(a_rs,a_key[a_iCnt2]);
-                                        a_sVal += "," + a_sTmp2;
-                                    }
-                                    a_sVal += "');\">" + a_sTmp1 + "</a>";
-                                }
-                            }
-                            a_sRet += a_sVal;
+                            a_sRet += "\t";
+                        }else{
+                            a_sVal = a_rs.getString(a_iCnt + 1);
                         }
-                        a_arrayRet.add(a_sRet);
-                    /*
+                        a_sRet += a_sVal;
                     }
-                    */
+                    a_arrayRet.add(a_sRet);
                 }
                 a_rs.close();
                 a_ps.close();
-            }
-            
+                
+            }            
         } catch (SQLException e) {
             _Environ._MyLogger.severe("[FindMnt]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
@@ -740,6 +622,7 @@ public class SetDB implements Serializable {
         PreparedStatement a_ps = null;
         ResultSet a_rs = null;
         String a_sql = "";
+        String a_sql_tmp = "";
         try{
             a_table_split = h_table.split("\t");
             if (a_table_split.length<2){
@@ -762,6 +645,134 @@ public class SetDB implements Serializable {
                 a_sql += " (" + a_key[a_iCnt] + "=?)";
             }
 
+            if (a_table_split[0].equals("pbxremotecustomer") == true){
+                a_sql_tmp = "SELECT";
+                a_sql_tmp += " s1.usercode";
+                a_sql_tmp += ",s1.userchargepart";
+                a_sql_tmp += ",s2.username";
+                a_sql_tmp += ",s2.maintel";
+                a_sql_tmp += ",s2.postcode";
+                a_sql_tmp += ",s2.useraddr";
+                a_sql_tmp += ",s2.chargename";
+                a_sql_tmp += ",s2.chargetel";
+                a_sql_tmp += ",s2.remotesin";
+                a_sql_tmp += ",s2.remotecontract";
+                a_sql_tmp += ",s2.diagnose";
+                a_sql_tmp += ",s2.remoteclass";
+                a_sql_tmp += ",s1.patrolmethod";
+                a_sql_tmp += ",s1.patroldayofweek";
+                a_sql_tmp += ",s1.command1";
+                a_sql_tmp += ",s1.command2";
+                a_sql_tmp += ",s2.monthreport";
+                a_sql_tmp += ",s3.reportclass";
+                a_sql_tmp += ",s1.usercode1";
+                a_sql_tmp += ",s1.usercode2";
+                a_sql_tmp += ",s4.remotesetid";
+                a_sql_tmp += ",s4.usernumber";
+                a_sql_tmp += ",s4.machinename";
+                a_sql_tmp += ",s4.version";
+                a_sql_tmp += ",s1.filever";
+                a_sql_tmp += ",s4.nodecode";
+                a_sql_tmp += ",s4.idcode";
+                a_sql_tmp += ",s1.maintenancecenter";
+                a_sql_tmp += ",s1.maintenancegroup";
+                a_sql_tmp += ",s1.maintenancedirect";
+                a_sql_tmp += ",s1.\"COMMENT\" AS comment";
+                a_sql_tmp += ",s1.notes";
+                a_sql_tmp += ",s4.urgentreportid";
+                a_sql_tmp += ",s1.termcode";
+                a_sql_tmp += ",s1.termname";
+                a_sql_tmp += ",s1.passwordorg";
+                a_sql_tmp += ",s1.passwordnew";
+                a_sql_tmp += ",s1.syspass";
+                a_sql_tmp += ",s2.linetel";
+                a_sql_tmp += ",s1.circuitclass";
+                a_sql_tmp += ",s1.patrolmethod1";
+                a_sql_tmp += ",s1.patrolmethod2";
+                a_sql_tmp += ",s1.comatr";
+                a_sql_tmp += ",s1.ctbt";
+                a_sql_tmp += ",s1.terminalline";
+                a_sql_tmp += ",s1.iocsel";
+                a_sql_tmp += ",s1.rmi";
+                a_sql_tmp += ",s4.autoalarmreset";
+                a_sql_tmp += ",s3.retransflg";
+                a_sql_tmp += ",s3.retransfernumber";
+                a_sql_tmp += ",s1.termdf1";
+                a_sql_tmp += ",s1.termdf2";
+                a_sql_tmp += ",s1.termdf3";
+                a_sql_tmp += ",s1.termdf4";
+                a_sql_tmp += ",s1.termdf5";
+                a_sql_tmp += ",s1.termdf6";
+                a_sql_tmp += ",s1.syscomment";
+                a_sql_tmp += ",s1.verhigh";
+                a_sql_tmp += ",s1.rev1st";
+                a_sql_tmp += ",s1.rev2nd";
+                a_sql_tmp += ",s1.rev3rd";
+                a_sql_tmp += ",s1.reserve";
+                a_sql_tmp += ",s1.reserve1";
+                a_sql_tmp += ",s4.id AS monitoring_id";
+                a_sql_tmp += " FROM";
+                a_sql_tmp += " (" + a_sql + ") s1";
+                a_sql_tmp += " LEFT JOIN";
+                a_sql_tmp += " newcustomermanage s2";
+                a_sql_tmp += " ON";
+                a_sql_tmp += " (s1.usercode=s2.usercode)";
+                a_sql_tmp += " LEFT JOIN";
+                a_sql_tmp += " customerstation s3";
+                a_sql_tmp += " ON";
+                a_sql_tmp += " (s1.id=s3.pbxremotecustomerid)";
+                a_sql_tmp += " LEFT JOIN";
+                a_sql_tmp += " remotemonitoringcustomer s4";
+                a_sql_tmp += " ON";
+                a_sql_tmp += " (s1.usercode=s4.usercode)";
+                a_sql = a_sql_tmp;
+            }else if (a_table_split[0].equals("irmsremotecustomer") == true){
+                a_sql_tmp = "SELECT";
+                a_sql_tmp += " s1.usercode";
+                a_sql_tmp += ",s2.username";
+                a_sql_tmp += ",s2.maintel";
+                a_sql_tmp += ",s2.postcode";
+                a_sql_tmp += ",s1.ext";
+                a_sql_tmp += ",s2.useraddr";
+                a_sql_tmp += ",s2.chargename";
+                a_sql_tmp += ",s2.chargetel";
+                a_sql_tmp += ",s2.remotesin";
+                a_sql_tmp += ",s2.remotecontract";
+                a_sql_tmp += ",s2.diagnose";
+                a_sql_tmp += ",s2.remoteclass";
+                a_sql_tmp += ",s1.managerpcno";
+                a_sql_tmp += ",s1.diaginterval";
+                a_sql_tmp += ",s1.diagtime";
+                a_sql_tmp += ",s1.linetype";
+                a_sql_tmp += ",s1.linetel";
+                a_sql_tmp += ",s1.inboundtype";
+
+                a_sql_tmp += ",s1.raspass";
+                a_sql_tmp += ",s1.commentary";
+                a_sql_tmp += ",s1.ftpsend";
+                a_sql_tmp += ",s2.monthreport";
+                a_sql_tmp += ",s4.machinename";
+                a_sql_tmp += ",s4.version";
+                a_sql_tmp += ",s4.nodecode";
+                a_sql_tmp += ",s4.idcode";
+                a_sql_tmp += ",s4.urgentreportid";
+                a_sql_tmp += ",s4.autoalarmreset";
+                a_sql_tmp += " FROM";
+                a_sql_tmp += " (" + a_sql + ") s1";
+                a_sql_tmp += " LEFT JOIN";
+                a_sql_tmp += " newcustomermanage s2";
+                a_sql_tmp += " ON";
+                a_sql_tmp += " (s1.usercode=s2.usercode)";
+                a_sql_tmp += " LEFT JOIN";
+                a_sql_tmp += " customerstation s3";
+                a_sql_tmp += " ON";
+                a_sql_tmp += " (s1.id=s3.pbxremotecustomerid)";
+                a_sql_tmp += " LEFT JOIN";
+                a_sql_tmp += " remotemonitoringcustomer s4";
+                a_sql_tmp += " ON";
+                a_sql_tmp += " (s1.usercode=s4.usercode)";
+                a_sql = a_sql_tmp;
+            }            
             Class.forName (_db_driver);
             // データベースとの接続
             a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
@@ -778,24 +789,39 @@ public class SetDB implements Serializable {
 
             a_rs = a_ps.executeQuery();
             while(a_rs.next()){
+                boolean a_isOK = true;
                 for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
                     String[] a_split2 = h_coldefs.get(a_iCnt).split("\t");
-                    String a_sTmp = a_split2[_Environ.COLUMN_DEF_NAME];
-                    a_sVal = _Environ.ExistDBString(a_rs, a_split2[_Environ.COLUMN_DEF_NAME]);
-                    
-                    if (a_sVal != ""){
-                        if ((a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("time") >= 0) || (a_split2[_Environ.COLUMN_DEF_TYPE].indexOf("date") >= 0)){
-                            //日付
-                            a_sVal = a_sVal.replace("-", "/");
-                            if (a_split2[_Environ.COLUMN_DEF_TIME].equals("n")){
-                                //時刻指定なし
-                                a_sVal = a_sVal.substring(0, 10);
-                            }
+                    String[] a_columns = a_split2[_Environ.COLUMN_DEF_NAME].split(":");
+                    String[] a_types = a_split2[_Environ.COLUMN_DEF_TYPE].split(":");
+                    String[] a_times = a_split2[_Environ.COLUMN_DEF_TIME].split(":");
+                    if (a_table_split[0].equals("pbxremotecustomer") == true){
+                        if (a_columns[0].equals("prt_status") == true){
+                            a_isOK = false;
                         }
                     }
-                    
-                    a_arrayRet.add(a_sTmp + "\t" + a_sVal);
+                    if (a_isOK == true){
+                        //0番目のカラムを使用
+                        a_sVal = _Environ.ExistDBString(a_rs, a_columns[0]);
+                        if (a_sVal != ""){
+                            //0番目のカラムを使用
+                            if ((a_types[0].indexOf("time") >= 0) || (a_types[0].indexOf("date") >= 0)){
+                                //日付
+                                a_sVal = a_sVal.replace("-", "/");
+                                if (a_times[0].equals("n")){
+                                    //時刻指定なし
+                                    a_sVal = a_sVal.substring(0, 10);
+                                }
+                            }
+                        }
+                        a_arrayRet.add(a_columns[0] + "\t" + a_sVal);
+                    }
                 }
+                if (a_table_split[0].equals("pbxremotecustomer") == true){
+                    a_sVal = _Environ.ExistDBString(a_rs, "monitoring_id");
+                    a_arrayRet.add("monitoring_id" + "\t" + a_sVal);
+                }
+                break;
             }
             a_rs.close();
             a_ps.close();
@@ -950,7 +976,8 @@ public class SetDB implements Serializable {
         PreparedStatement a_ps = null;
         ResultSet a_rs = null;
         String a_sql = "";
-        String[] a_items = h_show_def[_Environ.SHOWLIST_ITEM_NAME].split(",");
+        String[] a_columns = h_show_def[_Environ.SHOWLIST_COLUMN_NAME].split(":");
+        String[] a_items = h_show_def[_Environ.SHOWLIST_ITEM_NAME].split(":");
         //int a_iRet = 0;
         try{
             a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (" + h_show_def[_Environ.SHOWLIST_FIND_SQL] + ") t1";
@@ -996,9 +1023,15 @@ public class SetDB implements Serializable {
                     a_sRet = "";
                     //先頭は番号
                     for (int a_iCnt=0; a_iCnt<a_items.length + 1; a_iCnt++){
-                        a_sVal = a_rs.getString(a_iCnt + 1);
                         if (a_iCnt>0){
+                            //a_sVal = a_rs.getString(a_columns[a_iCnt - 1]);
+                            a_sVal = _Environ.ExistDBString(a_rs, a_columns[a_iCnt - 1]);
+                            if (a_sVal.equals("") == true){
+                                a_sVal += " ";
+                            }
                             a_sRet += "\t";
+                        }else{
+                            a_sVal = a_rs.getString(a_iCnt + 1);
                         }
                         a_sRet += a_sVal;
                     }
@@ -1188,4 +1221,155 @@ public class SetDB implements Serializable {
         
         return a_arrayRet;
     }
+    
+    //RPT使用状況の取得
+    public  String GetRPTMnt(
+        ArrayList<String> h_plurals,
+        String h_monitoring_id
+        ) throws Exception{
+        String[] a_table_split = null;
+        String[] a_column_split = null;
+        String[] a_any_split = null;
+        String[] a_key = null;
+        String[] a_type = null;
+
+        String a_sRet = "";
+        String a_sVal = "";
+        Connection a_con = null;
+        PreparedStatement a_ps = null;
+        ResultSet a_rs = null;
+        String a_sql = "";
+        String a_sql_tmp = "";
+        try{
+            Class.forName (_db_driver);
+            // データベースとの接続
+            a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
+
+            //equipmenttype
+            ArrayList<String> a_array_equipmenttype = new ArrayList<String>();
+            a_sql = "SELECT *,(SELECT name FROM equipmenttypemaster WHERE (id=equipmenttype.equipmenttypemasterid)) AS equipmenttype_name FROM equipmenttype WHERE (customerid=?) ORDER BY ordernumber";
+            a_ps = a_con.prepareStatement(a_sql);
+            a_ps.setInt(1, Integer.valueOf(h_monitoring_id));
+            a_rs = a_ps.executeQuery();
+            int a_rec = 0;
+            while(a_rs.next()){
+                a_rec++;
+                a_sVal = _Environ.ExistDBString(a_rs, "keyword");
+                a_array_equipmenttype.add("keyword" + String.valueOf(a_rec) + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "equipmenttypemasterid");
+                a_array_equipmenttype.add("equipmenttypemasterid" + String.valueOf(a_rec) + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "equipmenttype_name");
+                a_array_equipmenttype.add("equipmenttype_name" + String.valueOf(a_rec) + "\t" + a_sVal);
+            }
+            a_rs.close();
+            a_ps.close();
+            
+            //sioportnumber
+            ArrayList<String> a_array_sioportnumber = new ArrayList<String>();
+            a_sql = "SELECT * FROM sioportnumber WHERE (customerid=?)";
+            a_ps = a_con.prepareStatement(a_sql);
+            a_ps.setInt(1, Integer.valueOf(h_monitoring_id));
+            a_rs = a_ps.executeQuery();
+            while(a_rs.next()){
+                a_sVal = _Environ.ExistDBString(a_rs, "m0");
+                a_array_sioportnumber.add("m0" + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "m1");
+                a_array_sioportnumber.add("m1" + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "m2");
+                a_array_sioportnumber.add("m2" + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "m3");
+                a_array_sioportnumber.add("m3" + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "m4");
+                a_array_sioportnumber.add("m4" + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "m5");
+                a_array_sioportnumber.add("m5" + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "m6");
+                a_array_sioportnumber.add("m6" + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "m7");
+                a_array_sioportnumber.add("m7" + "\t" + a_sVal);
+                a_sVal = _Environ.ExistDBString(a_rs, "m8");
+                a_array_sioportnumber.add("m8" + "\t" + a_sVal);
+                break;
+            }
+            a_rs.close();
+            a_ps.close();
+
+            //データの組み立て
+            String a_plural_data = "";
+            for (int a_iCnt2=1; a_iCnt2<h_plurals.size(); a_iCnt2++){
+                String[] a_split2 = h_plurals.get(a_iCnt2).split("\t");
+                String[] a_split3 = a_split2[_Environ.COLUMN_DEF_FIELD].split(":");
+                if (a_iCnt2 > 1){
+                    a_plural_data += "\b\b\b";
+                }
+                for (int a_iCnt3=0; a_iCnt3<a_split3.length; a_iCnt3++){
+                    //該当番目の定義を組み立て
+                    String[] a_now_split = new String[_Environ.COLUMN_DEF_ACTION + 1];
+                    for (int a_iCnt4=0; a_iCnt4<_Environ.COLUMN_DEF_ACTION + 1; a_iCnt4++){
+                        String[] a_split4 = a_split2[a_iCnt4].split(":");
+                        a_now_split[a_iCnt4] = "";
+                        if (a_split4.length > a_iCnt3){
+                            a_now_split[a_iCnt4] = a_split4[a_iCnt3];
+                        }
+                    }
+                    if (a_iCnt3 > 0){
+                        a_plural_data += "\b\b";
+                    }
+                    String a_field = a_now_split[_Environ.COLUMN_DEF_FIELD];
+                    boolean a_isFound = false;
+                    //equipmenttype
+                    for(int a_idx=0; a_idx<a_array_equipmenttype.size(); a_idx++){
+                        String[] a_data = a_array_equipmenttype.get(a_idx).split("\t");
+                        if (a_data[0].equals(a_field) == true){
+                            //String a_val = HtmlEncode(request.getParameter(a_field));
+                            String a_val = a_data[1];
+                            if (a_val.length()>0){
+                                a_plural_data += a_field + "\b" + a_val;
+                            }else{
+                                a_plural_data += a_field + "\b ";
+                            }
+                            a_isFound = true;
+                            break;
+                        }
+                    }
+                    //sioportnumber
+                    for(int a_idx=0; a_idx<a_array_sioportnumber.size(); a_idx++){
+                        String[] a_data = a_array_sioportnumber.get(a_idx).split("\t");
+                        if (a_data[0].equals(a_field) == true){
+                            //String a_val = HtmlEncode(request.getParameter(a_field));
+                            String a_val = a_data[1];
+                            if (a_val.length()>0){
+                                a_plural_data += a_field + "\b" + a_val;
+                            }else{
+                                a_plural_data += a_field + "\b ";
+                            }
+                            a_isFound = true;
+                            break;
+                        }
+                    }
+                    if (a_isFound == false){
+                            a_plural_data += a_field + "\b ";
+                    }
+                }
+            }
+            a_sRet = a_plural_data;            
+            //a_sRet = "prt_status\t" + a_plural_data;            
+            
+        } catch (SQLException e) {
+            _Environ._MyLogger.severe("[GetRPTMnt]" + e.getMessage());
+        } catch (ClassNotFoundException ex) {
+            _Environ._MyLogger.severe("[GetRPTMnt]" + ex.getMessage());
+        } finally{
+            if (a_ps != null){
+                a_ps.close();
+            }
+            if (a_con != null){
+                a_con.close();
+            }
+        }
+        _Environ._MyLogger.info("*** GetRPTMnt is finished. ***");
+
+        return a_sRet;
+    }
+    
 }
