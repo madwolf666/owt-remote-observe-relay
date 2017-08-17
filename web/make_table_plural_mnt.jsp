@@ -28,7 +28,7 @@
     String[] a_table_split = null;
     String[] a_column_split = null;
     ArrayList<String> a_coldefs = null;
-    if (a_Mnt_Table != ""){
+    if (a_Mnt_Table.equals("") == false){
         a_table_split = a_Mnt_Table.split("\t");
         a_column_split = a_table_split[1].split(",");
     }

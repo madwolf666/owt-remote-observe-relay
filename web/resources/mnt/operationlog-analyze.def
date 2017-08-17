@@ -1,2 +1,6 @@
-カラム名：必須有無（a/n/y）：時刻指定（n/y）
-rascode:y:n
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/list/plural/check）	コメント
+id	id	loganalyzeschedule	a	n	n	10	n	ID
+period	period	loganalyzeschedule	y	time	y	5	n	検索期間設定
+starttime	starttime	loganalyzeschedule	y	date	y	16	n	検索開始時間
+findkeyword	findkeyword	loganalyzeschedule	y	s	n	4	n	検索キーワード
+sendmailaddress	sendmailaddress	loganalyzeschedule	n	s	n	4096	c	通知メールアドレス設定

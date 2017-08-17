@@ -29,6 +29,9 @@
            <script type="text/javascript" src="js/jquery-ui.min.js"></script>
             <script type="text/javascript" src="js/jquery.ui.datepicker-ja.min.js"></script>
 
+            <link type="text/css" href="css/ui-lightness.jquery-ui.css" rel="stylesheet" />
+            <script type="text/javascript" src="js/jquery.datetimepicker.js"></script>
+            <link type="text/css" href="css/jquery.datetimepicker.css" rel="stylesheet" />
             <title><ui:insert name="title">リモート監視中継</ui:insert></title>
             <style>
                 li.errorStyle {
@@ -89,7 +92,7 @@
               <!-- footer end -->
             </div>
             <!-- container end -->
-            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:178px;left:5px;background-color:#ffffff;width:99%;">
+            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:184px;left:5px;background-color:#ffffff;width:99%;">
             </div>
             <script type="text/javascript" src="js/navigation.js">hpb-navigation-js</script>
 
@@ -99,7 +102,7 @@
     </f:view>
 <script type="text/javascript">
     make_menu();
-    make_log_analyze_select_mnt();
+    //make_log_analyze_select_mnt();
     make_log_analyze_list_mnt(1);
     $(window).resize(function(){
         resize_tbl_list();

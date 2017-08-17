@@ -28,7 +28,7 @@
     ArrayList<String> a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs");
     String[] a_table_split = null;
     String[] a_column_split = null;
-    if (a_Mnt_Table.length() > 0){
+    if (a_Mnt_Table.equals("") == false){
         a_table_split = a_Mnt_Table.split("\t");
         a_column_split = a_table_split[1].split(",");
     }

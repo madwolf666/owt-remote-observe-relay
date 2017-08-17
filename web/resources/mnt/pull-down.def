@@ -31,3 +31,4 @@ trap	0:無視,1:MN,2:MJ,3:Non
 flttype	E 異常:E 異常,F 致命的:F 致命的,I 情報:I 情報,W 注意:W 注意,運用ログ:運用ログ
 module	Generic Trap:Generic Trap,SNMPc Event:SNMPc Event
 class	0:発報しない,1:MN,2:MJ,3:一般
+logname	mss2operationlog:MSSV2用RAS通信ログ,operationlog:オペレーションログ,pbxoperationlog:PBXリモートのオペレーションログ

@@ -265,6 +265,37 @@ ArrayList<String> GetDef_Plurals(
     return a_plural_def;
 }
 
+//チェックリスト表示
+String GetDef_CheckList(
+    String h_envPatht,
+    String h_col_name
+    ){
+    String a_check_def = "";
+    try{
+        FileInputStream a_fs = new FileInputStream(h_envPatht + h_col_name + ".def");
+        InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
+        BufferedReader a_br = new BufferedReader(a_isr);
+        String a_line = "";
+        int a_rec = 0;
+        while ((a_line = a_br.readLine())!=null){
+            //タイトルはなし
+            if (a_rec>0){
+                a_check_def += "\t";
+            }
+            a_check_def += a_line;
+            a_rec++;
+        }
+        a_br.close();
+        a_isr.close();
+        a_fs.close();
+
+    }catch(Exception e){
+
+    }
+
+    return a_check_def;
+}
+
 //特殊文字の変換
 // HTMLエンコードする
 String HtmlEncode(String original)
@@ -471,7 +502,7 @@ String Make_Tag_Mnt(
             a_sRet += Make_Input_Tag_Mnt_String(h_isEdit, h_act, h_coldef, "width:100%;", h_val);
         }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("time") >= 0){
             //ミリ秒まで扱う？
-            a_sRet += Make_Input_Tag_Mnt_TimeStamp(h_isMain, h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
+            a_sRet += Make_Input_Tag_Mnt_Time(h_isMain, h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
         }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("date") >= 0){
             a_sRet += Make_Input_Tag_Mnt_Date(h_isMain, h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
         }
@@ -486,6 +517,12 @@ String Make_Tag_Mnt(
         String[] a_show_def = GetDef_ShowList(h_showlist, a_colName);
         if (a_show_def != null){
             a_sRet += Make_Input_Tag_Mnt_ShowList(h_isEdit, h_coldef, a_show_def, "width:auto;", h_val);
+        }   
+    }else if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("c") >= 0){
+        //該当テーブルの定義情報を読み込む
+        String a_check_def = GetDef_CheckList(h_envPath, a_colName);
+        if (a_check_def != null){
+            a_sRet += Make_Input_Tag_Mnt_CheckList(h_isEdit, h_act, h_coldef, a_check_def, "width:auto;", h_val);
         }   
     }else if (h_coldef[COLUMN_DEF_PULLDOWN].equals("") == true){
         if (h_isEdit == false){
@@ -615,7 +652,7 @@ String Make_Input_Tag_Mnt_String(
 }
 
 //inputタグ生成（タイムスタンプ）
-String Make_Input_Tag_Mnt_TimeStamp(
+String Make_Input_Tag_Mnt_Time(
     boolean h_isMain,
     boolean h_isEdit,
     String h_act,
@@ -625,12 +662,16 @@ String Make_Input_Tag_Mnt_TimeStamp(
     String h_val
     ){
     String a_sRet = "";
-    int a_max_len = 10 + 1 + 8;
+    int a_max_len = 5;
 
     //カラム名を取得：0番目をメインとする
     String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
     String a_colName = a_colNames[0];
     String a_field = h_coldef[COLUMN_DEF_FIELD];
+
+    if (h_coldef[COLUMN_DEF_LENGTH].equals("") == false){
+        a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
+    }
 
     if (h_isEdit == false){
         a_sRet += h_val;
@@ -645,23 +686,10 @@ String Make_Input_Tag_Mnt_TimeStamp(
         }
         a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
 
-        //g_JScript_Out += "$('#d_" + h_column[1] + "').datepicker({});";
-        //g_JScript_Out += "$('#t_" + h_column[1] + "').datepicker({format:'H:i', datepicker:false, lang:'ja', step:1});";
-        //g_JScript_Out += "$('#" + h_column[1] + "').datetimepicker({dateFormat:'Y/m/d', showSecond: true, timeFormat:'hh:mm:ss', lang:'ja', step:0.1});";
-        if (h_isTime.equals("y")){
-            a_max_len = 10 + 1 + 8;
-            if (h_isMain == true){
-                g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
-            }else{
-                g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
-            }
+        if (h_isMain == true){
+            g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'H:i', datepicker:false, lang:'ja', step:1});";
         }else{
-            a_max_len = 10;
-            if (h_isMain == true){
-                g_JScript_Program += "$('#" + a_field + "').datepicker({});";
-            }else{
-                g_JScript_Program_Plural += "$('#" + a_field + "').datepicker({});";
-            }
+            g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'H:i', datepicker:false, lang:'ja', step:1});";
         }
 
         a_sRet +=  String.valueOf(a_max_len) + "'>";
@@ -688,6 +716,10 @@ String Make_Input_Tag_Mnt_Date(
     String a_colName = a_colNames[0];
     String a_field = h_coldef[COLUMN_DEF_FIELD];
 
+    if (h_coldef[COLUMN_DEF_LENGTH].equals("") == false){
+        a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
+    }
+
     if (h_isEdit == false){
         a_sRet += h_val;
     }
@@ -702,14 +734,16 @@ String Make_Input_Tag_Mnt_Date(
         a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='";
 
         if (h_isTime.equals("y")){
-            a_max_len = 10 + 1 + 8;
+            //a_max_len = 10 + 1 + 8;
             if (h_isMain == true){
-                g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+                g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i', lang:'ja', step:1});";
+                //g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
             }else{
-                g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
+                g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i', lang:'ja', step:1});";
+                //g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
             }
         }else{
-            a_max_len = 10;
+            //a_max_len = 10;
             if (h_isMain == true){
                 g_JScript_Program += "$('#" + a_field + "').datepicker({});";
             }else{
@@ -831,6 +865,69 @@ String Make_Input_Tag_Mnt_ShowList(
     return a_sRet;
 }
 
+//チェックリスト表示生成
+String Make_Input_Tag_Mnt_CheckList(
+    boolean h_isEdit,
+    String h_act,
+    String[] h_coldef,
+    String h_option,
+    String h_style,
+    String h_val
+    ){
+    String a_sRet = "";
+    String a_sRet2 = "";
+    String[] a_split1 = null;
+    String[] a_split2 = null;
+    String[] a_split3 = null;
+
+    //カラム名を取得：0番目をメインとする
+    String[] a_colNames = h_coldef[COLUMN_DEF_NAME].split(":");
+    String a_colName = a_colNames[0];
+    String a_field = h_coldef[COLUMN_DEF_FIELD];
+
+    a_split1 = h_option.split("\t");
+    a_split2 = h_val.split(";");
+
+    if (h_isEdit == false){
+        a_sRet += h_val;
+    }
+
+    if (h_act.equals("l") == false){
+        if (h_isEdit == true){
+            a_sRet2 = "<input type='checkbox' id='" + a_field + "' name='" + a_field + "' style='" + h_style + "'";
+            for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
+                boolean a_isFound = false;
+                if (a_iCnt>0){
+                    a_sRet += "<br>";
+                }
+                a_split3 = a_split1[a_iCnt].split(":");
+                String a_sTmp = a_split3[0];
+                a_sRet += a_sRet2 + " value='" + a_split3[0].trim() + "'";
+                for (int a_iCnt2=0; a_iCnt2<a_split2.length; a_iCnt2++){
+                    if (a_split3[0].equals(a_split2[a_iCnt2]) == true){
+                        a_isFound = true;
+                        break;
+                    }
+                }
+                if (a_isFound == true){
+                    a_sRet += " checked='checked'";
+                }
+                a_sRet += ">";
+                if (a_split3.length > 1){
+                    a_sRet += a_split3[1];
+                }else{
+                    a_sRet += a_split3[0];
+                }
+            }
+        }else{
+            a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field  + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+        }
+    }else{
+
+    }
+
+    return a_sRet.trim();
+}
 //入力確認
 String Make_Confirm_Table_Mnt(String h_act, String h_idx){
     String a_sRet = "" ;
@@ -1075,6 +1172,75 @@ String Make_Tag_Mnt_Machine_Code(
     String a_sRet = "";
 
     return a_sRet;
+}
+
+String Make_Entry_Log_Analyze_mnt(String h_act, String h_idx){
+    String a_sRet = "" ;
+   
+    a_sRet = "function entry_log_analyze_mnt(){";
+    
+    a_sRet += "var a_sendmailaddress = '';";
+    a_sRet += "$(\"[name='sendmailaddress']:checked\").each(function() {";
+    a_sRet += " value = $(this).val();";
+    a_sRet += " if (a_sendmailaddress != ''){a_sendmailaddress += ';';}";
+    a_sRet += " a_sendmailaddress += value;";
+    //a_sRet += " alert(value);";
+    //a_sRet += "console.log(value);";
+    a_sRet += "});";
+
+    g_Post_Data = g_Post_Data.replace("'sendmailaddress': $('#sendmailaddress').val()", "'sendmailaddress': a_sendmailaddress");
+
+    //a_sRet += "alert(\"" + g_Post_Data + "\");";
+    /*
+    a_sRet += " var a_act = $(\"#txt_act\").val();";
+    a_sRet += " var a_idx = $(\"#txt_idx\").val();";
+    */
+    
+    //数値入力チェック
+    a_sRet += g_JScript_IsNumeric;
+    
+    //必須入力チェック
+    //if (h_act.equals("n")){
+        a_sRet += g_JScript_IsRequired;
+    //}
+
+    a_sRet += " if (!confirm(\"登録します。よろしいですか？\")){";
+    a_sRet += "     return false;";
+    a_sRet += " }";
+
+    a_sRet += " $.ajax({";
+    a_sRet += "     url: m_parentURL + \"entry_log_analyze_mnt.jsp\",";
+    a_sRet += "     type: 'POST',";
+    a_sRet += "     dataType: \"html\",";
+    a_sRet += "     async: false,";
+    a_sRet += "     data:{";
+    a_sRet += "         'ACT': \"" + h_act + "\"";
+    a_sRet += "         ,'IDX': \"" + h_idx + "\"";
+    
+    //入力カラム数分、セットする
+    a_sRet += g_Post_Data;
+        
+    a_sRet += "     },";
+    a_sRet += "     success: function(data, dataType){";
+    a_sRet += "         var a_result = data.trim();";
+    a_sRet += "         if (a_result != \"\"){";
+    a_sRet += "             $(\"#my-pager\").empty().append(\"<font color='#ff0000'>\" + data + \"</font>\");";
+    a_sRet += "         } else{";
+    a_sRet += "             $(\"#my-pager\").empty();";
+    a_sRet += "             alert(\"登録しました。\");";
+    a_sRet += "             make_log_analyze_list_mnt(-1);";
+    a_sRet += "         }";
+    a_sRet += "     },";
+    a_sRet += "     error: function (XMLHttpRequest, textStatus, errorThrown) {";
+    a_sRet += "         alert(errorThrown.message);";
+    a_sRet += "     },";
+    a_sRet += "     complete: function (data) {";
+    a_sRet += "     }";
+    a_sRet += " });";
+    a_sRet += " return true;";
+    a_sRet += "}";
+    
+   return a_sRet;
 }
 
 %>

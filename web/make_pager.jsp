@@ -12,7 +12,6 @@
 <jsp:useBean id="ReportMonthly" scope="page" class="report.ReportMonthly" />
 <jsp:useBean id="WarnSchedule" scope="page" class="warn.WarnSchedule" />
 <jsp:useBean id="SetDB" scope="page" class="maintenance.SetDB" />
-<jsp:useBean id="AnalyzeLog" scope="page" class="maintenance.AnalyzeLog" />
 <%
     //パスを取得
     String SCRIPT_NAME = request.getServletPath();
@@ -47,6 +46,7 @@
     int Mnt_pageNo = -1;    //[2017.07.27]
     String a_col_name = "";
     String a_find_key = "";
+    String[] a_find_def = null;
     
     String a_sOut = "";
     //int a_list_sum = 0;
@@ -145,32 +145,35 @@
         case 7: //リモートDB設定[2017.07.27]
             String[] a_table_split = null;
             Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
-            if (Mnt_Table != ""){
+            if (Mnt_Table.equals("") == false){
                 a_table_split = Mnt_Table.split("\t");
-            }
-            if (a_PageNo < 0){
-                if (GetSessionValue(session.getAttribute("Mnt_pageNo")) != ""){
-                    a_PageNo = Integer.valueOf(GetSessionValue(session.getAttribute("Mnt_pageNo")));
-                }
-            }
-            SetDB.SetRealPath(a_realPath);
-            //定義情報の読み込み
-            String[] a_find_def = GetDef_FindList(a_findlist, a_table_split[0]);
 
-            a_sOut = SetDB.MakePagerMnt(a_Kind, a_PageNo, a_find_def, "");
-            session.setAttribute("Mnt_pageNo", a_PageNo);   //[2017.07.28]
+                if (a_PageNo < 0){
+                    if (GetSessionValue(session.getAttribute("Mnt_pageNo")) != ""){
+                        a_PageNo = Integer.valueOf(GetSessionValue(session.getAttribute("Mnt_pageNo")));
+                    }
+                }
+                SetDB.SetRealPath(a_realPath);
+                //定義情報の読み込み
+                a_find_def = GetDef_FindList(a_findlist, a_table_split[0]);
+
+                a_sOut = SetDB.MakePagerMnt(a_Kind, a_PageNo, a_find_def, "");
+                session.setAttribute("Mnt_pageNo", a_PageNo);   //[2017.07.28]
+            }
             break;
         case 8: //保全[2017.08.02]
             Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Log_Analyze_Table"));
             //[2017.07.28]
             if (a_PageNo < 0){
-                if (GetSessionValue(session.getAttribute("Mntt_Log_Analyze_pageNo")) != ""){
-                    a_PageNo = Integer.valueOf(GetSessionValue(session.getAttribute("Mntt_Log_Analyze_pageNo")));
+                if (GetSessionValue(session.getAttribute("Mnt_Log_Analyze_pageNo")) != ""){
+                    a_PageNo = Integer.valueOf(GetSessionValue(session.getAttribute("Mnt_Log_Analyze_pageNo")));
                 }
             }
-            AnalyzeLog.SetRealPath(a_realPath);
-            a_sOut = AnalyzeLog.MakePagerAnalyze(Mnt_Table, a_PageNo);
-            session.setAttribute("Mntt_Log_Analyze_pageNo", a_PageNo);   //[2017.07.28]
+            SetDB.SetRealPath(a_realPath);
+            //定義情報の読み込み
+            a_find_def = GetDef_FindList(a_findlist, "loganalyzeschedule");
+            a_sOut = SetDB.MakePagerMnt(a_Kind, a_PageNo, a_find_def, "");
+            session.setAttribute("Mnt_Log_Analyze_pageNo", a_PageNo);   //[2017.07.28]
             break;
         case 9: //リスト表示[2017.08.09]
             a_col_name = request.getParameter("col_name");

@@ -100,7 +100,9 @@ function do_make_table_list_mnt_first(){
 
 function make_table_list_mnt_first(h_table){
     //alert(h_table);
-    if (h_table != ""){
+    set_session_value_mnt_table(h_table);
+    do_make_table_list_mnt_first();
+    /*if (h_table != ""){
         set_session_value_mnt_table(h_table);
         //alert("make_table_list_mnt_first--->" + g_IsSet_Session)
         do_make_table_list_mnt_first();
@@ -114,7 +116,8 @@ function make_table_list_mnt_first(h_table){
         $("#back-mnt").hide();
         $("#cancel-mnt").hide();
         $("#list-mnt").hide();
-    }
+        //make_copyright();
+    }*/
 }
 
 //一覧表示
@@ -138,6 +141,16 @@ function make_table_list_mnt(h_pageNo){
             $("#back-mnt").hide();
             $("#cancel-mnt").hide();
             $("#list-mnt").hide();
+            if ($('[name=set-table-name] option:selected').val() != ''){
+            }else{
+                $("#my-pager").empty();
+                $("#new-mnt").hide();
+                $("#confirm-mnt").hide();
+                $("#entry-mnt").hide();
+                $("#back-mnt").hide();
+                $("#cancel-mnt").hide();
+                $("#list-mnt").hide();
+            }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown.message);

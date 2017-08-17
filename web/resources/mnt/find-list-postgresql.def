@@ -9,3 +9,4 @@ ssclustertrbinfo	num:msgid:flttitle:class:summary:action:commentary	n:s:s:s:s:s:
 croscoretrbinfo	num:flttype:fltcode:fltname:class	n:s:s:s:s	n:y:n:n:y		0	SELECT row_number() over(ORDER BY num), num,flttype,fltcode,fltname,class FROM croscoretrbinfo ORDER BY num	項番:障害タイプ:FLTCODE:障害概要:障害レベル
 snmpctrbinfo	num:trapcode:trapname:module:class:system:action:commentary	n:s:s:s:s:s:s:s	n:n:n:y:y:n:n:n		0	SELECT row_number() over(ORDER BY num), num,trapcode,trapname,module,class,system,action,commentary FROM snmpctrbinfo ORDER BY num	項番:トラップコード:障害名称:検出モジュール:障害レベル:障害内容:対策:備考
 raspingtrbinfo	num:rascode:fltname:class	n:s:s:s	n:n:n:y		0	SELECT row_number() over(ORDER BY num), num,rascode,fltname,class FROM raspingtrbinfo ORDER BY num	項番:RASCODE:障害名称:障害レベル
+loganalyzeschedule	id:logname:period:starttime:findkeyword:sendmailaddress	n:s:s:date:s:s	n:n:n:n:n:n		0	SELECT row_number() over(ORDER BY id), * FROM loganalyzeschedule ORDER BY id	ID:検索対象テーブル:検索期間:検索開始時間:検索キーワード:通知メールアドレス設定

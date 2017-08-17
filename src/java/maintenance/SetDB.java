@@ -328,6 +328,7 @@ public class SetDB implements Serializable {
                         || (a_tableName.equals("pbxoperationlog") == true)
                         || (a_tableName.equals("pbxremotecustomer") == true)
                         || (a_tableName.equals("remotemonitoringcustomer") == true)
+                        || (a_tableName.equals("loganalyzeschedule") == true)
                             ){
                         if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
                             a_sql += "(SELECT NVL(MAX(ID),0)+1 FROM " + a_tableName + "),";
@@ -456,6 +457,8 @@ public class SetDB implements Serializable {
                             }
                         }else if (a_sType.indexOf("time") >= 0){
                             //timestamp
+                            a_ps.setString(a_idx, a_sVal);
+                            /*
                             if (a_sVal.equals("") == false){
                                 java.sql.Timestamp a_ts = null;
                                 SimpleDateFormat a_sdf = null;
@@ -469,13 +472,15 @@ public class SetDB implements Serializable {
                             }else{
                                 a_ps.setNull(a_idx, java.sql.Types.TIMESTAMP);
                             }
+                            */
                         }else if (a_sType.indexOf("date") >= 0){
                             //date
                             if (a_sVal.equals("") == false){
                                 java.sql.Date a_dt = null;
                                 SimpleDateFormat a_sdf = null;
                                 if (a_sVal.indexOf(" ") >= 0){
-                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                    a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+                                    //a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                                 }else{
                                     a_sdf = new SimpleDateFormat("yyyy/MM/dd");
                                 }

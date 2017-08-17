@@ -127,6 +127,7 @@ function make_log_analyze_list_mnt(h_pageNo){
             $("#my-list").empty().append(data);
             //alert($("#reset-mnt"));
             //$("#reset-mnt").hide();
+            $("#new-mnt").show();
             $("#entry-mnt").hide();
             $("#back-mnt").hide();
         },
@@ -148,7 +149,8 @@ function make_log_analyze_edit_mnt(h_act, h_idx){
         async: false,
         data:{
             'ACT': h_act,
-            'IDX': h_idx
+            'IDX': h_idx,
+            'DB': '1'
         },
         success: function(data, dataType){
             $("#my-pager").empty().append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
