@@ -128,6 +128,7 @@ public class SetDB implements Serializable {
         ArrayList<String> a_table_sql_c = new ArrayList<String>();
         String a_user_code = "";
         String a_pbxremotecustomer_id = "";
+        String a_user_number = "";
         boolean a_isAuto = false;
         boolean a_isOK = true;
         boolean a_isFound = false;
@@ -458,6 +459,11 @@ public class SetDB implements Serializable {
                                         }
                                     }
                                 }
+                                if (a_tableName.equals("irmsremotecustomer") == true){
+                                    if (a_sName.equals("usernumber") == true){
+                                        a_sVal = a_user_number;
+                                    }
+                                }
                                 a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
                             }else{
                                 a_ps.setNull(a_idx, java.sql.Types.NUMERIC);
@@ -543,6 +549,7 @@ public class SetDB implements Serializable {
                         a_rs = a_ps.executeQuery();
                         while(a_rs.next()){
                             a_user_code = _Environ.ExistDBString(a_rs, "usercode");
+                            a_user_number = a_user_code.substring(3,3);
                         }
                         a_rs.close();
                     }else if (a_tableName.equals("pbxremotecustomer") == true){
