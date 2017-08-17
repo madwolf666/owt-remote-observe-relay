@@ -117,7 +117,7 @@
             out.print("<font color='#ffff00'>*</font>");
         }
         out.print("</td>");
-        out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, false, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
+        out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, false, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</td>");
         out.print("</tr>");
     }
     if (a_table_split[0].equals("irmsremotecustomer") == true){

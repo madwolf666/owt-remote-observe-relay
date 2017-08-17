@@ -451,6 +451,13 @@ public class SetDB implements Serializable {
                         if (a_sType.indexOf("n") >= 0){
                             //数値の場合
                             if (a_sVal.equals("") == false){
+                                if (a_tableName.equals("remotemonitoringcustomer") == true){
+                                    if (a_table_split[0].equals("irmsremotecustomer") == true){
+                                        if (a_sName.equals("stationid") == true){
+                                            a_sVal = "7";
+                                        }
+                                    }
+                                }
                                 a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
                             }else{
                                 a_ps.setNull(a_idx, java.sql.Types.NUMERIC);

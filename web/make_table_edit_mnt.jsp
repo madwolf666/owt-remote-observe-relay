@@ -162,7 +162,29 @@
                     out.print("<font color='#ffff00'>*</font>");
                 }
                 out.print("</td>");
-                out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
+                
+                out.print("<td bgcolor='transparent' style='text-align:left;'>");
+
+                boolean a_isFixed = false;
+                if (a_table_split[0].equals("irmsremotecustomer") == true){
+                    if (a_colName.equals("remotesetid") == true){
+                        //a_val = "4";
+                        a_isFixed = true;
+                    }
+                    if (a_colName.equals("usernumber") == true){
+                        //a_val = "";
+                        a_isFixed = true;
+                    }
+                }
+                
+                if (a_isFixed == false){
+                    out.print(Make_Tag_Mnt(a_envPath, true, true, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val));
+                }else{
+                    out.print(Make_Tag_Mnt(a_envPath, true, false, false, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val));
+                }
+
+                out.print("</td>");
+                
                 out.print("</tr>");
             }
         }
@@ -174,7 +196,7 @@
                 String a_prt_status_data = SetDB.GetRPTMnt(a_plurals, a_monitoring_id);
                 out.print("<tr>");
                 out.print("<td bgcolor='#003366' style='text-align:left;' nowrap><font color='#ffffff'>" + a_prt_status_def[COLUMN_DEF_COMMENT] + "</font>");
-                out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, false, a_ACT, a_prt_status_def, a_column_split, a_pulldown, a_showlist, a_prt_status_data) + "</font></td>");
+                out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, false, a_ACT, a_prt_status_def, a_column_split, a_pulldown, a_showlist, a_prt_status_data) + "</td>");
                 out.print("</tr>");
             }
         }
@@ -214,7 +236,26 @@
                 out.print("<font color='#ffff00'>*</font>");
             }
             out.print("</td>");
-            out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, true, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val) + "</font></td>");
+
+            out.print("<td bgcolor='transparent' style='text-align:left;'>");
+            boolean a_isFixed = false;
+            if (a_table_split[0].equals("irmsremotecustomer") == true){
+                if (a_colName.equals("remotesetid") == true){
+                    a_val = "4";
+                    a_isFixed = true;
+                }
+                if (a_colName.equals("usernumber") == true){
+                    a_val = "";
+                    a_isFixed = true;
+                }
+            }
+
+            if (a_isFixed == false){
+                out.print(Make_Tag_Mnt(a_envPath, true, true, true, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val));
+            }else{
+                out.print(Make_Tag_Mnt(a_envPath, true, false, true, a_ACT, a_split, a_column_split, a_pulldown, a_showlist, a_val));
+            }
+            out.print("</td>");
             out.print("</tr>");
         }
         if (a_table_split[0].equals("irmsremotecustomer") == true){

@@ -1,5 +1,7 @@
 入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
 usercode	usercode:usercode:usercode	newcustomermanage:irmsremotecustomer:remotemonitoringcustomer	a	s	n	6	n	ユーザコード
+remotesetid	remotesetid:stationid	remotemonitoringcustomer:remotemonitoringcustomer	n	n	n	1	y	SET
+usernumber	usernumber	remotemonitoringcustomer	n	n	n	32	l	REC
 username	username	newcustomermanage	y	s	n	88	n	名称
 maintel	maintel	newcustomermanage	n	s	n	32	n	代表電話番号
 postcode	postcode	newcustomermanage	n	s	n	8	n	郵便番号
