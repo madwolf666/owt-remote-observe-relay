@@ -8,7 +8,7 @@ monthreport	1:有,0:無
 reportclass	A-毎日:A-毎日,B-週１:B-週１,C-月１:C-月１,D-常駐:D-常駐,E-監視:E-監視,F-地域:F-地域,*-地方:*-地方
 usercode1	テクノ:テクノ,関西:関西,中国:中国,九州:九州,中部:中部,東北:東北,横浜:横浜,北関東:北関東,千葉:千葉,北海道:北海道
 remotesetid	0:A-SET,1:B-SET,2:C-SET,3:D-SET,4:E-SET,5:F-SET,6:G-SET,7:H-SET,8:I-SET,9:J-SET
-nodecode	1:DISCOVERYneo,2:SS9100,3:CROSCORE,4:CTSTAGE,9:その他
+nodecode	0:DISCOVERY2000,1:DISCOVERY01,2:DISCOVERYneo,3:SS9100,4:CROSCORE,5:CTSTAGE,9:その他
 termname	RMI/PB-RMI:RMI/PB-RMI,RMI/MB-RMI:RMI/MB-RMI,RMI/LG2002:RMI/LG2002,Modem:Modem
 circuitclass	D:D,P:P
 patrolmethod1	DIL:DIL,DID:DID,PBXdid:PBXdid,直通:直通,中継台:中継台,分散:分散,その他:その他
@@ -21,13 +21,13 @@ rim	ユーザ:ユーザ,OWT:OWT,営業:営業,その他:その他
 autoalarmreset	1:実行する,0:実行しない
 retransflg	1:有,0:無
 ext	0:外線,1:内線
-linetype	0:DP,1:PB,2:ISDN
-inboundtype	0:直通,1:DIL,2:PBD-DID,3:追加番号-DID
+linetype	1:DP,2:PB
+inboundtype	0:直通,1:DIL,2:PBX-DID,3:付加番号DID
 ftpsend	0:無,1:有
-flttype	E 異常:E 異常,F 致命的:F 致命的,I 情報:I 情報,W 注意:W 注意,運用ログ:運用ログ
-module	Generic Trap:Generic Trap,SNMPc Event:SNMPc Event
-class	0:発報しない,1:MN,2:MJ,3:一般
 ss9100flag	0:DISCOVERY,1:SS9100
 nodetype	2:SNMPc,4:SS9100,6:DISCOVERYneo,9:CrosCore
 watchtype	0:非監視,1:PING
 trap	0:無視,1:MN,2:MJ,3:Non
+flttype	E 異常:E 異常,F 致命的:F 致命的,I 情報:I 情報,W 注意:W 注意,運用ログ:運用ログ
+module	Generic Trap:Generic Trap,SNMPc Event:SNMPc Event
+class	0:発報しない,1:MN,2:MJ,3:一般

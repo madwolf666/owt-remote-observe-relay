@@ -106,14 +106,17 @@ public class SetDB implements Serializable {
         String a_sRet = "";
         Connection a_con = null;
         PreparedStatement a_ps = null;
+        ResultSet a_rs = null;
         String a_sql = "";
         String[] a_sql_t = null;
         String[] a_sql_v = null;
+        String[] a_sql_c = null;
         String a_sql_w = "";
         //int a_index = 0;
         String[] a_colNames = null;
         String a_colName = "";
         String[] a_tableNames = null;
+        String a_ness = "";
         String a_tableName = "";
         String[] a_post_data = null;
         String a_post_val = "";
@@ -122,7 +125,9 @@ public class SetDB implements Serializable {
         ArrayList<String> a_table_sql_p = new ArrayList<String>();
         ArrayList<String> a_table_sql_t = new ArrayList<String>();
         ArrayList<String> a_table_sql_v = new ArrayList<String>();
-        String a_userCode = "";
+        ArrayList<String> a_table_sql_c = new ArrayList<String>();
+        String a_user_code = "";
+        String a_pbxremotecustomer_id = "";
         boolean a_isAuto = false;
         boolean a_isOK = true;
         boolean a_isFound = false;
@@ -152,93 +157,137 @@ public class SetDB implements Serializable {
                 String[] a_split = h_coldefs.get(a_iCnt).split("\t");
                 a_colNames = a_split[_Environ.COLUMN_DEF_NAME].split(":");
                 a_tableNames = a_split[_Environ.COLUMN_DEF_TABLE_NAME].split(":");
+                a_ness = a_split[_Environ.COLUMN_DEF_NESS];
                 a_post_data = h_post_data.get(a_iCnt).split("\t");
                 a_post_val = "";
                 if (a_post_data.length>1){
                     a_post_val = a_post_data[1];
                 }
-                if (a_post_data[0].equals("usercode")){
-                    a_userCode = a_post_val;
+                if (h_act.equals("n") == true){
+                }else{
+                    if (a_post_data[0].equals("usercode")){
+                        a_user_code = a_post_val;
+                    }
                 }
                 for (int a_iCnt2=0; a_iCnt2<a_tableNames.length; a_iCnt2++){
                     a_tableName = a_tableNames[a_iCnt2];
                     a_isAuto = false;
                     a_isOK = true;
-                    if (a_tableName.equals(a_table_split[0]) == true){
-                        //キーでかつ自動採番のものは除外
-                        for (int a_iCnt4=0; a_iCnt4<a_key.length; a_iCnt4++){
-                            if ((a_key[a_iCnt4].equals(a_colNames[a_iCnt2]) == true)
-                             && (a_auto[a_iCnt4].equals("y") == true)){
+                    if (a_tableName.equals("") == false){
+                        if (a_ness.indexOf("a") >= 0){
+                            a_isAuto = true;
+                            /*
+                            if ((a_tableName.equals("pbxremotecustomer") == false)
+                             && (a_tableName.equals("irmsremotecustomer") == false)
+                             && (a_tableName.equals("remotemonitoringcustomer") == false)
+                            ){
                                 a_isAuto = true;
-                                break;
                             }
+                            */
                         }
-                        if (h_act.equals("n")){
+                        if (h_act.equals("n") == true){
                         }else{
                             if (a_isAuto == true){
                                 a_isOK = false;
                             }
                         }
-                    }
-                    if (a_isOK == true){
-                        a_isFound = false;
-                        for(int a_iCnt3=0; a_iCnt3<a_table_list.size(); a_iCnt3++){
-                            String a_sVal = a_table_list.get(a_iCnt3);
-                            if (a_sVal.equals(a_tableName) == true){
-                                a_isFound = true;
-                                if (h_act.equals("n")){
-                                    a_sql = a_table_sql_f.get(a_iCnt3);
-                                    a_sql += "," + a_colNames[a_iCnt2];
-                                    a_table_sql_f.set(a_iCnt3, a_sql);
-                                    a_sql = a_table_sql_p.get(a_iCnt3);
-                                    if (a_isAuto == false){
-                                        a_sql += ",?";
-                                    }else{
-                                        a_sql += "";
-                                    }
-                                    a_table_sql_p.set(a_iCnt3, a_sql);
-                                }else{
-                                    a_sql = a_table_sql_p.get(a_iCnt3);
-                                    a_sql += "," + a_colNames[a_iCnt2] + "=?";
-                                    a_table_sql_p.set(a_iCnt3, a_sql);
+                        /*
+                        if (a_tableName.equals(a_table_split[0]) == true){
+                            //キーでかつ自動採番のものは除外
+                            for (int a_iCnt4=0; a_iCnt4<a_key.length; a_iCnt4++){
+                                if ((a_key[a_iCnt4].equals(a_colNames[a_iCnt2]) == true)
+                                 && (a_auto[a_iCnt4].equals("y") == true)){
+                                    a_isAuto = true;
+                                    break;
                                 }
-                                a_sql = a_table_sql_t.get(a_iCnt3);
-                                if (a_isAuto == false){
-                                    a_sql += "\t" + a_split[_Environ.COLUMN_DEF_TYPE];
-                                }else{
-                                    a_sql += "\t";
+                            }
+                            if (h_act.equals("n")){
+                            }else{
+                                if (a_isAuto == true){
+                                    a_isOK = false;
                                 }
-                                a_table_sql_t.set(a_iCnt3, a_sql);
-                                a_sql = a_table_sql_v.get(a_iCnt3);
-                                if (a_isAuto == false){
-                                    a_sql += "\t" + a_post_val;
-                                }else{
-                                    a_sql += "\t";
-                                }
-                                a_table_sql_v.set(a_iCnt3, a_sql);
-                                break;
                             }
                         }
-                        if (a_isFound == false){
-                            a_table_list.add(a_tableName);
-                            if (h_act.equals("n")){
-                                a_sql = a_colNames[a_iCnt2];
-                                a_table_sql_f.add(a_sql);
-                                if (a_isAuto == false){
-                                    a_table_sql_p.add("?");
-                                }else{
-                                    a_table_sql_p.add("");
-                                }                                    
-                            }else{
-                                a_sql = a_colNames[a_iCnt2] + "=?";
-                                a_table_sql_p.add(a_sql);
+                        */
+                        if (a_isOK == true){
+                            a_isFound = false;
+                            for(int a_iCnt3=0; a_iCnt3<a_table_list.size(); a_iCnt3++){
+                                String a_sVal = a_table_list.get(a_iCnt3);
+                                if (a_sVal.equals(a_tableName) == true){
+                                    a_isFound = true;
+                                    if (h_act.equals("n")){
+                                        a_sql = a_table_sql_f.get(a_iCnt3);
+                                        a_sql += "," + a_colNames[a_iCnt2];
+                                        a_table_sql_f.set(a_iCnt3, a_sql);
+                                        a_sql = a_table_sql_p.get(a_iCnt3);
+                                        if (a_isAuto == false){
+                                            if (a_sql.trim().length() > 0){
+                                                a_sql += ",";
+                                            }
+                                            a_sql += "?";
+                                        }else{
+                                            a_sql += "";
+                                        }
+                                        a_table_sql_p.set(a_iCnt3, a_sql);
+                                    }else{
+                                        a_sql = a_table_sql_p.get(a_iCnt3);
+                                        if (a_sql.trim().length() > 0){
+                                            a_sql += ",";
+                                        }
+                                        a_sql += a_colNames[a_iCnt2] + "=?";
+                                        a_table_sql_p.set(a_iCnt3, a_sql);
+                                    }
+                                    
+                                    a_sql = a_table_sql_t.get(a_iCnt3);
+                                    if (a_isAuto == false){
+                                        a_sql += "\t" + a_split[_Environ.COLUMN_DEF_TYPE];
+                                    }else{
+                                        a_sql += "\t";
+                                    }
+                                    a_table_sql_t.set(a_iCnt3, a_sql);
+
+                                    a_sql = a_table_sql_v.get(a_iCnt3);
+                                    if (a_isAuto == false){
+                                        a_sql += "\t" + a_post_val;
+                                    }else{
+                                        a_sql += "\t";
+                                    }
+                                    a_table_sql_v.set(a_iCnt3, a_sql);
+
+                                    a_sql = a_table_sql_c.get(a_iCnt3);
+                                    if (a_isAuto == false){
+                                        a_sql += "\t" + a_colNames[a_iCnt2];
+                                    }else{
+                                        a_sql += "\t";
+                                    }
+                                    a_table_sql_c.set(a_iCnt3, a_sql);
+
+                                    break;
+                                }
                             }
-                            if (a_isAuto == false){
-                                a_table_sql_t.add(a_split[_Environ.COLUMN_DEF_TYPE]);
-                                a_table_sql_v.add(a_post_val);
-                            }else{
-                                a_table_sql_t.add("");
-                                a_table_sql_v.add("");
+                            if (a_isFound == false){
+                                a_table_list.add(a_tableName);
+                                if (h_act.equals("n")){
+                                    a_sql = a_colNames[a_iCnt2];
+                                    a_table_sql_f.add(a_sql);
+                                    if (a_isAuto == false){
+                                        a_table_sql_p.add("?");
+                                    }else{
+                                        a_table_sql_p.add("");
+                                    }                                    
+                                }else{
+                                    a_sql = a_colNames[a_iCnt2] + "=?";
+                                    a_table_sql_p.add(a_sql);
+                                }
+                                if (a_isAuto == false){
+                                    a_table_sql_c.add(a_colNames[a_iCnt2]);
+                                    a_table_sql_t.add(a_split[_Environ.COLUMN_DEF_TYPE]);
+                                    a_table_sql_v.add(a_post_val);
+                                }else{
+                                    a_table_sql_c.add("");
+                                    a_table_sql_t.add("");
+                                    a_table_sql_v.add("");
+                                }
                             }
                         }
                     }
@@ -248,8 +297,9 @@ public class SetDB implements Serializable {
             //テーブル数分更新
             for (int a_iCnt=0; a_iCnt<a_table_list.size(); a_iCnt++){
                 a_tableName = a_table_list.get(a_iCnt);
-                if (h_act.equals("n")){
+                if (h_act.equals("n") == true){
                     a_sql = "INSERT INTO " + a_tableName + "(";
+                    //自動付与するカラムを追加
                     if ((a_tableName.equals("customer") == true)
                         || (a_tableName.equals("customerstation") == true)
                         || (a_tableName.equals("newcustomermanage") == true)
@@ -268,7 +318,10 @@ public class SetDB implements Serializable {
                     if (a_tableName.equals("remotemonitoringcustomer") == true){
                         a_sql += "sendmaillevel,";
                     }
+                    
                     a_sql += a_table_sql_f.get(a_iCnt) + ") VALUES(";
+                    
+                    //idの自動付与
                     if ((a_tableName.equals("customer") == true)
                         || (a_tableName.equals("customerstation") == true)
                         || (a_tableName.equals("newcustomermanage") == true)
@@ -282,6 +335,7 @@ public class SetDB implements Serializable {
                             a_sql += "(SELECT COALESCE(MAX(ID),0)+1 FROM " + a_tableName + "),";
                         }
                     }
+                    //numの自動付与
                     if ((a_tableName.equals("discoveryneotrbinfo") == true)
                         || (a_tableName.equals("discoverytrbinfo") == true)
                         || (a_tableName.equals("ss9100trbinfo") == true)
@@ -292,13 +346,14 @@ public class SetDB implements Serializable {
                         || (a_tableName.equals("raspingtrbinfo") == true)
                             ){
                         if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
-                            a_sql += "(SELECT NVL(MAX(NUM),0)+1 FROM " + a_tableName + ")";
+                            a_sql += "(SELECT NVL(MAX(NUM),0)+1 FROM " + a_tableName + "),";
                         }else if (_db_driver.equals("org.postgresql.Driver")){
-                            a_sql += "(SELECT COALESCE(MAX(NUM),0)+1 FROM " + a_tableName + ")";
+                            a_sql += "(SELECT COALESCE(MAX(NUM),0)+1 FROM " + a_tableName + "),";
                         }
                     }
                     if (a_tableName.equals("customerstation") == true){
-                        a_sql += "(SELECT ID FROM pbxremotecustomer WHERE USERCODE='" + a_userCode + "'),";
+                        a_sql += a_pbxremotecustomer_id + ",";
+                        //a_sql += "(SELECT ID FROM pbxremotecustomer WHERE USERCODE='" + a_user_code + "'),";
                     }
                     if (a_tableName.equals("newcustomermanage") == true){
                         if (a_table_split[0].equals("pbxremotecustomer") == true){
@@ -309,47 +364,86 @@ public class SetDB implements Serializable {
                     }
                     if (a_tableName.equals("remotemonitoringcustomer") == true){
                         a_sql += "-1,";
+                        a_sql += "'" + a_user_code + "',";
                     }
+                    if (a_tableName.equals("pbxremotecustomer") == true){
+                        a_sql += "'" + a_user_code + "',";
+                    }
+                    if (a_tableName.equals("irmsremotecustomer") == true){
+                        a_sql += "'" + a_user_code + "',";
+                    }
+
+                    //newcustomermanageの場合、新規usercodeを自動付与
+                    if (a_tableName.equals("newcustomermanage") == true){
+                        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                            a_sql += "(SELECT TRIM(TO_CHAR(TO_NUMBER(NVL(MAX(usercode),'000000'),'999999')+1,'000000')) FROM " + a_tableName + " WHERE (usercode like '";
+                        }else if (_db_driver.equals("org.postgresql.Driver")){
+                            a_sql += "(SELECT TRIM(TO_CHAR(TO_NUMBER(COALESCE(MAX(usercode),'000000'),'999999')+1,'000000')) FROM " + a_tableName + " WHERE (usercode like '";
+                        }
+                        if (a_table_split[0].equals("pbxremotecustomer")){
+                            a_sql += "0%";
+                        }else if (a_table_split[0].equals("irmsremotecustomer")){
+                            a_sql += "1%";
+                        }
+                        a_sql += "')),";
+                    }
+
                     a_sql += a_table_sql_p.get(a_iCnt) + ")";
                 }else{
                     a_sql = "UPDATE " + a_tableName + " SET " + a_table_sql_p.get(a_iCnt) + " WHERE ";
                     //WHERE句キーのSQL組み立て
                     a_sql_w = "";
-                    String[] a_split_idxs = h_idx.split(",");
-                    for (int a_iCnt2=0; a_iCnt2<a_split_idxs.length; a_iCnt2++){
-                        if (a_sql_w != ""){
-                            a_sql_w += " AND ";
+                    if (a_tableName.equals("customerstation") == true){
+                        a_sql_w += "(pbxremotecustomerid=(SELECT id FROM pbxremotecustomer WHERE (usercode='" + a_user_code + "')))";
+                    }else{
+                        String[] a_split_idxs = h_idx.split(",");
+                        for (int a_iCnt2=0; a_iCnt2<a_split_idxs.length; a_iCnt2++){
+                            if (a_sql_w != ""){
+                                a_sql_w += " AND ";
+                            }
+                            //キーでかつ自動採番のものはWHERE句
+                            a_sql_w += "(" + a_key[a_iCnt2] + "="; 
+                            if (a_type[0].equals("n") == true){
+                                //数値の場合
+                                a_sql_w += a_split_idxs[a_iCnt2];
+                            }else{
+                                //数値以外の場合
+                                a_sql_w += "'"  + a_split_idxs[a_iCnt2] + "'";
+                            }
+                            a_sql_w += ")";
                         }
-                        //キーでかつ自動採番のものはWHERE句
-                        a_sql_w += "(" + a_key[a_iCnt2] + "="; 
-                        if (a_type[0].equals("n") == true){
-                            //数値の場合
-                            a_sql_w += a_split_idxs[a_iCnt2];
-                        }else{
-                            //数値以外の場合
-                            a_sql_w += "'"  + a_split_idxs[a_iCnt2] + "'";
-                        }
-                        a_sql_w += ")";
                     }
                     a_sql += a_sql_w;
                 }
                 
+                //カラム名に予約語commentがある場合
                 if (a_tableName.equals("pbxremotecustomer") == true){
                     a_sql = a_sql.replace(",comment", ",\"COMMENT\"");
                 }
-                
+
+                if (h_act.equals("n") == true){
+                    if (a_tableName.equals("newcustomermanage") == true){
+                        a_sql += " RETURNING usercode";
+                    }else if (a_tableName.equals("pbxremotecustomer") == true){
+                        a_sql += " RETURNING id";
+                    }
+                }
+
                 a_ps = a_con.prepareStatement(a_sql);
 
                 a_sql_t = a_table_sql_t.get(a_iCnt).split("\t");
                 a_sql_v = a_table_sql_v.get(a_iCnt).split("\t");
+                a_sql_c = a_table_sql_c.get(a_iCnt).split("\t");
                 
                 //登録値のSQLを組み立て
                 int a_idx = 0;
                 for (int a_iCnt2=0; a_iCnt2<a_sql_t.length; a_iCnt2++){
                     String a_sType = a_sql_t[a_iCnt2];
                     String a_sVal = "";
+                    String a_sName = "";
                     if (a_sql_v.length > a_iCnt2){
                         a_sVal = a_sql_v[a_iCnt2].trim();
+                        a_sName = a_sql_c[a_iCnt2].trim();
                     }
                     if (a_sType.equals("") == false){
                         a_idx++;
@@ -391,13 +485,66 @@ public class SetDB implements Serializable {
                                 a_ps.setNull(a_idx, java.sql.Types.DATE);
                             }
                         }else{
+                            boolean a_isInt = false;
                             //文字列
-                            a_ps.setString(a_idx, a_sVal);
+                            if (a_tableName.equals("pbxremotecustomer") == true){
+                                if (a_sName.equals("patrolclass") == true){
+                                    a_sVal = a_sVal.substring(0,1);
+                                }
+                            }
+                            if (a_tableName.equals("remotemonitoringcustomer") == true){
+                                if (a_table_split[0].equals("pbxremotecustomer") == true){
+                                    if (a_sName.equals("stationid") == true){
+                                        a_sVal = "7";
+                                        a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
+                                        a_isInt = true;
+                                    }
+                                }
+                            }
+                            if (a_tableName.equals("customerstation") == true){
+                                if (a_table_split[0].equals("pbxremotecustomer") == true){
+                                    if (a_sName.equals("stationid") == true){
+                                        a_sVal = "7";
+                                        a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
+                                        a_isInt = true;
+                                    }
+                                }
+                                if (a_sName.equals("monthreport") == true){
+                                    if (a_sVal.equals("1") == true){
+                                        a_sVal = "要";
+                                    }else{
+                                        a_sVal = "不要";
+                                    }
+                                }
+                            }
+                            if (a_isInt == false){
+                                a_ps.setString(a_idx, a_sVal);
+                            }
                         }
                     }
                 }
 
-                int a_i = a_ps.executeUpdate();
+                int a_i = 0;
+                //a_i = a_ps.executeUpdate();
+                if (h_act.equals("n") == true){
+                    if (a_tableName.equals("newcustomermanage") == true){
+                        a_rs = a_ps.executeQuery();
+                        while(a_rs.next()){
+                            a_user_code = _Environ.ExistDBString(a_rs, "usercode");
+                        }
+                        a_rs.close();
+                    }else if (a_tableName.equals("pbxremotecustomer") == true){
+                        a_rs = a_ps.executeQuery();
+                        while(a_rs.next()){
+                            a_pbxremotecustomer_id = _Environ.ExistDBString(a_rs, "id");
+                        }
+                        a_rs.close();
+                    }else{
+                        a_i = a_ps.executeUpdate();
+                    }
+                }else{
+                    a_i = a_ps.executeUpdate();
+                }
             }
             a_con.commit();
 

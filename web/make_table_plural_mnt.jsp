@@ -141,11 +141,13 @@
             String[] a_colNames = a_split[0].split(":");
             String a_colName = a_colNames[0];
             String a_val = "";
+            /*
             if ((a_colName.equals("usercode") == true) && a_split[COLUMN_DEF_NESS].equals("a") == true){
                 //PBXリモートの場合は、0XXXXの最老番号+1
                 //IRMASの場合は、1XXXXの最老番号+1
                 a_val = SetDB.GetNextUserCode(a_table_split[0]);
             }
+            */
             if (a_arrayList != null){
                 String[] a_split2 = a_arrayList.get(a_iCnt).split("\t");
                 if (a_split2.length > 1){

@@ -39,6 +39,7 @@ passwordnew	passwordnew	pbxremotecustomer	n	s	n	4	n	RMI新パスワード
 syspass	syspass	pbxremotecustomer	n	s	n	10	n	システムパス
 linetel	linetel	newcustomermanage	n	s	n	32	n	回線番号
 circuitclass	circuitclass	pbxremotecustomer	y	s	n	1	y	Dp/Pb
+reserve	reserve	pbxremotecustomer	n	s	n	17	n	局線発信特番
 patrolmethod1	patrolmethod1	pbxremotecustomer	n	s	n	6	y	接続方式
 patrolmethod2	patrolmethod2	pbxremotecustomer	n	s	n	9	y	接続方法
 comatr	comatr	pbxremotecustomer	y	s	n	10	y	通信属性
@@ -60,6 +61,5 @@ verhigh	verhigh	pbxremotecustomer	n	s	n	1	n	バージョン情報(high)
 rev1st	rev1st	pbxremotecustomer	n	s	n	1	n	バージョン情報(1st)
 rev2nd	rev2nd	pbxremotecustomer	n	s	n	1	n	バージョン情報(2nd)
 rev3rd	rev3rd	pbxremotecustomer	n	s	n	1	n	バージョン情報(3rd)
-reserve	reserve	pbxremotecustomer	n	s	n	17	n	予約1
 reserve1	reserve1	pbxremotecustomer	n	s	n	72	n	予約2
-prt_status	prt_status	table	n	s	n	10	p	PRT使用状況
+prt_status	prt_status		n	s	n	10	p	PRT使用状況

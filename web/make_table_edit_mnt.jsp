@@ -201,11 +201,13 @@
             String[] a_colNames = a_split[COLUMN_DEF_NAME].split(":");
             String a_colName = a_colNames[0];
             String a_val = "";
+            /*
             if ((a_colName.equals("usercode") == true) && a_split[COLUMN_DEF_NESS].equals("a") == true){
                 //PBXリモートの場合は、0XXXXの最老番号+1
                 //IRMASの場合は、1XXXXの最老番号+1
                 a_val = SetDB.GetNextUserCode(a_table_split[0]);
             }
+            */
             out.print("<tr>");
             out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
             if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
