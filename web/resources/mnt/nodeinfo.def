@@ -1,0 +1,7 @@
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
+nodecode	nodecode	nodeinfo	y	s	s	n	4	n	機器コード
+vendercode	vendercode	nodeinfo	n	s	s	n	4	n	ベンダーコード
+nodename	nodename	nodeinfo	n	s	s	n	32	n	機器名
+version	version	nodeinfo	n	s	s	n	16	n	バージョン
+oid	oid	nodeinfo	n	s	s	n	64	n	オブジェクトID
+commentary	commentary	nodeinfo	n	s	s	n	64	n	備考

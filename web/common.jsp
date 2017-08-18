@@ -56,13 +56,14 @@ static int COLUMN_DEF_FIELD = 0;        //入力フィールド
 static int COLUMN_DEF_NAME = 1;         //カラム名（複数）
 static int COLUMN_DEF_TABLE_NAME = 2;   //テーブル名（複数）
 static int COLUMN_DEF_NESS = 3;         //必須有無（a/n/y）
-static int COLUMN_DEF_TYPE = 4;         //型（n/s/time/date）
-static int COLUMN_DEF_TIME = 5;         //時刻指定（n/y）
-static int COLUMN_DEF_LENGTH = 6;       //MAX桁
-static int COLUMN_DEF_PULLDOWN = 7;     //プルダウン（n/y）
-static int COLUMN_DEF_COMMENT = 8;      //コメント
-static int COLUMN_DEF_INIT = 9;         //初期値
-static int COLUMN_DEF_ACTION = 10;      //入力時の動作
+static int COLUMN_DEF_INPUT_TYPE = 4;   //型（n/s/time/date）
+static int COLUMN_DEF_TYPE = 5;         //型（n/s/time/date）
+static int COLUMN_DEF_TIME = 6;         //時刻指定（n/y）
+static int COLUMN_DEF_LENGTH = 7;       //MAX桁
+static int COLUMN_DEF_PULLDOWN = 8;     //プルダウン（n/y）
+static int COLUMN_DEF_COMMENT = 9;      //コメント
+static int COLUMN_DEF_INIT = 10;         //初期値
+static int COLUMN_DEF_ACTION = 11;      //入力時の動作
 
 //DBテーブルのキー定義
 static int DB_TABLE_KEY_DEF_NAME = 0;           //キーのカラム名
@@ -488,7 +489,7 @@ String Make_Tag_Mnt(
     }
 
     if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("n") >= 0){
-        if (h_coldef[COLUMN_DEF_TYPE].indexOf("n") >= 0){
+        if (h_coldef[COLUMN_DEF_INPUT_TYPE].indexOf("n") >= 0){
             //data_precisionが整数桁、data_scaleが小数桁
             a_sRet += Make_Input_Tag_Mnt_Numeric(h_isEdit, h_act, h_coldef, "width:100%;", h_val);
             //g_JScript_IsNumeric += "    alert($(\"#" + h_column[1] + "\"));";
@@ -497,13 +498,13 @@ String Make_Tag_Mnt(
             }else{
                 g_JScript_IsNumeric_Plural += "    if (!check_IsNumeric(\"#" + a_field + "\", \"" + a_comment + "は数値入力です！\")){return false;}";
             }
-        }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("s") >= 0){
+        }else if (h_coldef[COLUMN_DEF_INPUT_TYPE].indexOf("s") >= 0){
             //data_lengthがMAX桁数
             a_sRet += Make_Input_Tag_Mnt_String(h_isEdit, h_act, h_coldef, "width:100%;", h_val);
-        }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("time") >= 0){
+        }else if (h_coldef[COLUMN_DEF_INPUT_TYPE].indexOf("time") >= 0){
             //ミリ秒まで扱う？
             a_sRet += Make_Input_Tag_Mnt_Time(h_isMain, h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
-        }else if (h_coldef[COLUMN_DEF_TYPE].indexOf("date") >= 0){
+        }else if (h_coldef[COLUMN_DEF_INPUT_TYPE].indexOf("date") >= 0){
             a_sRet += Make_Input_Tag_Mnt_Date(h_isMain, h_isEdit, h_act, h_coldef, "width:100%;", a_isTime, h_val);
         }
     }else if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("y") >= 0){
@@ -1055,7 +1056,9 @@ String Make_Entry_Table_Mnt(String h_act, String h_idx){
         
     a_sRet += "     },";
     a_sRet += "     success: function(data, dataType){";
+    //a_sRet += "alert(data);";
     a_sRet += "         var a_result = data.trim();";
+    //a_sRet += "alert(a_result);";
     a_sRet += "         if (a_result != \"\"){";
     a_sRet += "             $(\"#my-pager\").empty().append(\"<font color='#ff0000'>\" + data + \"</font>\");";
     a_sRet += "         } else{";
@@ -1144,22 +1147,6 @@ String Make_Tag_Mnt_LTIC_TN(
 
 //ユーザ機器登録
 String Make_Tag_Mnt_User_Machine(
-    String h_envPath,
-    boolean h_isEdit,
-    boolean h_isFirst,
-    String h_act,
-    ArrayList<String> h_coldef,
-    String[] h_key,
-    String h_pulldown,
-    String h_showlist
-    ){
-    String a_sRet = "";
-
-    return a_sRet;
-}
-
-//機器コード設定
-String Make_Tag_Mnt_Machine_Code(
     String h_envPath,
     boolean h_isEdit,
     boolean h_isFirst,

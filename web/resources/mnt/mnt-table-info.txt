@@ -1,6 +1,7 @@
 テーブル名	説明	キーのカラム名：型（n/s）：修正可否（n/y）:自動採番（n/y）
 pbxremotecustomer	PBXリモートユーザ管理	usercode:s:n:y
 irmsremotecustomer	IRMSユーザ管理	usercode:s:n:y
+nodeinfo	機器情報	nodecode:s:y:n
 discoveryneotrbinfo	DiscoveryNeo障害情報管理	num:n:n:y
 discoverytrbinfo	Discovery2000/01障害情報管理	num:n:n:y
 ss9100trbinfo	SS9100障害情報管理	num:n:n:y

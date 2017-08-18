@@ -1,6 +1,6 @@
-入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
-num	num	croscoretrbinfo	a	n	n	1	n	項番
-flttype	flttype	croscoretrbinfo	n	s	n	32	y	障害タイプ
-fltcode	fltcode	croscoretrbinfo	n	s	n	8	n	FLTCODE
-fltname	fltname	croscoretrbinfo	n	s	n	128	n	障害概要
-class	class	croscoretrbinfo	n	s	n	1	y	障害レベル
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
+num	num	croscoretrbinfo	a	n	n	n	1	n	項番
+flttype	flttype	croscoretrbinfo	n	s	s	n	32	y	障害タイプ
+fltcode	fltcode	croscoretrbinfo	n	s	s	n	8	n	FLTCODE
+fltname	fltname	croscoretrbinfo	n	s	s	n	128	n	障害概要
+class	class	croscoretrbinfo	n	s	s	n	1	y	障害レベル

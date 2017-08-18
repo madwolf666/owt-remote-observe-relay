@@ -50,8 +50,8 @@
             a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
         }else if (a_mode.equals("2") == true){
             a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
-        }else if (a_mode.equals("3") == true){
-            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");
+        /*}else if (a_mode.equals("3") == true){
+            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");*/
         }
     }
 
@@ -60,14 +60,14 @@
     ArrayList<String>[] a_arrayList_dst = null;
     if (a_user_code.equals("") == false){
         //DBの更新
-        //String a_sRet = SetDB.EnteryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
+        //String a_sRet = SetDB.EntryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
     }else{
         if (a_mode.equals("1") == true){
             a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");
         }else if (a_mode.equals("2") == true){
             a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
-        }else if (a_mode.equals("3") == true){
-            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");
+        /*}else if (a_mode.equals("3") == true){
+            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");*/
         }
         
         if (a_seq.equals("-1") == false){
@@ -90,8 +90,8 @@
             session.setAttribute("Mnt_Data_LTIC_TN", a_arrayList_dst);
         }else if (a_mode.equals("2") == true){
             session.setAttribute("Mnt_Data_User_Machine", a_arrayList_dst);
-        }else if (a_mode.equals("3") == true){
-            session.setAttribute("Mnt_Data_Machine_Code", a_arrayList_dst);
+        /*}else if (a_mode.equals("3") == true){
+            session.setAttribute("Mnt_Data_Machine_Code", a_arrayList_dst);*/
         }
     }
     

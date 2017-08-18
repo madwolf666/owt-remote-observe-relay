@@ -32,7 +32,7 @@
     ArrayList<String> a_coldefs = new ArrayList<String>();
     ArrayList<String> a_coldefs_ltic_tn = new ArrayList<String>();
     ArrayList<String> a_coldefs_user_machine = new ArrayList<String>();
-    ArrayList<String> a_coldefs_machine_code = new ArrayList<String>();
+    /*ArrayList<String> a_coldefs_machine_code = new ArrayList<String>();*/
     if (a_Mnt_Table.equals("") == false){
         a_table_split = a_Mnt_Table.split("\t");
         a_column_split = a_table_split[1].split(",");
@@ -41,7 +41,7 @@
         if (a_table_split[0].equals("irmsremotecustomer") == true){
             a_coldefs_ltic_tn = GetDef_Field(a_envPath + "ltic_tn.def");
             a_coldefs_user_machine = GetDef_Field(a_envPath + "user_machine.def");
-            a_coldefs_machine_code = GetDef_Field(a_envPath + "machine_code.def");
+            /*a_coldefs_machine_code = GetDef_Field(a_envPath + "machine_code.def");*/
         }
 
         session.setAttribute("Mnt_Coldefs", a_coldefs);
@@ -49,10 +49,10 @@
         if (a_table_split[0].equals("irmsremotecustomer") == true){
             session.setAttribute("Mnt_Coldefs_LTIC_TN", a_coldefs_ltic_tn);
             session.setAttribute("Mnt_Coldefs_User_Machine", a_coldefs_user_machine);
-            session.setAttribute("Mnt_Coldefs_Machine_Code", a_coldefs_machine_code);
+            /*session.setAttribute("Mnt_Coldefs_Machine_Code", a_coldefs_machine_code);*/
             session.setAttribute("Mnt_Data_LTIC_TN", null);
             session.setAttribute("Mnt_Data_User_Machine", null);
-            session.setAttribute("Mnt_Data_Machine_Code", null);
+            /*session.setAttribute("Mnt_Data_Machine_Code", null);*/
         }
 
         //POSTデータを取得
@@ -124,7 +124,7 @@
                         a_now_split[COLUMN_DEF_NAME] = a_split_column[a_iCnt2 - 1];
                         a_now_split[COLUMN_DEF_TABLE_NAME] = "";
                         a_now_split[COLUMN_DEF_NESS] = "";
-                        a_now_split[COLUMN_DEF_TYPE] = a_split_type[a_iCnt2 - 1];
+                        a_now_split[COLUMN_DEF_INPUT_TYPE] = a_split_type[a_iCnt2 - 1];
                         a_now_split[COLUMN_DEF_LENGTH] = "";
                         a_now_split[COLUMN_DEF_PULLDOWN] = a_split_pulldown[a_iCnt2 - 1];
                         a_now_split[COLUMN_DEF_COMMENT] = "";

@@ -89,7 +89,7 @@ public class SetDB implements Serializable {
     }
     
     //登録
-    public String EnteryMnt(
+    public String[] EntryMnt(
         String h_table,
         ArrayList<String> h_coldefs,
         String h_act,
@@ -103,7 +103,7 @@ public class SetDB implements Serializable {
         String[] a_type = null;
         String[] a_auto = null;
 
-        String a_sRet = "";
+        String[] a_sRet = new String[1];
         Connection a_con = null;
         PreparedStatement a_ps = null;
         ResultSet a_rs = null;
@@ -127,8 +127,9 @@ public class SetDB implements Serializable {
         ArrayList<String> a_table_sql_v = new ArrayList<String>();
         ArrayList<String> a_table_sql_c = new ArrayList<String>();
         String a_user_code = "";
-        String a_pbxremotecustomer_id = "";
         String a_user_number = "";
+        //String a_monitoring_id = "";
+        String a_pbxremotecustomer_id = "";
         boolean a_isAuto = false;
         boolean a_isOK = true;
         boolean a_isFound = false;
@@ -137,6 +138,16 @@ public class SetDB implements Serializable {
             if (a_table_split.length<2){
                 return a_sRet;
             }
+            
+            if (a_table_split[0].equals("pbxremotecustomer") == true){
+                a_sRet = new String[5];
+            }else if (a_table_split[0].equals("irmsremotecustomer") == true){
+                a_sRet = new String[5];
+            }else{
+                a_sRet = new String[2];
+            }
+            a_sRet[0] = "";
+            
             a_column_split = a_table_split[1].split(",");
             a_key = new String[a_column_split.length];
             a_type = new String[a_column_split.length];
@@ -168,6 +179,22 @@ public class SetDB implements Serializable {
                 }else{
                     if (a_post_data[0].equals("usercode")){
                         a_user_code = a_post_val;
+                        if ((a_table_split[0].equals("pbxremotecustomer") == true)
+                         || (a_table_split[0].equals("irmsremotecustomer") == true)
+                           ){
+                            a_sRet[1] = a_user_code;
+                        }
+                    }else if (a_post_data[0].equals("usernumber")){
+                        a_user_number = a_post_val;
+                        if ((a_table_split[0].equals("pbxremotecustomer") == true)
+                         || (a_table_split[0].equals("irmsremotecustomer") == true)
+                           ){
+                            a_sRet[2] = a_user_number;
+                        }
+                    }else if (a_post_data[0].equals("id")){
+                            a_sRet[1] = a_post_val;
+                    }else if (a_post_data[0].equals("num")){
+                            a_sRet[1] = a_post_val;
                     }
                 }
                 for (int a_iCnt2=0; a_iCnt2<a_tableNames.length; a_iCnt2++){
@@ -216,7 +243,7 @@ public class SetDB implements Serializable {
                                 String a_sVal = a_table_list.get(a_iCnt3);
                                 if (a_sVal.equals(a_tableName) == true){
                                     a_isFound = true;
-                                    if (h_act.equals("n")){
+                                    if (h_act.equals("n") == true){
                                         a_sql = a_table_sql_f.get(a_iCnt3);
                                         a_sql += "," + a_colNames[a_iCnt2];
                                         a_table_sql_f.set(a_iCnt3, a_sql);
@@ -268,7 +295,7 @@ public class SetDB implements Serializable {
                             }
                             if (a_isFound == false){
                                 a_table_list.add(a_tableName);
-                                if (h_act.equals("n")){
+                                if (h_act.equals("n") == true){
                                     a_sql = a_colNames[a_iCnt2];
                                     a_table_sql_f.add(a_sql);
                                     if (a_isAuto == false){
@@ -318,6 +345,14 @@ public class SetDB implements Serializable {
                     }
                     if (a_tableName.equals("remotemonitoringcustomer") == true){
                         a_sql += "sendmaillevel,";
+                    }
+                    if ((a_tableName.equals("equipmenttype") == true)
+                     || (a_tableName.equals("sioportnumber") == true)
+                        ){
+                        a_sql += "customerid,";
+                        if (a_tableName.equals("equipmenttype") == true){
+                            a_sql += "ordernumber,";
+                        }
                     }
                     
                     a_sql += a_table_sql_f.get(a_iCnt) + ") VALUES(";
@@ -390,21 +425,41 @@ public class SetDB implements Serializable {
                         a_sql += "')),";
                     }
 
+                    if ((a_tableName.equals("equipmenttype") == true)
+                     || (a_tableName.equals("sioportnumber") == true)
+                        ){
+                        a_sql += "(SELECT id FROM remotemonitoringcustomer WHERE (usercode='" + h_idx + "')),";
+                        if (a_tableName.equals("equipmenttype") == true){
+                            if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                                a_sql += "(SELECT NVL(MAX(ordernumber),0)+1 FROM " + a_tableName + "),";
+                            }else if (_db_driver.equals("org.postgresql.Driver")){
+                                a_sql += "(SELECT COALESCE(MAX(ordernumber),0)+1 FROM " + a_tableName + "),";
+                            }
+                        }
+                        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                            a_sql += "(SELECT NVL(MAX(ID),0)+1 FROM " + a_tableName + "),";
+                        }else if (_db_driver.equals("org.postgresql.Driver")){
+                            a_sql += "(SELECT COALESCE(MAX(ID),0)+1 FROM " + a_tableName + "),";
+                        }
+                    }
+
                     a_sql += a_table_sql_p.get(a_iCnt) + ")";
                 }else{
                     a_sql = "UPDATE " + a_tableName + " SET " + a_table_sql_p.get(a_iCnt) + " WHERE ";
                     //WHERE句キーのSQL組み立て
                     a_sql_w = "";
                     if (a_tableName.equals("customerstation") == true){
-                        a_sql_w += "(pbxremotecustomerid=(SELECT id FROM pbxremotecustomer WHERE (usercode='" + a_user_code + "')))";
+                        a_sql_w += " (pbxremotecustomerid=(SELECT id FROM pbxremotecustomer WHERE (usercode='" + a_user_code + "')))";
+                    }else if (a_tableName.equals("sioportnumber") == true){
+                        a_sql_w += " (customerid=(SELECT id FROM remotemonitoringcustomer WHERE (usercode='" + h_idx + "')))";
                     }else{
                         String[] a_split_idxs = h_idx.split(",");
                         for (int a_iCnt2=0; a_iCnt2<a_split_idxs.length; a_iCnt2++){
                             if (a_sql_w != ""){
-                                a_sql_w += " AND ";
+                                a_sql_w += " AND";
                             }
                             //キーでかつ自動採番のものはWHERE句
-                            a_sql_w += "(" + a_key[a_iCnt2] + "="; 
+                            a_sql_w += " (" + a_key[a_iCnt2] + "="; 
                             if (a_type[0].equals("n") == true){
                                 //数値の場合
                                 a_sql_w += a_split_idxs[a_iCnt2];
@@ -426,6 +481,8 @@ public class SetDB implements Serializable {
                 if (h_act.equals("n") == true){
                     if (a_tableName.equals("newcustomermanage") == true){
                         a_sql += " RETURNING usercode";
+                    /*}else if (a_tableName.equals("remotemonitoringcustomer") == true){
+                        a_sql += " RETURNING id";*/
                     }else if (a_tableName.equals("pbxremotecustomer") == true){
                         a_sql += " RETURNING id";
                     }
@@ -550,12 +607,30 @@ public class SetDB implements Serializable {
                         while(a_rs.next()){
                             a_user_code = _Environ.ExistDBString(a_rs, "usercode");
                             a_user_number = a_user_code.substring(3,3);
+                            if ((a_table_split[0].equals("pbxremotecustomer") == true)
+                             || (a_table_split[0].equals("irmsremotecustomer") == true)
+                               ){
+                                a_sRet[1] = a_user_code;
+                                a_sRet[2] = a_user_number;
+                            }
                         }
                         a_rs.close();
+                    /*}else if (a_tableName.equals("remotemonitoringcustomer") == true){
+                        a_rs = a_ps.executeQuery();
+                        while(a_rs.next()){
+                            a_monitoring_id = _Environ.ExistDBString(a_rs, "id");
+                            if (a_table_split[0].equals("pbxremotecustomer") == true){
+                                a_sRet[3] = a_monitoring_id;
+                            }
+                        }
+                        a_rs.close();*/
                     }else if (a_tableName.equals("pbxremotecustomer") == true){
                         a_rs = a_ps.executeQuery();
                         while(a_rs.next()){
                             a_pbxremotecustomer_id = _Environ.ExistDBString(a_rs, "id");
+                            if (a_table_split[0].equals("pbxremotecustomer") == true){
+                                a_sRet[3] = a_pbxremotecustomer_id;
+                            }
                         }
                         a_rs.close();
                     }else{
@@ -571,13 +646,56 @@ public class SetDB implements Serializable {
             if (a_con != null){
                 a_con.rollback();
             }
-            _Environ._MyLogger.severe("[EnteryMnt]" + e.getMessage());
+            _Environ._MyLogger.severe("[EntryMnt]" + e.getMessage());
+            a_sRet[0] = e.getMessage();
+        } catch (ClassNotFoundException ex) {
+            if (a_con != null){
+                a_con.rollback();
+            }
+            _Environ._MyLogger.severe("[EntryMnt]" + ex.getMessage());
+            a_sRet[0] = ex.getMessage();
+        } finally{
+            if (a_ps != null){
+                a_ps.close();
+            }
+            if (a_con != null){
+                a_con.close();
+            }
+        }
+
+        _Environ._MyLogger.info("*** EntryMnt is finished. ***");
+        return a_sRet;
+    }
+
+    //削除
+    public String DeleteMnt(
+        String h_table,
+        String h_where
+        ) throws Exception{
+        String a_sRet = "";
+        Connection a_con = null;
+        PreparedStatement a_ps = null;
+        String a_sql = "DELETE FROM " + h_table + " WHERE (" + h_where + ")";
+        try{
+            Class.forName (_db_driver);
+            // データベースとの接続
+            a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
+            a_con.setAutoCommit(false);
+            a_ps = a_con.prepareStatement(a_sql);
+            //a_ps.setString(1, JobId);
+            int a_i = a_ps.executeUpdate();
+            a_con.commit();
+        } catch (SQLException e) {
+            if (a_con != null){
+                a_con.rollback();
+            }
+            _Environ._MyLogger.severe("[DeleteMnt]" + e.getMessage());
             a_sRet = e.getMessage();
         } catch (ClassNotFoundException ex) {
             if (a_con != null){
                 a_con.rollback();
             }
-            _Environ._MyLogger.severe("[EnteryMnt]" + ex.getMessage());
+            _Environ._MyLogger.severe("[DeleteMnt]" + ex.getMessage());
             a_sRet = ex.getMessage();
         } finally{
             if (a_ps != null){
@@ -588,45 +706,8 @@ public class SetDB implements Serializable {
             }
         }
 
-        _Environ._MyLogger.info("*** EnteryMnt is finished. ***");
-        return a_sRet;
-    }
-
-    //削除
-    public void DeleteMnt() throws Exception{
-        /*
-        Connection a_con = null;
-        PreparedStatement a_ps = null;
-        String a_sql = "DELETE FROM JOBSCHEDULE WHERE (JOBID=?);";
-        try{
-            Class.forName (_db_driver);
-            // データベースとの接続
-            a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
-            a_con.setAutoCommit(false);
-            a_ps = a_con.prepareStatement(a_sql);
-            a_ps.setString(1, JobId);
-            int a_i = a_ps.executeUpdate();
-            a_con.commit();
-        } catch (SQLException e) {
-            if (a_con != null){
-                a_con.rollback();
-            }
-            _Environ._MyLogger.severe("[DeleteWarnSchedule]" + e.getMessage());
-        } catch (ClassNotFoundException ex) {
-            if (a_con != null){
-                a_con.rollback();
-            }
-            _Environ._MyLogger.severe("[DeleteWarnSchedule]" + ex.getMessage());
-        } finally{
-            if (a_ps != null){
-                a_ps.close();
-            }
-            if (a_con != null){
-                a_con.close();
-            }
-        }
-        */
         _Environ._MyLogger.info("*** DeleteMnt is finished. ***");
+        return a_sRet;
     }
     
     //pagerの作成
@@ -1420,6 +1501,8 @@ public class SetDB implements Serializable {
             int a_rec = 0;
             while(a_rs.next()){
                 a_rec++;
+                a_sVal = _Environ.ExistDBString(a_rs, "id");
+                a_array_equipmenttype.add("id" + String.valueOf(a_rec) + "\t" + a_sVal);
                 a_sVal = _Environ.ExistDBString(a_rs, "keyword");
                 a_array_equipmenttype.add("keyword" + String.valueOf(a_rec) + "\t" + a_sVal);
                 a_sVal = _Environ.ExistDBString(a_rs, "equipmenttypemasterid");
@@ -1535,6 +1618,164 @@ public class SetDB implements Serializable {
         }
         _Environ._MyLogger.info("*** GetRPTMnt is finished. ***");
 
+        return a_sRet;
+    }
+
+    //RPT使用状況登録
+    public String EntryRPTMnt(
+        ArrayList<String> h_plurals,
+        String h_act,
+        String h_use_code,
+        String h_post_data
+        ) throws Exception{
+        String a_sRet = "";
+        String[] a_sRet2 = null;
+        boolean a_isOK = true;
+        try{
+            //DB更新するテーブルのSQLを組み立てる
+            String a_tableName = "";
+            String[] a_post = h_post_data.split("\t");
+            String[] a_data_list = a_post[1].split("\b\b\b");
+            a_isOK = true;
+            for (int a_it=0; a_it<2; a_it++){
+                switch (a_it){
+                    case 0:
+                        a_tableName = "equipmenttype";
+                        break;
+                    case 1:
+                        a_tableName = "sioportnumber";
+                        break;
+                }
+                //1行目はヘッダ
+                for (int a_iCnt=1; a_iCnt<h_plurals.size(); a_iCnt++){
+                    String[] a_def = h_plurals.get(a_iCnt).split("\t");
+                    String[] a_field = a_def[_Environ.COLUMN_DEF_FIELD].split(":");
+                    String[] a_table = a_def[_Environ.COLUMN_DEF_TABLE_NAME].split(":");
+                    ArrayList<String> a_now_split = new ArrayList<String>();
+                    String[] a_data_line = null;
+                    String[] a_data = null;
+                    ArrayList<String> a_data2 = new ArrayList<String>();
+                    boolean a_isNew = true;
+                    boolean a_isFound = false;
+                    boolean a_isExec = true;
+                    String a_idx = "";
+                    for (int a_iCnt2=0; a_iCnt2<a_field.length; a_iCnt2++){
+                        if (a_table[a_iCnt2].equals(a_tableName) == true){
+                            
+                            //該当番目の定義を組み立て
+                            String a_tmp = "";
+                            String a_fn = "";
+                            String a_col = "";
+                            for (int a_iCnt3=0; a_iCnt3<_Environ.COLUMN_DEF_ACTION + 1; a_iCnt3++){
+                                String[] a_split3 = a_def[a_iCnt3].split(":");
+                                if (a_iCnt3>0){
+                                    a_tmp += "\t";
+                                }
+                                if (a_split3.length > a_iCnt2){
+                                    a_tmp += a_split3[a_iCnt2];
+                                    if (a_iCnt3 == _Environ.COLUMN_DEF_FIELD){
+                                        a_fn = a_split3[a_iCnt2];
+                                    }
+                                    if (a_iCnt3 == _Environ.COLUMN_DEF_NAME){
+                                        a_col = a_split3[a_iCnt2];
+                                    }
+                                }
+                            }
+                            a_now_split.add(a_tmp);
+                            
+                            //フィールドデータを検出
+                            a_data_line = a_data_list[a_iCnt - 1].split("\b\b");
+                            for (int a_iCnt3=0; a_iCnt3<a_data_list.length; a_iCnt3++){
+                                a_data = a_data_line[a_iCnt3].split("\b");
+                                if (a_data[0].equals(a_fn) == true){
+                                    a_isFound = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (a_isFound == true){
+                                //データの組み立て
+                                String a_sVal = "";
+                                if (a_data.length > 1){
+                                    a_sVal = a_data[1].trim();
+                                }
+                                if (a_col.equals("id") == true){
+                                    a_idx = a_sVal;
+                                }else{
+                                    if (a_sVal.equals("") == true){
+                                        a_isExec = false;
+                                        if (a_tableName.equals("sioportnumber") == true){
+                                            a_sVal = "-1";
+                                        }
+                                    }
+                                }
+                                a_data2.add(a_col + "\t" + a_sVal);
+                                //if (a_iCnt2==0){
+                                    if (a_idx.equals("") == true){
+                                        a_isNew = true;
+                                    }else{
+                                        a_isNew = false;
+                                    }
+                                //}
+                            }
+                        }
+                    }
+                    if (a_isFound == true){
+                        if (a_tableName.equals("equipmenttype") == true){
+                            if (a_isExec == true){
+                                if (a_isNew == true){
+                                    //新規
+                                    a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "n", h_use_code, a_data2);
+                                }else{
+                                    //更新
+                                    a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "e", a_idx, a_data2);
+                                }
+                                if (a_sRet2[0].equals("") == false){
+                                    a_isOK = false;
+                                    a_sRet = a_sRet2[0];
+                                    break;
+                                }
+                            }else{
+                                if (a_idx.equals("") == false){
+                                    //削除処理：pending
+                                    a_sRet = DeleteMnt(a_tableName, "id=" + a_idx);
+                                    if (a_sRet.equals("") == false){
+                                        a_isOK = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }else{
+                            if (h_act.equals("n") == true){
+                                //新規
+                                a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "n", h_use_code, a_data2);
+                            }else{
+                                //更新
+                                a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "e", h_use_code, a_data2);
+                            }
+                            if (a_sRet2[0].equals("") == false){
+                                a_isOK = false;
+                                a_sRet = a_sRet2[0];
+                                break;
+                            }
+                        }
+                    }
+                    if (a_isOK == false){
+                        break;
+                    }
+                }
+                if (a_isOK == false){
+                    break;
+                }
+            }
+            
+        } catch (Exception e) {
+            _Environ._MyLogger.severe("[EntryRPTMnt]" + e.getMessage());
+            a_sRet = e.getMessage();
+        } finally{
+        }
+
+        _Environ._MyLogger.info("*** EntryRPTMnt is finished. ***");
         return a_sRet;
     }
     

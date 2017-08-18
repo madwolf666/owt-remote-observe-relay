@@ -112,7 +112,7 @@
                     a_now_split[COLUMN_DEF_NAME] = a_split_column[a_iCnt2 - 1];
                     a_now_split[COLUMN_DEF_TABLE_NAME] = "";
                     a_now_split[COLUMN_DEF_NESS] = "";
-                    a_now_split[COLUMN_DEF_TYPE] = a_split_type[a_iCnt2 - 1];
+                    a_now_split[COLUMN_DEF_INPUT_TYPE] = a_split_type[a_iCnt2 - 1];
                     a_now_split[COLUMN_DEF_LENGTH] = "";
                     a_now_split[COLUMN_DEF_PULLDOWN] = a_split_pulldown[a_iCnt2 - 1];
                     a_now_split[COLUMN_DEF_COMMENT] = "";

@@ -52,7 +52,7 @@
                     String[] a_split2 = a_plurals.get(a_iCnt2).split("\t");
                     String[] a_split3 = a_split2[COLUMN_DEF_FIELD].split(":");
                     if (a_iCnt2 > 1){
-                        a_plural_data += "\f\f";
+                        a_plural_data += "\b\b\b";
                     }
                     for (int a_iCnt3=0; a_iCnt3<a_split3.length; a_iCnt3++){
                         //該当番目の定義を組み立て
@@ -65,18 +65,18 @@
                             }
                         }
                         if (a_iCnt3 > 0){
-                            a_plural_data += "\f\f";
+                            a_plural_data += "\b\b";
                         }
                         a_field = a_now_split[COLUMN_DEF_FIELD];
                         if (request.getParameter(a_field) != null){
                             String a_val = HtmlEncode(request.getParameter(a_field));
                             if (a_val.length()>0){
-                                a_plural_data += a_field + "\f" + a_val;
+                                a_plural_data += a_field + "\b" + a_val;
                             }else{
-                                a_plural_data += a_field + "\f";
+                                a_plural_data += a_field + "\b ";
                             }
                         }else{
-                                a_plural_data += a_field + "\f";
+                                a_plural_data += a_field + "\b ";
                         }
                     }
                 }
@@ -100,13 +100,20 @@
     SetDB.SetRealPath(a_realPath);
     
     //DBの更新
-    String a_sRet = SetDB.EnteryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
-    if (a_sRet.equals("") == true){
+    String[] a_sRets = SetDB.EntryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
+    String a_sRet = "";
+    if (a_sRets[0].equals("") == true){
+        if (a_table_split[0].equals("pbxremotecustomer") == true){
+            ArrayList<String> a_plurals = GetDef_Plurals(a_envPath + "prt_status.def");
+            a_sRet = SetDB.EntryRPTMnt(a_plurals, ACT, a_sRets[1], a_post_data.get(a_post_data.size() - 1));
+        }
         if (a_table_split[0].equals("irmsremotecustomer") == true){
             session.setAttribute("Mnt_Data_LTIC_TN", null);
             session.setAttribute("Mnt_Data_User_Machine", null);
-            session.setAttribute("Mnt_Data_Machine_Code", null);
+            /*session.setAttribute("Mnt_Data_Machine_Code", null);*/
         }
+    }else{
+        a_sRet = a_sRets[0];
     }
 
     out.print(a_sRet);

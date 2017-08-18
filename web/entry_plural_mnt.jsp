@@ -50,8 +50,8 @@
             a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
         }else if (a_mode.equals("2") == true){
             a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
-        }else if (a_mode.equals("3") == true){
-            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");
+        /*}else if (a_mode.equals("3") == true){
+            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");*/
         }
     }
 
@@ -71,7 +71,7 @@
                     String[] a_split2 = a_plurals.get(a_iCnt2).split("\t");
                     String[] a_split3 = a_split2[COLUMN_DEF_FIELD].split(":");
                     if (a_iCnt2 > 1){
-                        a_plural_data += "\f\f";
+                        a_plural_data += "\b\b\b";
                     }
                     for (int a_iCnt3=0; a_iCnt3<a_split3.length; a_iCnt3++){
                         //該当番目の定義を組み立て
@@ -84,18 +84,18 @@
                             }
                         }
                         if (a_iCnt3 > 0){
-                            a_plural_data += "\f\f";
+                            a_plural_data += "\b\b";
                         }
                         a_field = a_now_split[COLUMN_DEF_FIELD];
                         if (request.getParameter(a_field) != null){
                             String a_val = HtmlEncode(request.getParameter(a_field));
                             if (a_val.length()>0){
-                                a_plural_data += a_field + "\f" + a_val;
+                                a_plural_data += a_field + "\b" + a_val;
                             }else{
-                                a_plural_data += a_field + "\f";
+                                a_plural_data += a_field + "\b ";
                             }
                         }else{
-                                a_plural_data += a_field + "\f";
+                                a_plural_data += a_field + "\b ";
                         }
                     }
                 }
@@ -120,14 +120,14 @@
     ArrayList<String>[] a_arrayList_dst = null;
     if (a_user_code.equals("") == false){
         //DBの更新
-        //String a_sRet = SetDB.EnteryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
+        //String a_sRet = SetDB.EntryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
     }else{
         if (a_mode.equals("1") == true){
             a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");
         }else if (a_mode.equals("2") == true){
             a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
-        }else if (a_mode.equals("3") == true){
-            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");
+        /*}else if (a_mode.equals("3") == true){
+            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");*/
         }
         
         if (a_seq.equals("-1") == false){
@@ -154,8 +154,8 @@
             session.setAttribute("Mnt_Data_LTIC_TN", a_arrayList_dst);
         }else if (a_mode.equals("2") == true){
             session.setAttribute("Mnt_Data_User_Machine", a_arrayList_dst);
-        }else if (a_mode.equals("3") == true){
-            session.setAttribute("Mnt_Data_Machine_Code", a_arrayList_dst);
+        /*}else if (a_mode.equals("3") == true){
+            session.setAttribute("Mnt_Data_Machine_Code", a_arrayList_dst);*/
         }
     }
     

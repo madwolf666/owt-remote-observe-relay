@@ -1,32 +1,32 @@
-入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
-usercode	usercode:usercode:usercode	newcustomermanage:irmsremotecustomer:remotemonitoringcustomer	a	s	n	6	n	ユーザコード
-remotesetid	remotesetid:stationid	remotemonitoringcustomer:remotemonitoringcustomer	n	n	n	1	y	SET
-usernumber	usernumber	remotemonitoringcustomer	n	n	n	32	l	REC
-username	username	newcustomermanage	y	s	n	88	n	名称
-maintel	maintel	newcustomermanage	n	s	n	32	n	代表電話番号
-postcode	postcode	newcustomermanage	n	s	n	8	n	郵便番号
-ext	ext	irmsremotecustomer	n	s	n	1	y	外線・内線種別
-useraddr	useraddr	newcustomermanage	n	s	n	50	n	住所
-chargename	chargename	newcustomermanage	n	s	n	32	n	ユーザ担当者
-chargetel	chargetel	newcustomermanage	n	s	n	32	n	ユーザ担当者電話番号
-remotesin	remotesin	newcustomermanage	n	date	n	10	n	リモートSIN年月日
-remotecancel	remotecancel	irmsremotecustomer	n	date	n	10	n	リモート解約日
-remotecontract	remotecontract	newcustomermanage	y	s	n	1	y	リモート契約
-diagnose	diagnose	newcustomermanage	y	s	n	1	y	診断
-remoteclass	remoteclass	newcustomermanage	y	s	n	8	y	リモート契約クラス
-managerpcno	managerpcno	irmsremotecustomer	y	s	n	1	n	診断ManagerPC番号
-diaginterval	diaginterval	irmsremotecustomer	n	s	n	2	n	診断間隔
-diagtime	diagtime	irmsremotecustomer	n	s	n	5	n	診断時間
-linetype	linetype	irmsremotecustomer	n	s	n	1	y	回線種別
-linetel	linetel	newcustomermanage	n	s	n	32	n	回線番号
-inboundtype	inboundtype	irmsremotecustomer	n	s	n	1	y	着信種別
-raspass	raspass	irmsremotecustomer	n	s	n	16	n	RASログオンパスワード
-commentary	commentary	irmsremotecustomer	n	s	n	64	n	備考
-ftpsend	ftpsend	irmsremotecustomer	n	s	n	1	y	FTP情報転送
-monthreport	monthreport	newcustomermanage	y	s	n	1	y	月報
-machinename	machinename	remotemonitoringcustomer	n	s	n	24	n	機種名
-version	version	remotemonitoringcustomer	n	s	n	20	n	Version
-nodecode	nodecode	remotemonitoringcustomer	y	s	n	2	y	機種コード
-idcode	idcode	remotemonitoringcustomer	y	s	n	64	n	ユーザIDコード
-urgentreportid	urgentreportid	remotemonitoringcustomer	y	n	n	10	l	緊急連絡体制表No.
-autoalarmreset	autoalarmreset	remotemonitoringcustomer	n	n	n	1	y	自動アラームリセット
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）型（n/s/time/date）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
+usercode	usercode:usercode:usercode	newcustomermanage:irmsremotecustomer:remotemonitoringcustomer	a	n	s	n	6	n	ユーザコード
+remotesetid	remotesetid:stationid	remotemonitoringcustomer:remotemonitoringcustomer	n	n	n	n	1	y	SET
+usernumber	usernumber	remotemonitoringcustomer	n	n	n	n	32	l	REC
+username	username	newcustomermanage	y	s	s	n	88	n	名称
+maintel	maintel	newcustomermanage	n	s	s	n	32	n	代表電話番号
+postcode	postcode	newcustomermanage	n	s	s	n	8	n	郵便番号
+ext	ext	irmsremotecustomer	n	s	s	n	1	y	外線・内線種別
+useraddr	useraddr	newcustomermanage	n	s	s	n	50	n	住所
+chargename	chargename	newcustomermanage	n	s	s	n	32	n	ユーザ担当者
+chargetel	chargetel	newcustomermanage	n	s	s	n	32	n	ユーザ担当者電話番号
+remotesin	remotesin	newcustomermanage	n	date	date	n	10	n	リモートSIN年月日
+remotecancel	remotecancel	irmsremotecustomer	n	date	date	n	10	n	リモート解約日
+remotecontract	remotecontract	newcustomermanage	y	s	s	n	1	y	リモート契約
+diagnose	diagnose	newcustomermanage	y	s	s	n	1	y	診断
+remoteclass	remoteclass	newcustomermanage	y	s	s	n	8	y	リモート契約クラス
+managerpcno	managerpcno	irmsremotecustomer	y	s	s	n	1	n	診断ManagerPC番号
+diaginterval	diaginterval	irmsremotecustomer	n	s	s	n	2	n	診断間隔
+diagtime	diagtime	irmsremotecustomer	n	s	s	n	5	n	診断時間
+linetype	linetype	irmsremotecustomer	n	s	s	n	1	y	回線種別
+linetel	linetel	newcustomermanage	n	s	s	n	32	n	回線番号
+inboundtype	inboundtype	irmsremotecustomer	n	s	s	n	1	y	着信種別
+raspass	raspass	irmsremotecustomer	n	s	s	n	16	n	RASログオンパスワード
+commentary	commentary	irmsremotecustomer	n	s	s	n	64	n	備考
+ftpsend	ftpsend	irmsremotecustomer	n	s	s	n	1	y	FTP情報転送
+monthreport	monthreport	newcustomermanage	y	s	s	n	1	y	月報
+machinename	machinename	remotemonitoringcustomer	n	s	s	n	24	n	機種名
+version	version	remotemonitoringcustomer	n	s	s	n	20	n	Version
+nodecode	nodecode	remotemonitoringcustomer	y	s	s	n	2	y	機種コード
+idcode	idcode	remotemonitoringcustomer	y	s	s	n	64	n	ユーザIDコード
+urgentreportid	urgentreportid	remotemonitoringcustomer	y	n	n	n	10	l	緊急連絡体制表No.
+autoalarmreset	autoalarmreset	remotemonitoringcustomer	n	n	n	n	1	y	自動アラームリセット

@@ -130,10 +130,10 @@
             out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>ユーザ機器登録</font></td>");
             out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='機器設定' onclick='set_irms_plural(\"2\", \"0\", \"" + a_user_code + "\");'></td>");
             out.print("</tr>");
-            out.print("<tr>");
+            /*out.print("<tr>");
             out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>機器コード設定</font></td>");
             out.print("<td bgcolor='transparent' style='text-align:left;'><input type='button' value='機器コード登録' onclick='set_irms_plural(\"3\", \"0\", \"" + a_user_code + "\");'></td>");
-        out.print("</tr>");
+            out.print("</tr>");*/
     }
 
     out.print("</table>");

@@ -60,9 +60,9 @@
     SetDB.SetRealPath(a_realPath);
     
     //DBの更新
-    String a_sRet = SetDB.EnteryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
+    String[] a_sRet = SetDB.EntryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
 
-    out.print(a_sRet);
+    out.print(a_sRet[0]);
 %>
 
     

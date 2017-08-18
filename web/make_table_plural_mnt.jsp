@@ -50,8 +50,8 @@
             a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
         }else if (a_mode.equals("2") == true){
             a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
-        }else if (a_mode.equals("3") == true){
-            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");
+        /*}else if (a_mode.equals("3") == true){
+            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");*/
         }
     }
 
@@ -69,8 +69,8 @@
             a_arrayLists = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");
         }else if (a_mode.equals("2") == true){
             a_arrayLists = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
-        }else if (a_mode.equals("3") == true){
-            a_arrayLists = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");
+        /*}else if (a_mode.equals("3") == true){
+            a_arrayLists = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");*/
         }
     }
     
