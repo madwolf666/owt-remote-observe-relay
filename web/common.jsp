@@ -630,14 +630,15 @@ String Make_Input_Tag_Mnt_String(
 
     if (h_isEdit == false){
         a_sRet += h_val;
+        //a_sRet += h_val;
     }
 
     if (h_act.equals("l") == false){
         if (a_max_len > 256){
             if (h_isEdit == true){
-                a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
+                a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + HtmlEncode(h_val) + "</textarea>";
             }else{
-                a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+                a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' value='" + HtmlEncode(h_val) + "'>";
             }
         }else{
             a_sRet += "<input type='";
@@ -646,7 +647,7 @@ String Make_Input_Tag_Mnt_String(
             }else{
                 a_sRet += "hidden";
             }
-            a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + h_val + "' maxlength='" + String.valueOf(a_max_len) + "'>";
+            a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "' value='" + HtmlEncode(h_val) + "' maxlength='" + String.valueOf(a_max_len) + "'>";
         }
     }
 

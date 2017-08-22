@@ -68,7 +68,8 @@
                         }
                         a_field = a_now_split[COLUMN_DEF_FIELD];
                         if (request.getParameter(a_field) != null){
-                            String a_val = HtmlEncode(request.getParameter(a_field));
+                            String a_val = request.getParameter(a_field);
+                            //String a_val = HtmlEncode(request.getParameter(a_field));
                             if (a_val.length()>0){
                                 a_plural_data += a_field + "\b" + a_val;
                             }else{
@@ -83,7 +84,8 @@
             a_post_data.add(a_field + "\t" + a_plural_data);
         }else{
             if (request.getParameter(a_field) != null){
-                String a_val = HtmlEncode(request.getParameter(a_field));
+                String a_val = request.getParameter(a_field);
+                //String a_val = HtmlEncode(request.getParameter(a_field));
                 if (a_val.length()>0){
                     a_post_data.add(a_field + "\t" + a_val);
                 }else{

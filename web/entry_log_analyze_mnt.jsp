@@ -45,7 +45,8 @@
         String a_colName = a_colNames[0];
         String a_field = a_split[COLUMN_DEF_FIELD];
         if (request.getParameter(a_field) != null){
-            String a_val = HtmlEncode(request.getParameter(a_field));
+            String a_val = request.getParameter(a_field);
+            //String a_val = HtmlEncode(request.getParameter(a_field));
             if (a_val.length()>0){
                 a_post_data.add(a_field + "\t" + a_val);
             }else{

@@ -618,6 +618,11 @@ public class SetDB implements Serializable {
                                 }
                             }
                             if (a_isInt == false){
+                                a_sVal = a_sVal.replace("&lt;", "<");
+                                a_sVal = a_sVal.replace("&gt;", ">");
+                                a_sVal = a_sVal.replace("&#38;", "&");
+                                a_sVal = a_sVal.replace("&#34;", "\"");
+                                a_sVal = a_sVal.replace("&#39;", "'");
                                 a_ps.setString(a_idx, a_sVal);
                             }
                         }
