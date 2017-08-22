@@ -460,7 +460,8 @@ String Make_Tag_Mnt(
             g_JScript_Val_Auto_Plural += "," + a_colName;
         }
         if (h_val.equals("") == true){
-            a_sRet = "<font color='#ff0000'>自動付与されます</font>";
+            a_sRet = "<font color='#ff0000'>自動付与</font>";
+            //a_sRet = "<font color='#ff0000'>自動付与されます</font>";
         }else{
             a_sRet = h_val;
         }
@@ -1079,7 +1080,7 @@ String Make_Entry_Table_Mnt(String h_act, String h_idx){
    return a_sRet;
 }
 
-String Make_Entry_Plural_Mnt(String h_mode, String h_is_edit, String h_user_code, String h_seq){
+String Make_Entry_Plural_Mnt(String h_mode, String h_is_edit, String h_user_code, String h_seq, String h_opt1){
     String a_sRet = "" ;
    
     a_sRet = "function entry_plural_mnt(){";
@@ -1108,6 +1109,7 @@ String Make_Entry_Plural_Mnt(String h_mode, String h_is_edit, String h_user_code
     a_sRet += "         ,'is_edit': \"" + h_is_edit + "\"";
     a_sRet += "         ,'user_code': \"" + h_user_code + "\"";
     a_sRet += "         ,'seq': \"" + h_seq + "\"";
+    a_sRet += "         ,'opt1': \"" + h_opt1 + "\"";
     
     //入力カラム数分、セットする
     a_sRet += g_Post_Data_Plural;

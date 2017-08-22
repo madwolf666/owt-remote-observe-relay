@@ -41,14 +41,19 @@
     if (a_seq == null){
         a_seq = "-1";
     }
-
+    String a_mytable = "";
+    String a_idx = "";
+    String a_user_ipaddr = request.getParameter("opt1");;
+    
     //Beansへの値引渡し
     SetDB.SetRealPath(a_realPath);
 
     if (a_table_split[0].equals("irmsremotecustomer") == true){
         if (a_mode.equals("1") == true){
+            a_mytable = "trunkandlticinformation\tusercode:s:n:y";
             a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
         }else if (a_mode.equals("2") == true){
+            a_mytable = "usernode\tusercode:s:n:y";
             a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
         /*}else if (a_mode.equals("3") == true){
             a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");*/
@@ -104,6 +109,21 @@
         }else{
             if (request.getParameter(a_field) != null){
                 String a_val = HtmlEncode(request.getParameter(a_field));
+                if (a_colName.equals("usercode") == true){
+                    if (a_user_code.equals("") == false){
+                        a_val = a_user_code;
+                    }
+                }
+                if (a_colName.equals("id") == true){
+                    if (a_user_code.equals("") == false){
+                        a_idx = a_val;
+                    }
+                }
+                /*if (a_colName.equals("useripaddr") == true){
+                    if (a_user_code.equals("") == false){
+                        a_user_ipaddr = a_val;
+                    }
+                }*/
                 if (a_val.length()>0){
                     a_post_data.add(a_field + "\t" + a_val);
                 }else{
@@ -119,8 +139,22 @@
     ArrayList<String>[] a_arrayList_src = null;
     ArrayList<String>[] a_arrayList_dst = null;
     if (a_user_code.equals("") == false){
-        //DBの更新
-        //String a_sRet = SetDB.EntryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
+        String[] a_sRets = null;
+        if (a_seq.equals("-1") == false){
+            //更新
+            if (a_mode.equals("1") == true){
+                a_sRets = SetDB.EntryMnt(a_mytable, a_coldefs, "e", a_idx, a_post_data);
+            }else{
+                a_sRets = SetDB.EntryMnt(a_mytable, a_coldefs, "e", a_user_code + "," + a_user_ipaddr, a_post_data);
+            }
+        }else{
+            //新規
+            a_sRets = SetDB.EntryMnt(a_mytable, a_coldefs, "n", a_user_code, a_post_data);
+        }
+        if (a_sRets[0].equals("") == true){
+        }else{
+            a_sRet = a_sRets[0];
+        }
     }else{
         if (a_mode.equals("1") == true){
             a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");

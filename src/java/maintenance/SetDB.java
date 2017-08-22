@@ -443,6 +443,18 @@ public class SetDB implements Serializable {
                         }
                     }
 
+                    if (a_tableName.equals("trunkandlticinformation") == true){
+                        a_sql += "'" + h_idx + "',";
+                        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                            a_sql += "(SELECT NVL(MAX(ID),0)+1 FROM " + a_tableName + "),";
+                        }else if (_db_driver.equals("org.postgresql.Driver")){
+                            a_sql += "(SELECT COALESCE(MAX(ID),0)+1 FROM " + a_tableName + "),";
+                        }
+                    }
+                    if (a_tableName.equals("usernode") == true){
+                        a_sql += "'" + h_idx + "',";
+                    }
+                    
                     a_sql += a_table_sql_p.get(a_iCnt) + ")";
                 }else{
                     a_sql = "UPDATE " + a_tableName + " SET " + a_table_sql_p.get(a_iCnt) + " WHERE ";
@@ -452,6 +464,14 @@ public class SetDB implements Serializable {
                         a_sql_w += " (pbxremotecustomerid=(SELECT id FROM pbxremotecustomer WHERE (usercode='" + a_user_code + "')))";
                     }else if (a_tableName.equals("sioportnumber") == true){
                         a_sql_w += " (customerid=(SELECT id FROM remotemonitoringcustomer WHERE (usercode='" + h_idx + "')))";
+
+                    }else if (a_tableName.equals("trunkandlticinformation") == true){
+                        a_sql_w += " (id=" + h_idx + ")";
+                    }else if (a_tableName.equals("usernode") == true){
+                        String[] a_split_idxs = h_idx.split(",");
+                        a_sql_w += " (usercode='" + a_split_idxs[0] + "')";
+                        a_sql_w += " AND (useripaddr='" + a_split_idxs[1] + "')";
+                        
                     }else{
                         String[] a_split_idxs = h_idx.split(",");
                         for (int a_iCnt2=0; a_iCnt2<a_split_idxs.length; a_iCnt2++){
@@ -508,19 +528,24 @@ public class SetDB implements Serializable {
                         a_idx++;
                         if (a_sType.indexOf("n") >= 0){
                             //数値の場合
-                            if (a_sVal.equals("") == false){
-                                if (a_tableName.equals("remotemonitoringcustomer") == true){
-                                    if (a_table_split[0].equals("irmsremotecustomer") == true){
-                                        if (a_sName.equals("stationid") == true){
-                                            a_sVal = "7";
-                                        }
+                            if (a_tableName.equals("remotemonitoringcustomer") == true){
+                                if (a_table_split[0].equals("irmsremotecustomer") == true){
+                                    if (a_sName.equals("stationid") == true){
+                                        a_sVal = "7";
                                     }
-                                }
-                                if (a_tableName.equals("irmsremotecustomer") == true){
                                     if (a_sName.equals("usernumber") == true){
                                         a_sVal = a_user_number;
                                     }
                                 }
+                            }
+                            /*
+                            if (a_tableName.equals("irmsremotecustomer") == true){
+                                if (a_sName.equals("usernumber") == true){
+                                    a_sVal = a_user_number;
+                                }
+                            }
+                            */
+                            if (a_sVal.equals("") == false){
                                 a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
                             }else{
                                 a_ps.setNull(a_idx, java.sql.Types.NUMERIC);
@@ -606,7 +631,7 @@ public class SetDB implements Serializable {
                         a_rs = a_ps.executeQuery();
                         while(a_rs.next()){
                             a_user_code = _Environ.ExistDBString(a_rs, "usercode");
-                            a_user_number = a_user_code.substring(3,3);
+                            a_user_number = a_user_code.substring(3,6);
                             if ((a_table_split[0].equals("pbxremotecustomer") == true)
                              || (a_table_split[0].equals("irmsremotecustomer") == true)
                                ){
@@ -976,6 +1001,8 @@ public class SetDB implements Serializable {
             }else if (a_table_split[0].equals("irmsremotecustomer") == true){
                 a_sql_tmp = "SELECT";
                 a_sql_tmp += " s1.usercode";
+                a_sql_tmp += ",s4.remotesetid";
+                a_sql_tmp += ",s4.usernumber";
                 a_sql_tmp += ",s2.username";
                 a_sql_tmp += ",s2.maintel";
                 a_sql_tmp += ",s2.postcode";
@@ -984,6 +1011,7 @@ public class SetDB implements Serializable {
                 a_sql_tmp += ",s2.chargename";
                 a_sql_tmp += ",s2.chargetel";
                 a_sql_tmp += ",s2.remotesin";
+                a_sql_tmp += ",s1.remotecancel";
                 a_sql_tmp += ",s2.remotecontract";
                 a_sql_tmp += ",s2.diagnose";
                 a_sql_tmp += ",s2.remoteclass";
@@ -991,9 +1019,8 @@ public class SetDB implements Serializable {
                 a_sql_tmp += ",s1.diaginterval";
                 a_sql_tmp += ",s1.diagtime";
                 a_sql_tmp += ",s1.linetype";
-                a_sql_tmp += ",s1.linetel";
+                a_sql_tmp += ",s2.linetel";
                 a_sql_tmp += ",s1.inboundtype";
-
                 a_sql_tmp += ",s1.raspass";
                 a_sql_tmp += ",s1.commentary";
                 a_sql_tmp += ",s1.ftpsend";
@@ -1010,10 +1037,6 @@ public class SetDB implements Serializable {
                 a_sql_tmp += " newcustomermanage s2";
                 a_sql_tmp += " ON";
                 a_sql_tmp += " (s1.usercode=s2.usercode)";
-                a_sql_tmp += " LEFT JOIN";
-                a_sql_tmp += " customerstation s3";
-                a_sql_tmp += " ON";
-                a_sql_tmp += " (s1.id=s3.pbxremotecustomerid)";
                 a_sql_tmp += " LEFT JOIN";
                 a_sql_tmp += " remotemonitoringcustomer s4";
                 a_sql_tmp += " ON";
@@ -1348,7 +1371,7 @@ public class SetDB implements Serializable {
         return a_sRet;
     }
     
-    public  ArrayList<String> GetPluralMnt(
+    public  ArrayList<String>[] GetPluralMnt(
         String h_table,
         ArrayList<String> h_coldefs,
         String h_user_code
@@ -1359,7 +1382,7 @@ public class SetDB implements Serializable {
         String a_fields = "";
         String[] a_key = null;
         
-        ArrayList<String> a_arrayRet = null;
+        ArrayList<String>[] a_arrayRet = null;
         int a_iSum = 0;
         Connection a_con = null;
         PreparedStatement a_ps = null;
@@ -1382,12 +1405,17 @@ public class SetDB implements Serializable {
                 a_key[a_iCnt] = a_any_split[0];
             }
             
-            a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0];
+            a_sql = "SELECT COUNT(*) AS REC_SUM FROM " + a_table_split[0] + " WHERE (usercode=?)";
             
             Class.forName (_db_driver);
             // データベースとの接続
             a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
             a_ps = a_con.prepareStatement(a_sql);
+            if (a_table_split[0].equals("trunkandlticinformation") == true){
+                a_ps.setInt(1, Integer.valueOf(h_user_code));
+            }else{
+                a_ps.setString(1, h_user_code);
+            }
             a_rs = a_ps.executeQuery();
             while(a_rs.next()){
                 a_iSum = a_rs.getInt("REC_SUM");
@@ -1396,7 +1424,7 @@ public class SetDB implements Serializable {
             a_ps.close();
             
             if (a_iSum > 0){
-                a_arrayRet = new ArrayList<String>();
+                a_arrayRet = new ArrayList[a_iSum];
                 String a_sVal = "";
                 int a_iVal = 0;
                 String a_sRet = "";
@@ -1412,13 +1440,23 @@ public class SetDB implements Serializable {
                     a_sql = "SELECT * FROM (" + a_sql + ") s1 WHERE (s1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }
                 */
-                a_sql = "SELECT * FROM " + a_table_split[0] + " ORDER BY " + a_fields;
+                a_sql = "SELECT * FROM " + a_table_split[0] + " WHERE (usercode=?) ORDER BY usercode";
+                if (a_table_split[0].equals("trunkandlticinformation") == true){
+                    a_sql += ",id";
+                }
 
                 a_ps = a_con.prepareStatement(a_sql);
+                if (a_table_split[0].equals("trunkandlticinformation") == true){
+                    a_ps.setInt(1, Integer.valueOf(h_user_code));
+                }else{
+                    a_ps.setString(1, h_user_code);
+                }
                 a_rs = a_ps.executeQuery();
+                int a_iRec = 0;
                 while(a_rs.next()){
-                    a_sRet = "";
+                    ArrayList<String> a_data_list = new ArrayList<String>();
                     for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
+                        a_sRet = "";
                         String[] a_split2 = h_coldefs.get(a_iCnt).split("\t");
                         a_sVal = _Environ.ExistDBString(a_rs, a_split2[_Environ.COLUMN_DEF_NAME]);
                         String a_sTmp1 = a_sVal;
@@ -1435,18 +1473,22 @@ public class SetDB implements Serializable {
                         }
                         
                         if (a_iCnt > 0){
-                            a_sRet += "\t";
+                            //a_sRet += "\t";
                         }else{
+                            /*
                             a_sVal = "<a href=\"#\" onClick=\"make_table_edit_mnt('e','" + a_sTmp1;
                             for (int a_iCnt2=1; a_iCnt2<a_key.length; a_iCnt2++){
                                 String a_sTmp2 = _Environ.ExistDBString(a_rs,a_key[a_iCnt2]);
                                 a_sVal += "," + a_sTmp2;
                             }
                             a_sVal += "');\">" + a_sTmp1 + "</a>";
+                            */
                         }
-                        a_sRet += a_sVal;
+                        a_sRet += a_split2[_Environ.COLUMN_DEF_NAME] + "\t" + a_sVal;
+                        a_data_list.add(a_sRet);
                     }
-                    a_arrayRet.add(a_sRet);
+                    a_arrayRet[a_iRec] = a_data_list;
+                    a_iRec++;
                 }
                 a_rs.close();
                 a_ps.close();
@@ -1776,6 +1818,37 @@ public class SetDB implements Serializable {
         }
 
         _Environ._MyLogger.info("*** EntryRPTMnt is finished. ***");
+        return a_sRet;
+    }
+    
+    //LTIC・TN/ユーザ機器登録
+    public String[] EntryPluralMnt(
+        String h_table,
+        ArrayList<String> h_plurals,
+        String h_act,
+        String h_idx,
+        ArrayList<String>[] h_post_data
+        ) throws Exception{
+        String[] a_sRet = new String[1];
+        try{
+            a_sRet[0] = "";
+            if (h_post_data != null){
+                for (int a_iCnt=0; a_iCnt<h_post_data.length; a_iCnt++){
+                    ArrayList<String> a_post_data = h_post_data[a_iCnt];
+                    a_sRet = EntryMnt(h_table, h_plurals, h_act, h_idx, a_post_data);
+                    if (a_sRet[0].equals("") == false){
+                        break;
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            _Environ._MyLogger.severe("[EntryPluralMnt]" + e.getMessage());
+            a_sRet[0] = e.getMessage();
+        } finally{
+        }
+
+        _Environ._MyLogger.info("*** EntryPluralMnt is finished. ***");
         return a_sRet;
     }
     

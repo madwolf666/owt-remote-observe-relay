@@ -108,9 +108,28 @@
             a_sRet = SetDB.EntryRPTMnt(a_plurals, ACT, a_sRets[1], a_post_data.get(a_post_data.size() - 1));
         }
         if (a_table_split[0].equals("irmsremotecustomer") == true){
-            session.setAttribute("Mnt_Data_LTIC_TN", null);
-            session.setAttribute("Mnt_Data_User_Machine", null);
-            /*session.setAttribute("Mnt_Data_Machine_Code", null);*/
+            if (ACT.equals("n") == true){
+                String a_user_code = a_sRets[1];
+                ArrayList<String> a_sub_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
+                ArrayList<String>[] a_sub_post_data = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");
+                a_sRets = SetDB.EntryPluralMnt(a_Mnt_Table, a_sub_coldefs, ACT, a_user_code, a_sub_post_data);
+                if (a_sRets[0].equals("") == true){
+                    a_sub_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
+                    a_sub_post_data = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
+                    a_sRets = SetDB.EntryPluralMnt(a_Mnt_Table, a_sub_coldefs, ACT, a_user_code, a_sub_post_data);
+                    if (a_sRets[0].equals("") == true){
+                    }else{
+                        a_sRet = a_sRets[0];
+                    }
+                }else{
+                    a_sRet = a_sRets[0];
+                }
+            }
+            if (a_sRet.equals("") == true){
+                session.setAttribute("Mnt_Data_LTIC_TN", null);
+                session.setAttribute("Mnt_Data_User_Machine", null);
+                /*session.setAttribute("Mnt_Data_Machine_Code", null);*/
+            }
         }
     }else{
         a_sRet = a_sRets[0];

@@ -1,10 +1,10 @@
-入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
-p_usercode	usercode	trunkandlticinformation	a	n	n	10	n	顧客ユーザコード
-p_id	id	trunkandlticinformation	a	n	n	10	n	ID
-p_ss9100flag	ss9100flag	trunkandlticinformation	y	n	n	2	y	PBX種別
-p_linenumber	linenumber	trunkandlticinformation	y	n	n	10	n	LTIC番号
-p_basename	basename	trunkandlticinformation	y	s	n	256	n	拠点名
-p_ipaddress	ipaddress	trunkandlticinformation	n	s	n	16	n	IPアドレス
-p_linename	linename	trunkandlticinformation	y	s	n	256	n	回線名
-p_userid	userid	trunkandlticinformation	n	s	n	32	n	USERID
-p_cabno	cabno	trunkandlticinformation	n	n	n	2	n	キャビネット番号
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/l）	コメント
+p_usercode	usercode	trunkandlticinformation	a	n	n	n	10	n	顧客ユーザコード
+p_id	id	trunkandlticinformation	a	n	n	n	10	n	ID
+p_ss9100flag	ss9100flag	trunkandlticinformation	y	n	n	n	2	y	PBX種別
+p_linenumber	linenumber	trunkandlticinformation	y	n	n	n	10	n	LTIC番号
+p_basename	basename	trunkandlticinformation	y	s	s	n	256	n	拠点名
+p_ipaddress	ipaddress	trunkandlticinformation	n	s	s	n	16	n	IPアドレス
+p_linename	linename	trunkandlticinformation	y	s	s	n	256	n	回線名
+p_userid	userid	trunkandlticinformation	n	s	s	n	32	n	USERID
+p_cabno	cabno	trunkandlticinformation	n	n	n	n	2	n	キャビネット番号

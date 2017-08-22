@@ -822,6 +822,46 @@ primary key(id)
 );
 create index remotemonitoringcustomer_index1 on remotemonitoringcustomer(usercode);
 
+create table irmsremotecustomer(
+usercode		varchar2(6),
+ext			varchar2(1),
+managerpcno		varchar2(1) default '1',
+diaginterval		varchar2(2) default '1',
+diagtime		varchar2(5) default '07:00',
+lastdiag		date default sysdate,
+remotecancel		date,
+linetype		varchar2(1) default '2',
+inboundtype		varchar2(1) default '0',
+raspass			varchar2(16) default 'remote',
+commentary		varchar2(64),
+version			varchar2(20),
+existmail		varchar2(1) default '0',
+livemailtime		varchar2(5) default '07:00',
+livemailinterval	varchar2(2) default '1',
+nextlivemailtime	date,
+mailalarmcount		varchar2(2) default '1',
+maillaststate		varchar2(1) default '0',
+ftpsend			varchar2(1) default '1',
+savepath		varchar2(256),
+mstat			varchar2(1) default '0',
+regularrasuser		varchar2(1),
+rasnotifytime		varchar2(5),
+rasnotifyweek		varchar2(1),
+rasnotifymonth		varchar2(2),
+rasnotifyalarmcount	number,
+rasnotifytype		varchar2(1),
+rascheckresult		varchar2(1),
+rasnextnotifydate	varchar2(19),
+connectmode		varchar2(1) default '0',
+rasnowalarmcount	number,
+mailnowalarmcount	number,
+primary key(usercode)
+);
+
+
+
+
+
 -- ƒƒO‰ğÍ
 create table loganalyzeschedule (
 id				number not null,

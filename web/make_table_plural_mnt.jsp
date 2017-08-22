@@ -41,6 +41,7 @@
     if (a_seq == null){
         a_seq = "-1";
     }
+    String a_user_ipaddr = "";
 
     //Beansへの値引渡し
     SetDB.SetRealPath(a_realPath);
@@ -58,11 +59,11 @@
     ArrayList<String>[] a_arrayLists = null;
     if (a_user_code.equals("") == false){
         if (a_mode.equals("1") == true){
-            //a_arrayList= SetDB.GetPluralMnt("trunkandlticinformation   id:n:n:y", a_coldefs, a_user_code);
+            a_arrayLists = SetDB.GetPluralMnt("trunkandlticinformation\tusercode:s:n:y", a_coldefs, a_user_code);
         }else if (a_mode.equals("2") == true){
-            //a_arrayList = SetDB.GetPluralMnt("usernode  useripaddr:s:y:n", a_coldefs, a_user_code);
-        }else if (a_mode.equals("3") == true){
-            //a_arrayList = SetDB.GetPluralMnt("nodeinfo  nodecode:s:y:n", a_coldefs, a_user_code);
+            a_arrayLists = SetDB.GetPluralMnt("usernode\tusercode:s:n:y", a_coldefs, a_user_code);
+        /*}else if (a_mode.equals("3") == true){
+            //a_arrayList = SetDB.GetPluralMnt("nodeinfo  nodecode:s:y:n", a_coldefs, a_user_code);*/
         }
     }else{
         if (a_mode.equals("1") == true){
@@ -138,7 +139,7 @@
             String[] a_split = a_coldefs.get(a_iCnt).split("\t");
             //splitは値が入っている所までしかlengthが返らない[2017.07.31]
             //カラム名を取得：0番目をメインとする
-            String[] a_colNames = a_split[0].split(":");
+            String[] a_colNames = a_split[COLUMN_DEF_NAME].split(":");
             String a_colName = a_colNames[0];
             String a_val = "";
             /*
@@ -150,8 +151,12 @@
             */
             if (a_arrayList != null){
                 String[] a_split2 = a_arrayList.get(a_iCnt).split("\t");
+                //out.print(a_arrayList.get(a_iCnt)+"<br>");
                 if (a_split2.length > 1){
                     a_val = a_split2[1];
+                }
+                if (a_colName.equals("useripaddr") == true){
+                    a_user_ipaddr = a_val;
                 }
             }
             out.print("<tr>");
@@ -182,7 +187,7 @@
     out.print(g_JScript_Program_Plural);
     //out.print("alert(g_val_auto);");
     //out.print("alert(g_val_ness);");
-    out.print(Make_Entry_Plural_Mnt(a_mode, a_is_edit, a_user_code, a_seq));
+    out.print(Make_Entry_Plural_Mnt(a_mode, a_is_edit, a_user_code, a_seq, a_user_ipaddr));
     out.print("</script>");
 %>
 

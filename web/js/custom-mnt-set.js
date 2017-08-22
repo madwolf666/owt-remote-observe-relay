@@ -266,6 +266,7 @@ function set_irms_plural(h_mode, h_is_edit, h_user_code){
             'user_code': h_user_code
         },
         success: function(data, dataType){
+            //alert(data);
             a_result = data.trim();
             $("#show-list").empty().append(data);
         },

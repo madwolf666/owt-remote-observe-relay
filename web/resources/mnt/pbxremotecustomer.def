@@ -1,4 +1,4 @@
-入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/list/plural）	コメント
+入力フィールド名	カラム名（複数）	テーブル名（複数）	必須有無（a/n/y）	型（n/s/time/date）	型（n/s/time/date）	時刻指定（n/y）	MAX桁	プルダウン（n/y/list/plural）	コメント
 usercode	usercode:usercode:usercode	newcustomermanage:pbxremotecustomer:remotemonitoringcustomer	a	n	s	n	6	n	ユーザコード
 username	username	newcustomermanage	y	s	s	n	88	n	名称
 maintel	maintel	newcustomermanage	n	s	s	n	32	n	代表電話番号
