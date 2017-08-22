@@ -461,9 +461,9 @@ public class SetDB implements Serializable {
                     //WHERE句キーのSQL組み立て
                     a_sql_w = "";
                     if (a_tableName.equals("customerstation") == true){
-                        a_sql_w += " (pbxremotecustomerid=(SELECT id FROM pbxremotecustomer WHERE (usercode='" + a_user_code + "')))";
+                        a_sql_w += " (pbxremotecustomerid=(SELECT id FROM pbxremotecustomer WHERE (usercode='" + a_user_code + "') AND (stationid=7)))";
                     }else if (a_tableName.equals("sioportnumber") == true){
-                        a_sql_w += " (customerid=(SELECT id FROM remotemonitoringcustomer WHERE (usercode='" + h_idx + "')))";
+                        a_sql_w += " (customerid=(SELECT id FROM remotemonitoringcustomer WHERE (usercode='" + h_idx + "') AND (stationid=7)))";
 
                     }else if (a_tableName.equals("trunkandlticinformation") == true){
                         a_sql_w += " (id=" + h_idx + ")";
