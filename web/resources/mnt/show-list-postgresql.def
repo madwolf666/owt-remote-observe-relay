@@ -1,3 +1,4 @@
 入力フィールド名	カラム名（複数）	型（n/s/time/date）	プルダウン（n/y/l）	ボタン名	検索キー	選択キー（番号）	取得SQL	項目表示
 usernumber	usercode:username:remotesetid:usernumber:idcode	s:s:n:n:s	n:n:y:n:n	確認	remotesetid		SELECT row_number() over(ORDER BY s1.usernumber,s1.usercode), s1.usercode,s2.username,s1.remotesetid,s1.usernumber,s1.idcode FROM (remotemonitoringcustomer s1 JOIN newcustomermanage s2 ON s1.usercode=s2.usercode) WHERE s1.remotesetid=? ORDER BY s1.usernumber,s1.usercode	ユーザコード:ユーザ名:SET:REC:ユーザIDコード
 urgentreportid	id:office:relationusername:content:chargeperson	n:s:s:s:s	n:n:n:n:n	選択		0	SELECT row_number() over(ORDER BY id), id,office,relationusername,content,chargeperson FROM urgentreport ORDER BY id	id:支店営業所:関連ユーザ:内容:担当者
+p_nodecode	nodecode:vendercode:nodename:version:oid:commentary	s:s:s:s:s:s	n:n:n:n:n:n	選択		0	SELECT row_number() over(ORDER BY nodecode), * FROM nodeinfo ORDER BY nodecode	機器コード:ベンダーコード:機器名:バージョン:オブジェクトID:備考

@@ -3,7 +3,7 @@ p_usercode	usercode	usernode	a	s	s	n	6	n	ユーザコード
 p_nodetype	nodetype	usernode	y	s	s	n	1	y	機器種別
 p_nodeportno	nodeportno	usernode	y	n	n	n	5	n	ポートナンバー
 p_watchtype	watchtype	usernode	y	s	s	n	1	y	監視種別
-p_nodecode	nodecode	usernode	n	s	s	n	4	n	機器コード
+p_nodecode	nodecode	usernode	n	s	s	n	4	l	機器コード
 p_usernodename	usernodename	usernode	n	s	s	n	40	n	ユーザノード名
 p_useripaddr	useripaddr	usernode	y	s	s	n	15	n	IPアドレス
 p_logonname	logonname	usernode	n	s	s	n	32	n	ログオン名

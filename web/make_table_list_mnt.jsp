@@ -27,6 +27,7 @@
 
     //セッション変数
     String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
+    String a_Mnt_Find = GetSessionValue(session.getAttribute("Mnt_Find_Condition"));
     String[] a_table_split = null;
     String[] a_column_split = null;
     ArrayList<String> a_coldefs = new ArrayList<String>();
@@ -80,7 +81,7 @@
                 }
             }
             */
-            a_arrayList = SetDB.FindMnt(a_PageNo, a_find_def, "");
+            a_arrayList = SetDB.FindMnt(a_PageNo, a_find_def, a_Mnt_Find);
         }
 
         if (a_arrayList != null){

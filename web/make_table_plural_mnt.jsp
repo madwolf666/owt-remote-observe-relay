@@ -171,8 +171,8 @@
         out.print("</table>");
         
         out.print("<table><tr>");
-        out.print("<td rowspan='1' valign='top'><div id='entry-plural-mnt'><input id='change_submit' type='button' value='　登録　' onclick='entry_plural_mnt();' /></div></td>");
         out.print("<td rowspan='1' valign='top'><div id='delete-plural-mnt' style='display:none;'><input id='change_submit' type='button' value='　削除　' onclick='delete_plural_mnt(\"" + a_mode + "\",\"" + a_is_edit + "\",\"" + a_user_code + "\");' /></div></td>");
+        out.print("<td rowspan='1' valign='top'><div id='entry-plural-mnt'><input id='change_submit' type='button' value='　登録　' onclick='entry_plural_mnt();' /></div></td>");
         out.print("<input type='hidden' name='select-plural-seq' id='select-plural-seq' value=''>");
         out.print("</tr></table>");
     }

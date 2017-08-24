@@ -124,7 +124,7 @@
     g_JScript_IsRequired = "";
     g_Post_Data = "";
     
-    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:auto;'>");
+    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:660px;'>");
     //out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:768px;'>");
 
     String a_monitoring_id = "";

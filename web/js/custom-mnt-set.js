@@ -15,6 +15,8 @@ function set_session_value_mnt_table(h_table){
             'Mnt_Table': h_table
     };
     //alert(m_parentURL);
+    g_IsSet_Session == false;
+    
     $.ajax({
         url: m_parentURL + "set_session_value.jsp",
         type: 'POST',
@@ -59,6 +61,7 @@ function set_session_value_mnt_pageNo(h_pageNo){
 
 //リモートDBテーブル名取得
 function make_table_select_mnt(){
+    $("#delete-mnt").hide();
     $("#new-mnt").hide();
     //$("#reset-mnt").hide();
     $("#confirm-mnt").hide();
@@ -85,21 +88,30 @@ function make_table_select_mnt(){
 }
 
 //一覧表示（最初）
+var g_IsSess = 0;
 function do_make_table_list_mnt_first(){
     if (g_IsSet_Session == false) {
         //doSomething();
         setTimeout(function(){do_make_table_list_mnt_first()}, 1000);
     }else{
         g_IsSet_Session = false;
+        g_IsSess++;
+    }
+    /*if (g_IsSess<2){
+        //alert(g_IsSess);
+        set_session_value_mnt_find();
+    }else{*/
         //alert("make_table_list_mnt_first--->" + g_IsSet_Session)
         //alert(h_table);
         //make_pager(2,h_pageNo);   //[2016.02.15]
+        make_table_find_condition();
         make_table_list_mnt(1);
-    }
+    /*}*/
 }
 
 function make_table_list_mnt_first(h_table){
     //alert(h_table);
+    g_IsSess = 0;
     set_session_value_mnt_table(h_table);
     do_make_table_list_mnt_first();
     /*if (h_table != ""){
@@ -134,6 +146,7 @@ function make_table_list_mnt(h_pageNo){
         success: function(data, dataType){
             make_pager(7,h_pageNo); //[2017.07.27]
             $("#my-list").empty().append(data);
+            $("#delete-mnt").hide();
             $("#new-mnt").show();
             //$("#reset-mnt").hide();
             $("#confirm-mnt").hide();
@@ -144,6 +157,7 @@ function make_table_list_mnt(h_pageNo){
             if ($('[name=set-table-name] option:selected').val() != ''){
             }else{
                 $("#my-pager").empty();
+                $("#delete-mnt").hide();
                 $("#new-mnt").hide();
                 $("#confirm-mnt").hide();
                 $("#entry-mnt").hide();
@@ -176,6 +190,7 @@ function make_table_edit_mnt(h_act, h_idx){
         success: function(data, dataType){
             $("#my-pager").empty().append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
             $("#my-list").empty().append(data);
+            $("#delete-mnt").show();
             $("#new-mnt").hide();
             //$("#reset-mnt").show();
             $("#confirm-mnt").show();
@@ -362,4 +377,79 @@ function delete_plural_mnt(h_mode, h_is_edit, h_user_code){
        complete: function (data) {
        }
     });
+}
+
+function make_table_find_condition(){
+    /*
+    if (h_table == ""){
+        return;
+    }
+    */
+    $.ajax({
+        url: m_parentURL + "make_table_find_condition.jsp",
+        type: 'POST',
+        dataType: "html",
+        async: false,
+        data:{
+            //'table': h_table
+        },
+        success: function(data, dataType){
+            a_result = data.trim();
+            $("#my-find-condition").empty().append(a_result);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown.message);
+        },
+       complete: function (data) {
+       }
+    });
+}
+
+function set_session_value_mnt_find(){
+    var a_table_info = $('[name=set-table-name] option:selected').val();
+    var a_table = a_table_info.split("\t");
+    var a_session_val = "";
+    
+    if ((a_table[0] == "pbxremotecustomer") || (a_table[0] == "pbxremotecustomer")){
+        a_session_val += $('#f_remotesetid').val();
+        
+    }
+    //alert("a_session_val=" + a_session_val);
+    var a_data = {
+            'Mnt_Find_Condition': a_session_val
+    };
+    //alert(m_parentURL);
+    g_IsSet_Session == false;
+    
+    $.ajax({
+        url: m_parentURL + "set_session_value.jsp",
+        type: 'POST',
+        dataType: "html",
+        async: false,
+        data: a_data,
+        success: function(data, dataType){
+            g_IsSet_Session = true;
+            //alert("set_session_value_mnt--->" + g_IsSet_Session);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown.message);
+        },
+       complete: function (data) {
+       }
+   });	
+}
+
+function do_find_table_mnt_first(){
+    if (g_IsSet_Session == false) {
+        //doSomething();
+        setTimeout(function(){do_find_table_mnt_first()}, 1000);
+    }else{
+        g_IsSet_Session = false;
+        make_table_list_mnt(1);
+    }
+}
+
+function find_table_mnt_first(){
+    set_session_value_mnt_find();
+    do_find_table_mnt_first();
 }

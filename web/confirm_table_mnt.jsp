@@ -97,7 +97,7 @@
         }
     }
 
-    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
+    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:660px;'>");
     
     String a_user_code = "";
     for (int a_iCnt=0; a_iCnt<a_coldefs.size(); a_iCnt++){

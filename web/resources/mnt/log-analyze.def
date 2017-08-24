@@ -3,5 +3,5 @@ id	id	loganalyzeschedule	a	n	n	n	10	n	ID
 logname	logname	loganalyzeschedule	y	s	s	n	32	y	検索対象テーブル選択
 period	period	loganalyzeschedule	y	time	time	y	5	n	検索期間設定
 starttime	starttime	loganalyzeschedule	y	date	date	y	16	n	検索開始時間
-findkeyword	findkeyword	loganalyzeschedule	y	s	s	n	4	n	検索キーワード
+findkeyword	findkeyword	loganalyzeschedule	y	s	s	n	256	n	検索キーワード
 sendmailaddress	sendmailaddress	loganalyzeschedule	n	s	s	n	4096	c	通知メールアドレス設定

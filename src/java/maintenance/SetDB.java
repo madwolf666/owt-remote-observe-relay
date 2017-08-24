@@ -759,8 +759,34 @@ public class SetDB implements Serializable {
         */
         int a_iSum = -1;
         String a_sRet = "";
+        String[] a_find_cols = h_find_def[_Environ.FINDLIST_FIND_KEY_NAME].split(":");
+        String[] a_find_key = null;
+        String a_where = "";
+        String a_find_sql = "";
         try{
-            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1";
+            //a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1";
+            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (";
+            if (h_find_key.equals("") == false){
+                a_find_key = h_find_key.split("\t");
+                a_where += " WHERE ";
+                int a_idx = 0;
+                for (int a_iCnt=0; a_iCnt<a_find_key.length; a_iCnt++){
+                    if (a_find_key[a_iCnt].equals("") == false){
+                        if (a_idx>0){
+                            a_where += " AND ";
+                        }
+                        a_where += "(s1." + a_find_cols[a_iCnt] + "=" + a_find_key[a_iCnt] + ")";
+                        //a_where += "(f1." + a_find_cols[a_iCnt] + "=" + a_find_key[a_iCnt] + ")";
+                        a_idx++;
+                    }
+                }
+                a_find_sql = h_find_def[_Environ.FINDLIST_FIND_SQL].replace(" ORDER", a_where + " ORDER");
+                /*a_find_sql += "SELECT f1.* FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") f1";
+                a_find_sql += a_where;*/
+            }else{
+                a_find_sql = h_find_def[_Environ.FINDLIST_FIND_SQL];
+            }
+            a_sql += a_find_sql + ") t1";
 
             Class.forName (_db_driver);
             // データベースとの接続
@@ -809,9 +835,34 @@ public class SetDB implements Serializable {
         String a_sql = "";
         String[] a_columns = h_find_def[_Environ.FINDLIST_COLUMN_NAME].split(":");
         String[] a_items = h_find_def[_Environ.FINDLIST_ITEM_NAME].split(":");
+        String[] a_find_cols = h_find_def[_Environ.FINDLIST_FIND_KEY_NAME].split(":");
+        String[] a_find_key = null;
+        String a_where = "";
+        String a_find_sql = "";
         //int a_iRet = 0;
         try{
-            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1";
+            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (";
+            if (h_find_key.equals("") == false){
+                a_find_key = h_find_key.split("\t");
+                a_where += " WHERE ";
+                int a_idx = 0;
+                for (int a_iCnt=0; a_iCnt<a_find_key.length; a_iCnt++){
+                    if (a_find_key[a_iCnt].equals("") == false){
+                        if (a_idx>0){
+                            a_where += " AND ";
+                        }
+                        a_where += "(s1." + a_find_cols[a_iCnt] + "=" + a_find_key[a_iCnt] + ")";
+                        //a_where += "(f1." + a_find_cols[a_iCnt] + "=" + a_find_key[a_iCnt] + ")";
+                        a_idx++;
+                    }
+                }
+                a_find_sql = h_find_def[_Environ.FINDLIST_FIND_SQL].replace(" ORDER", a_where + " ORDER");
+                /*a_find_sql += "SELECT f1.* FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") f1";
+                a_find_sql += a_where;*/
+            }else{
+                a_find_sql = h_find_def[_Environ.FINDLIST_FIND_SQL];
+            }
+            a_sql += a_find_sql + ") t1";
             
             Class.forName (_db_driver);
             // データベースとの接続
@@ -834,11 +885,13 @@ public class SetDB implements Serializable {
                 int a_end_idx = (h_pageNo*_max_line_page);
                 
                 if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
-                    a_sql = "SELECT t1.* FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                    a_sql = "SELECT t1.* FROM (" + a_find_sql + ") t1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                    //a_sql = "SELECT t1.* FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }else if (_db_driver.equals("org.postgresql.Driver")){
-                    a_sql = "SELECT t1.* FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1 WHERE (t1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                    a_sql = "SELECT t1.* FROM (" + a_find_sql + ") t1 WHERE (t1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                    //a_sql = "SELECT t1.* FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1 WHERE (t1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }
-
+                
                 a_ps = a_con.prepareStatement(a_sql);
                 
                 a_rs = a_ps.executeQuery();

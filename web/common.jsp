@@ -857,7 +857,15 @@ String Make_Input_Tag_Mnt_ShowList(
     if (h_isEdit == true){
         a_sRet += "<input type='hidden' name='show_col_name_" + a_field + "' id='show_col_name_" + a_field + "' value='" + a_field + "'>";
         a_sRet += "<input type='hidden' name='show_find_key_" + a_field + "' id='show_find_key_" + a_field + "' value='" + h_option[SHOWLIST_FIND_KEY_NAME] + "'>";
-        a_sRet += "&nbsp;&nbsp;<input type='button' value='" + h_option[SHOWLIST_BUTTON_NAME] + "' onclick='set_select_show_list(\"" + a_field + "\");make_show_list(1";
+        a_sRet += "&nbsp;&nbsp;<input type='button' value='" + h_option[SHOWLIST_BUTTON_NAME] + "' onclick='set_select_show_list(\"" + a_field + "\");";
+
+        if (a_field.equals("p_nodecode") == true){
+            a_sRet += "make_show_list2(1";
+        }else{
+            a_sRet += "make_show_list(1";
+        }
+
+
        // a_sRet += ",\"" + a_field + "\"";
         /*a_sRet += ",\"" + h_option[SHOWLIST_FIND_KEY_NAME] + "\"";
         a_sRet += ",\"" + h_option[SHOWLIST_SELECT_KEY_NAME] + "\"";

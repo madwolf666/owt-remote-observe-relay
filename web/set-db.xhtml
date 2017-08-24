@@ -70,11 +70,13 @@
                     <ui:insert name="box">
                         <table border="0">
                             <tr>
-                                <td rowspan="1" colspan="4" valign="top"><div id="my-table-select" /></td>
+                                <td rowspan="1" colspan="1" valign="top"><div id="my-table-select" /></td>
+                                <td rowspan="1" colspan="1" valign="top" style="width:auto;"><div id="my-find-condition" /></td>
                             </tr>
                         </table>
                         <table border="0">
                             <tr>
+                                <td rowspan="1" valign="top"><div id="delete-mnt"><input id="change_submit" type="button" value="　削除　" onclick="delete_table_edit_mnt('n','');" /></div></td>
                                 <td rowspan="1" valign="top"><div id="new-mnt"><input id="change_submit" type="button" value="　新規登録　" onclick="make_table_edit_mnt('n','');" /></div></td>
                                 <!-- td rowspan="1" valign="top"><div id="reset-mnt"><input id="change_submit" type="button" value="　リセット　" onclick="reset_table_edit_mnt();" /></div></td -->
                                 <td rowspan="1" valign="top"><div id="confirm-mnt"><input id="change_submit" type="button" value="　確認　" onclick="confirm_table_mnt();" /></div></td>
@@ -102,11 +104,14 @@
               <!-- footer end -->
             </div>
             <!-- container end -->
-            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:212px;left:5px;background-color:#ffffff;width:99%;">
+            <div id="my-list" style="z-index:100;text-align:left;position:absolute;top:216px;left:5px;background-color:#ffffff;width:99%;">
             </div>
             <input type="hidden" name="select-show-key" id="select-show-key" value="" />
             <div id="popup1" class="popup">
                 <div id="show-list" class="popup_inner" style=""></div>
+            </div>
+            <div id="popup1s" class="popup2">
+                <div id="show-list2" class="popup_inner" style=""></div>
             </div>
             <script type="text/javascript" src="js/navigation.js">hpb-navigation-js</script>
             

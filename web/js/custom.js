@@ -995,6 +995,62 @@ function make_show_list(h_pageNo){
     return false;
 }
 
+function make_show_list2(h_pageNo){
+    //alert($('#select-show-key').val());
+    //alert('show_list--->' + h_pageNo + "," + h_colName + "," + h_find_key + "," + h_select_key + "," + h_find_sql);
+    //alert('show_list--->' + h_pageNo + "," + $('#show_col_name_' + h_colName).val() + "," + $('#show_find_key_' + h_colName).val());
+    var a_colName = $('#select-show-key').val();
+    //alert(a_colName);
+    var a_find_key = '';
+    var a_result = '';
+    if ($('#' + $('#show_find_key_' + a_colName).val()).val() != null){
+        a_find_key = $('#' + $('#show_find_key_' + a_colName).val()).val();
+    }
+    //alert(a_find_key);
+    $.ajax({
+        url: m_parentURL + "make_show_list2.jsp",
+        type: 'POST',
+        dataType: "html",
+        async: false,
+        data:{
+            'PageNo': h_pageNo,
+            'col_name': $('#show_col_name_' + a_colName).val(),
+            'find_key': a_find_key
+        },
+        success: function(data, dataType){
+            a_result = data.trim();
+            if (a_result != 'NO_FIND_KEY'){
+                //alert(data);
+                $("#show-list2").empty().append(data);
+            }
+            //make_pager(6,h_pageNo); //[2016.03.03]bug-fixed.
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown.message);
+        },
+       complete: function (data) {
+       }
+    });	
+
+    if (a_result != 'NO_FIND_KEY'){
+        var $popup = $("#popup1s");
+
+        //alert($popup);
+        // ポップアップの幅と高さからmarginを計算する
+        var mT = ($popup.outerHeight() / 2) * (-1) + 'px';
+        var mL = ($popup.outerWidth() / 2) * (-1) + 'px';
+        //alert(mT + "," + mL);
+        // marginを設定して表示
+        $('.popup2').hide();
+        $popup.css({
+                'margin-top': mT,
+                'margin-left': mL
+        }).show();
+        //$('#overlay').show();
+    }
+    return false;
+}
+
 //リスト上の選択
 function select_show_list(h_selectKey, h_selectVal){
     //alert(h_selectKey + "," + h_selectVal);

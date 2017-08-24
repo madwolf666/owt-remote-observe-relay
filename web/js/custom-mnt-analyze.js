@@ -58,6 +58,7 @@ function set_session_value_mnt_log_analyze_pageNo(h_pageNo){
 
 //リモートDBテーブル名取得
 function make_log_analyze_select_mnt(){
+    $("#delete-mnt").hide();
     $("#new-mnt").hide();
     //$("#reset-mnt").hide();
     $("#entry-mnt").hide();
@@ -103,6 +104,7 @@ function make_log_analyze_list_mnt_first(h_table){
     }else{
         $("#my-pager").empty();
         $("#my-list").empty();
+        $("#delete-mnt").hide();
         $("#new-mnt").hide();
         //$("#reset-mnt").hide();
         $("#entry-mnt").hide();
@@ -127,6 +129,7 @@ function make_log_analyze_list_mnt(h_pageNo){
             $("#my-list").empty().append(data);
             //alert($("#reset-mnt"));
             //$("#reset-mnt").hide();
+            $("#delete-mnt").hide();
             $("#new-mnt").show();
             $("#entry-mnt").hide();
             $("#back-mnt").hide();
@@ -155,6 +158,11 @@ function make_log_analyze_edit_mnt(h_act, h_idx){
         success: function(data, dataType){
             $("#my-pager").empty().append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
             $("#my-list").empty().append(data);
+            if (h_act == "n"){
+                $("#delete-mnt").hide();
+            }else{
+                $("#delete-mnt").show();
+            }
             $("#new-mnt").hide();
             //$("#reset-mnt").show();
             $("#entry-mnt").show();

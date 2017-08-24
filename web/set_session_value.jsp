@@ -33,7 +33,8 @@
         
     String Mnt_Table = request.getParameter("Mnt_Table");   //[2017.07.27]
     String Mnt_Log_Analyze_Table = request.getParameter("Mnt_Log_Analyze_Table");   //[2017.08.02]
-    
+    String Mnt_Find_Condition = request.getParameter("Mnt_Find_Condition");
+            
     //セッション変数を設定
     session.setAttribute("txt_UserCode", UserCode);
     session.setAttribute("txt_SetNo", SetNo);
@@ -47,8 +48,15 @@
     session.setAttribute("chk_TroubleKind_GN", TroubleKind_GN);
     session.setAttribute("chk_Contact", Contact);
 
-    session.setAttribute("Mnt_Table", Mnt_Table);   //[2017.07.27]
-    session.setAttribute("Mnt_Log_Analyze_Table", Mnt_Log_Analyze_Table);   //[2017.08.02]
+    if (Mnt_Table != null){
+        session.setAttribute("Mnt_Table", Mnt_Table);   //[2017.07.27]
+    }
+    if (Mnt_Log_Analyze_Table != null){
+        session.setAttribute("Mnt_Log_Analyze_Table", Mnt_Log_Analyze_Table);   //[2017.08.02]
+    }
+    if (Mnt_Find_Condition != null){
+        session.setAttribute("Mnt_Find_Condition", Mnt_Find_Condition);   //[2017.08.02]
+    }
 
 %>
 

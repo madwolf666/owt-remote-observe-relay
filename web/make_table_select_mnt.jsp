@@ -10,6 +10,7 @@
 <jsp:useBean id="Environ" scope="page" class="common.Environ" />
 <%
     session.setAttribute("Mnt_Table", "");   //[2017.07.27]
+    session.setAttribute("Mnt_Find_Condition", "");
 
     //パスを取得
     String SCRIPT_NAME = request.getServletPath();
@@ -22,6 +23,9 @@
     a_envPath = Environ.GetEnvironValue("mnt_env_path");
     a_tableInfo = Environ.GetEnvironValue("mnt_table_info");
 
+    out.print("<table id='tbl_list' border='0' cellspacing='0' cellpadding='0' style='width:auto;margin-top:-4px;'>");
+    out.print("<tr>");
+    out.print("<td bgcolor='transparent' style='text-align:left;'>");
     out.print("<select id='set-table-name' name='set-table-name'>");
     out.print("<option value=''></option>");
     try{
@@ -48,4 +52,7 @@
 
     }
     out.print("</select>");
+    out.print("</td>");
+    out.print("</tr>");
+    out.print("</table>");
 %>

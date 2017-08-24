@@ -203,6 +203,9 @@ public class Environ {
         case 9: //リスト表示[2017.08.09]
             a_sFunc = "make_show_list";
             break;
+        case 10: //リスト表示[2017.08.09]
+            a_sFunc = "make_show_list2";
+            break;
         }
         
         try{

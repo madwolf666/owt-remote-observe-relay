@@ -17,6 +17,24 @@
 	padding:20px;
 }
 
+.popup2 {
+	display:none;
+	position:fixed;
+	top: 50%;
+	left: 50%;
+	background-color:#ffffcc;
+	/*background-color:#fff;*/
+	overflow:hidden;
+	z-index:101;
+        border: medium solid #ff00ff;
+        overflow-x: scroll;
+        overflow-y: scroll;
+}
+
+.popup2_inner {
+	padding:20px;
+}
+
 #overlay {
 	display:none;
 	position:fixed;
@@ -32,6 +50,11 @@
 }
 
 #popup1 {
+	width: 90%; /*520px;*/	/*[2015.03.14]*/
+	height: 90%;  /*610px;*/
+}
+
+#popup1s {
 	width: 90%; /*520px;*/	/*[2015.03.14]*/
 	height: 90%;  /*610px;*/
 }

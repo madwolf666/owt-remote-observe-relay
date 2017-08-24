@@ -43,6 +43,7 @@
     String Contact = "";
 
     String Mnt_Table = "";  //[2017.07.27]
+    String Mnt_Find = "";
     int Mnt_pageNo = -1;    //[2017.07.27]
     String a_col_name = "";
     String a_find_key = "";
@@ -145,6 +146,7 @@
         case 7: //リモートDB設定[2017.07.27]
             String[] a_table_split = null;
             Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
+            Mnt_Find = GetSessionValue(session.getAttribute("Mnt_Find_Condition"));
             if (Mnt_Table.equals("") == false){
                 a_table_split = Mnt_Table.split("\t");
 
@@ -157,7 +159,7 @@
                 //定義情報の読み込み
                 a_find_def = GetDef_FindList(a_findlist, a_table_split[0]);
 
-                a_sOut = SetDB.MakePagerMnt(a_Kind, a_PageNo, a_find_def, "");
+                a_sOut = SetDB.MakePagerMnt(a_Kind, a_PageNo, a_find_def, Mnt_Find);
                 session.setAttribute("Mnt_pageNo", a_PageNo);   //[2017.07.28]
             }
             break;
