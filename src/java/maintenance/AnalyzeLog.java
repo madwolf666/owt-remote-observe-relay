@@ -35,7 +35,7 @@ import java.sql.Statement;
  */
 @ManagedBean(name="AnalyzeLog")
 @RequestScoped
-public class SenceLogAnalyze implements Serializable {
+public class AnalyzeLog implements Serializable {
     //private CheckAny _CheckAny = null;
     public Environ _Environ = null;
     
@@ -52,7 +52,7 @@ public class SenceLogAnalyze implements Serializable {
     /**
      * Creates a new instance of SalesForceApi
      */
-    public SenceLogAnalyze() {
+    public AnalyzeLog() {
         //_CheckAny = new CheckAny();
         _Environ = new Environ();
 
