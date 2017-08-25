@@ -214,7 +214,7 @@ function make_table_edit_mnt(h_act, h_idx){
    });	
 }
 
-//テーブル情報編集内容のリセット
+//テーブル情報編集内容のリセット(未使用)
 function reset_table_edit_mnt(){
     var a_act = $("#txt_act").val();
     var a_idx = $("#edit_idx").val();
