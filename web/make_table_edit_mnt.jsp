@@ -43,7 +43,7 @@
 
     //登録済データを取得
     ArrayList<String> a_arrayList = null;
-    out.print("<input type='hidden' id='txt_idx' name='txt_idx' value='");
+    out.print("<input type='hidden' id='edit_idx' name='edit_idx' value='");
     if ((a_ACT.equals("e") == true) && (a_DB.equals("1") == true)){
         a_arrayList = SetDB.GetMnt(a_Mnt_Table, a_coldefs, a_IDX);
         out.print(a_IDX);
@@ -289,6 +289,13 @@
     out.print(g_JScript_Program);
     //out.print("alert(g_val_auto);");
     //out.print("alert(g_val_ness);");
+    /*
+    if (a_ACT.equals("n") == true){
+        out.print("$(\"#delete-mnt\").hide();");
+    }else{
+        out.print("$(\"#delete-mnt\").show();");
+    }
+    */
     out.print(Make_Confirm_Table_Mnt(a_ACT, a_IDX));
     out.print("</script>");
     

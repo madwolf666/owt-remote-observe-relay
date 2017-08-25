@@ -130,6 +130,7 @@ public class SetDB implements Serializable {
         String a_user_number = "";
         //String a_monitoring_id = "";
         String a_pbxremotecustomer_id = "";
+        String a_ss9100flag = "";
         boolean a_isAuto = false;
         boolean a_isOK = true;
         boolean a_isFound = false;
@@ -354,6 +355,9 @@ public class SetDB implements Serializable {
                             a_sql += "ordernumber,";
                         }
                     }
+                    if (a_tableName.equals("usernode") == true){
+                        a_sql += "logcounter,";
+                    }
                     
                     a_sql += a_table_sql_f.get(a_iCnt) + ") VALUES(";
                     
@@ -452,6 +456,7 @@ public class SetDB implements Serializable {
                         }
                     }
                     if (a_tableName.equals("usernode") == true){
+                        a_sql += "'0',";
                         a_sql += "'" + h_idx + "',";
                     }
                     
@@ -539,10 +544,15 @@ public class SetDB implements Serializable {
                                 }
                             }
                             /*
-                            if (a_tableName.equals("irmsremotecustomer") == true){
-                                if (a_sName.equals("usernumber") == true){
-                                    a_sVal = a_user_number;
-                                }
+                            if (a_tableName.equals("trunkandlticinformation") == true){
+                                    if (a_sName.equals("ss9100flag") == true){
+                                        a_ss9100flag = a_sVal;
+                                    }
+                                    if (a_sName.equals("cabno") == true){
+                                        if (a_ss9100flag.equals("1") == true){
+                                            a_sVal = "-99";
+                                        }
+                                    }
                             }
                             */
                             if (a_sVal.equals("") == false){
@@ -705,15 +715,60 @@ public class SetDB implements Serializable {
         String a_sRet = "";
         Connection a_con = null;
         PreparedStatement a_ps = null;
-        String a_sql = "DELETE FROM " + h_table + " WHERE (" + h_where + ")";
+        String a_sql = "";
         try{
             Class.forName (_db_driver);
             // データベースとの接続
             a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
             a_con.setAutoCommit(false);
-            a_ps = a_con.prepareStatement(a_sql);
-            //a_ps.setString(1, JobId);
-            int a_i = a_ps.executeUpdate();
+            
+            if (h_table.equals("pbxremotecustomer") == true){
+                a_sql = "DELETE FROM sioportnumber WHERE (customerid=(SELECT id FROM remotemonitoringcustomer WHERE (" + h_where + ")))";
+                a_ps = a_con.prepareStatement(a_sql);
+                int a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM equipmenttype WHERE (customerid=(SELECT id FROM remotemonitoringcustomer WHERE (" + h_where + ")))";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM customerstation WHERE (pbxremotecustomerid=(SELECT id FROM " + h_table + " WHERE (" + h_where + ")))";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM " + h_table + " WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM remotemonitoringcustomer WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM newcustomermanage WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM equipmenttype WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+
+            }else if (h_table.equals("irmsremotecustomer") == true){
+                a_sql = "DELETE FROM " + h_table + " WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                int a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM remotemonitoringcustomer WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM newcustomermanage WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+            }else{
+                a_sql = "DELETE FROM " + h_table + " WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                int a_i = a_ps.executeUpdate();
+            }
+            
             a_con.commit();
         } catch (SQLException e) {
             if (a_con != null){

@@ -10,6 +10,8 @@
 <jsp:useBean id="Environ" scope="page" class="common.Environ" />
 <jsp:useBean id="SetDB" scope="page" class="maintenance.SetDB" />
 <%
+    String a_sRet = "";
+    
     //パスを取得
     String SCRIPT_NAME = request.getServletPath();
     String a_mainPath = GetMainPath(SCRIPT_NAME);
@@ -35,63 +37,79 @@
 
     //POSTデータを取得
     String a_mode = request.getParameter("mode");
-    String a_is_edit = request.getParameter("is_edit");
     String a_user_code = request.getParameter("user_code");
     String a_seq = request.getParameter("seq");
     if (a_seq == null){
         a_seq = "-1";
     }
+    String a_IDX = request.getParameter("IDX");
+    String a_user_ipaddr = request.getParameter("opt1");
 
     //Beansへの値引渡し
     SetDB.SetRealPath(a_realPath);
 
-    if (a_table_split[0].equals("irmsremotecustomer") == true){
-        if (a_mode.equals("1") == true){
-            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
-        }else if (a_mode.equals("2") == true){
-            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
-        /*}else if (a_mode.equals("3") == true){
-            a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");*/
-        }
-    }
-
-    String a_sRet = "";
-    ArrayList<String>[] a_arrayList_src = null;
-    ArrayList<String>[] a_arrayList_dst = null;
     if (a_user_code.equals("") == false){
-        //DBの更新
-        //String a_sRet = SetDB.EntryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
-    }else{
-        if (a_mode.equals("1") == true){
-            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");
-        }else if (a_mode.equals("2") == true){
-            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
-        /*}else if (a_mode.equals("3") == true){
-            a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");*/
+        if (a_table_split[0].equals("irmsremotecustomer") == true){
+            if (a_mode.equals("1") == true){
+                //拠点設定
+                a_sRet = SetDB.DeleteMnt("trunkandlticinformation", "id='" + a_IDX + "'");
+            }else if (a_mode.equals("2") == true){
+                //機器設定
+                a_sRet = SetDB.DeleteMnt("usernode", "usercode='" + a_user_code + "' AND useripaddr='" + a_user_ipaddr + "'");
+            }
         }
-        
-        if (a_seq.equals("-1") == false){
-            //更新
-            if (a_arrayList_src.length == 1){
-                a_arrayList_dst = null;
-            }else{
-                a_arrayList_dst = new ArrayList[a_arrayList_src.length - 1];
-                int a_idx = 0;
-                for (int a_iCnt=0; a_iCnt<a_arrayList_src.length; a_iCnt++){
-                    if (a_iCnt != Integer.valueOf(a_seq)){
-                        a_arrayList_dst[a_idx] = a_arrayList_src[a_iCnt];
-                        a_idx++;
+    }else{
+        if (a_table_split[0].equals("irmsremotecustomer") == true){
+            if (a_mode.equals("1") == true){
+                a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
+            }else if (a_mode.equals("2") == true){
+                a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
+            /*}else if (a_mode.equals("3") == true){
+                a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");*/
+            }
+        }
+
+        ArrayList<String>[] a_arrayList_src = null;
+        ArrayList<String>[] a_arrayList_dst = null;
+        if (a_user_code.equals("") == false){
+            //DBの更新
+            //String a_sRet = SetDB.EntryMnt(a_Mnt_Table, a_coldefs, ACT, IDX, a_post_data);
+        }else{
+            if (a_table_split[0].equals("irmsremotecustomer") == true){
+                if (a_mode.equals("1") == true){
+                    a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");
+                }else if (a_mode.equals("2") == true){
+                    a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
+                /*}else if (a_mode.equals("3") == true){
+                    a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");*/
+                }
+            }
+            
+            if (a_seq.equals("-1") == false){
+                //更新
+                if (a_arrayList_src.length == 1){
+                    a_arrayList_dst = null;
+                }else{
+                    a_arrayList_dst = new ArrayList[a_arrayList_src.length - 1];
+                    int a_idx = 0;
+                    for (int a_iCnt=0; a_iCnt<a_arrayList_src.length; a_iCnt++){
+                        if (a_iCnt != Integer.valueOf(a_seq)){
+                            a_arrayList_dst[a_idx] = a_arrayList_src[a_iCnt];
+                            a_idx++;
+                        }
                     }
                 }
             }
-        }
-        
-        if (a_mode.equals("1") == true){
-            session.setAttribute("Mnt_Data_LTIC_TN", a_arrayList_dst);
-        }else if (a_mode.equals("2") == true){
-            session.setAttribute("Mnt_Data_User_Machine", a_arrayList_dst);
-        /*}else if (a_mode.equals("3") == true){
-            session.setAttribute("Mnt_Data_Machine_Code", a_arrayList_dst);*/
+
+            if (a_table_split[0].equals("irmsremotecustomer") == true){
+                if (a_mode.equals("1") == true){
+                    session.setAttribute("Mnt_Data_LTIC_TN", a_arrayList_dst);
+                }else if (a_mode.equals("2") == true){
+                    session.setAttribute("Mnt_Data_User_Machine", a_arrayList_dst);
+                /*}else if (a_mode.equals("3") == true){
+                    session.setAttribute("Mnt_Data_Machine_Code", a_arrayList_dst);*/
+                }
+            }
         }
     }
     

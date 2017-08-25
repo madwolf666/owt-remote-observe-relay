@@ -96,17 +96,19 @@ function do_make_table_list_mnt_first(){
     }else{
         g_IsSet_Session = false;
         g_IsSess++;
+        make_table_find_condition();
+        make_table_list_mnt(1);
     }
     /*if (g_IsSess<2){
         //alert(g_IsSess);
         set_session_value_mnt_find();
-    }else{*/
+    }else{
         //alert("make_table_list_mnt_first--->" + g_IsSet_Session)
         //alert(h_table);
         //make_pager(2,h_pageNo);   //[2016.02.15]
         make_table_find_condition();
         make_table_list_mnt(1);
-    /*}*/
+    }*/
 }
 
 function make_table_list_mnt_first(h_table){
@@ -190,7 +192,11 @@ function make_table_edit_mnt(h_act, h_idx){
         success: function(data, dataType){
             $("#my-pager").empty().append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
             $("#my-list").empty().append(data);
-            $("#delete-mnt").show();
+            if (h_act == "n"){
+                $("#delete-mnt").hide();
+            }else{
+                $("#delete-mnt").show();
+            }
             $("#new-mnt").hide();
             //$("#reset-mnt").show();
             $("#confirm-mnt").show();
@@ -211,7 +217,7 @@ function make_table_edit_mnt(h_act, h_idx){
 //テーブル情報編集内容のリセット
 function reset_table_edit_mnt(){
     var a_act = $("#txt_act").val();
-    var a_idx = $("#txt_idx").val();
+    var a_idx = $("#edit_idx").val();
     //alert(a_act);
     //alert(a_idx);
     if (confirm("入力内容をリセットします。よろしいですか？")){
@@ -349,7 +355,8 @@ function select_plural_list(h_mode, h_is_edit, h_user_code, h_seq){
     return false;
 }
 
-function delete_plural_mnt(h_mode, h_is_edit, h_user_code){
+function delete_plural_mnt(h_mode, h_is_edit, h_user_code, h_idx, h_opt1){
+    alert(h_opt1);
     var a_seq = $("#select-plural-seq").val();
 
     if (!confirm("削除します。よろしいですか？")){
@@ -365,7 +372,9 @@ function delete_plural_mnt(h_mode, h_is_edit, h_user_code){
             'mode': h_mode,
             'is_edit': h_is_edit,
             'user_code': h_user_code,
-            'seq': a_seq
+            'seq': a_seq,
+            'IDX': h_idx,
+            'opt1': h_opt1
         },
         success: function(data, dataType){
             a_result = data.trim();
@@ -452,4 +461,32 @@ function do_find_table_mnt_first(){
 function find_table_mnt_first(){
     set_session_value_mnt_find();
     do_find_table_mnt_first();
+}
+
+function delete_table_mnt(){
+    if (!confirm("削除します。よろしいですか？")){
+         return false;
+    }
+    var a_idx = $('#edit_idx').val();
+    $.ajax({
+        url: m_parentURL + "delete_table_mnt.jsp",
+        type: 'POST',
+        dataType: "html",
+        async: false,
+        data:{
+            'IDX': a_idx
+        },
+        success: function(data, dataType){
+            var a_result = data.trim();
+            if (a_resut == ""){
+                alert("削除しました。");
+                make_table_list_mnt(1);
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown.message);
+        },
+       complete: function (data) {
+       }
+   });	
 }

@@ -947,7 +947,7 @@ String Make_Confirm_Table_Mnt(String h_act, String h_idx){
    
     /*
     a_sRet += " var a_act = $(\"#txt_act\").val();";
-    a_sRet += " var a_idx = $(\"#txt_idx\").val();";
+    a_sRet += " var a_idx = $(\"#edit_idx\").val();";
     */
     
     //数値入力チェック
@@ -976,6 +976,13 @@ String Make_Confirm_Table_Mnt(String h_act, String h_idx){
     a_sRet += "     success: function(data, dataType){";
     a_sRet += "         $(\"#my-pager\").empty().append(\"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\");";
     a_sRet += "         $(\"#my-list\").empty().append(data);";
+/*
+    if (h_act.equals("n") == true){
+        a_sRet += "         $(\"#delete-mnt\").hide();";
+    }else{
+        a_sRet += "         $(\"#delete-mnt\").show();";
+    }
+*/
     a_sRet += "         $(\"#new-mnt\").hide();";
     //a_sRet += "         //$(\"#reset-mnt\").show();";
     a_sRet += "         $(\"#confirm-mnt\").hide();";
@@ -1045,7 +1052,7 @@ String Make_Entry_Table_Mnt(String h_act, String h_idx){
    
     /*
     a_sRet += " var a_act = $(\"#txt_act\").val();";
-    a_sRet += " var a_idx = $(\"#txt_idx\").val();";
+    a_sRet += " var a_idx = $(\"#edit_idx\").val();";
     */
     
     a_sRet += " if (!confirm(\"登録します。よろしいですか？\")){";
@@ -1096,7 +1103,7 @@ String Make_Entry_Plural_Mnt(String h_mode, String h_is_edit, String h_user_code
    
     /*
     a_sRet += " var a_act = $(\"#txt_act\").val();";
-    a_sRet += " var a_idx = $(\"#txt_idx\").val();";
+    a_sRet += " var a_idx = $(\"#edit_idx\").val();";
     */
     //数値入力チェック
     a_sRet += g_JScript_IsNumeric_Plural;
@@ -1191,7 +1198,7 @@ String Make_Entry_Log_Analyze_mnt(String h_act, String h_idx){
     //a_sRet += "alert(\"" + g_Post_Data + "\");";
     /*
     a_sRet += " var a_act = $(\"#txt_act\").val();";
-    a_sRet += " var a_idx = $(\"#txt_idx\").val();";
+    a_sRet += " var a_idx = $(\"#edit_idx\").val();";
     */
     
     //数値入力チェック

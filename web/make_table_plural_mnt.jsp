@@ -41,6 +41,7 @@
     if (a_seq == null){
         a_seq = "-1";
     }
+    String a_IDX = "";
     String a_user_ipaddr = "";
 
     //Beansへの値引渡し
@@ -155,6 +156,9 @@
                 if (a_split2.length > 1){
                     a_val = a_split2[1];
                 }
+                if (a_colName.equals("id") == true){
+                    a_IDX = a_val;
+                }
                 if (a_colName.equals("useripaddr") == true){
                     a_user_ipaddr = a_val;
                 }
@@ -171,7 +175,7 @@
         out.print("</table>");
         
         out.print("<table><tr>");
-        out.print("<td rowspan='1' valign='top'><div id='delete-plural-mnt' style='display:none;'><input id='change_submit' type='button' value='　削除　' onclick='delete_plural_mnt(\"" + a_mode + "\",\"" + a_is_edit + "\",\"" + a_user_code + "\");' /></div></td>");
+        out.print("<td rowspan='1' valign='top'><div id='delete-plural-mnt' style='display:none;'><input id='change_submit' type='button' value='　削除　' onclick='delete_plural_mnt(\"" + a_mode + "\",\"" + a_is_edit + "\",\"" + a_user_code + "\",\"" + a_IDX + "\",\"" + a_user_ipaddr + "\");' /></div></td>");
         out.print("<td rowspan='1' valign='top'><div id='entry-plural-mnt'><input id='change_submit' type='button' value='　登録　' onclick='entry_plural_mnt();' /></div></td>");
         out.print("<input type='hidden' name='select-plural-seq' id='select-plural-seq' value=''>");
         out.print("</tr></table>");
@@ -188,6 +192,23 @@
     //out.print("alert(g_val_auto);");
     //out.print("alert(g_val_ness);");
     out.print(Make_Entry_Plural_Mnt(a_mode, a_is_edit, a_user_code, a_seq, a_user_ipaddr));
+
+    out.print("$(function () {");
+    out.print("$('#p_ss9100flag').change(function(){");
+    //out.print("    alert('');");
+    out.print("    var a_val = $('[name=p_ss9100flag] option:selected').val();");
+    //out.print("    alert(a_val);");
+    out.print("    if (a_val == '1'){");
+    //out.print("    alert('SS9100');");
+    out.print("        $('#p_cabno').val('-99');");
+    out.print("        $('#p_cabno').attr('readonly', true);");
+    out.print("    }else{");
+    out.print("    alert('DISCOVERY');");
+    out.print("        $('#p_cabno').attr('readonly', false);");
+    out.print("    }");
+    out.print("});");
+    out.print("})");
+
     out.print("</script>");
 %>
 

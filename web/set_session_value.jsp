@@ -50,6 +50,7 @@
 
     if (Mnt_Table != null){
         session.setAttribute("Mnt_Table", Mnt_Table);   //[2017.07.27]
+        session.setAttribute("Mnt_Find_Condition", "");
     }
     if (Mnt_Log_Analyze_Table != null){
         session.setAttribute("Mnt_Log_Analyze_Table", Mnt_Log_Analyze_Table);   //[2017.08.02]

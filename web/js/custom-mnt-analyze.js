@@ -176,3 +176,31 @@ function make_log_analyze_edit_mnt(h_act, h_idx){
        }
    });	
 }
+
+function delete_log_analyze_mnt(){
+    if (!confirm("削除します。よろしいですか？")){
+         return false;
+    }
+    var a_idx = $('#edit_idx').val();
+    $.ajax({
+        url: m_parentURL + "delete_log_analyze_mnt.jsp",
+        type: 'POST',
+        dataType: "html",
+        async: false,
+        data:{
+            'IDX': a_idx
+        },
+        success: function(data, dataType){
+            var a_result = data.trim();
+            if (a_resut == ""){
+                alert("削除しました。");
+                make_log_analyze_list_mnt(1);
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown.message);
+        },
+       complete: function (data) {
+       }
+   });	
+}

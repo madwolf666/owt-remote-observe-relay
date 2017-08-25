@@ -40,7 +40,8 @@
     
     String a_out = "";
 
-    if ((a_table_split[0].equals("pbxremotecustomer") == true) || (a_table_split[0].equals("irmsremotecustomer") == true)){
+    //if ((a_table_split[0].equals("pbxremotecustomer") == true) || (a_table_split[0].equals("irmsremotecustomer") == true)){
+    if (a_table_split[0].equals("pbxremotecustomer") == true){
         a_coldefs = GetDef_Field(a_envPath + a_table_split[0] + "-findc.def");
         //a_out += "<table id='tbl_list' border='0' cellspacing='0' cellpadding='0' style='width:auto;'>";
         a_out += "<table id='tbl_list' border='0' cellspacing='0' cellpadding='0' style='width:auto;margin-top:-4px;'>";
