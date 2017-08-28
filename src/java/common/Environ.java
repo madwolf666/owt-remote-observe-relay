@@ -5,27 +5,23 @@
  */
 package common;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.Serializable;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
 
 /**
  *
@@ -121,7 +117,14 @@ public class Environ {
     public void SetRealPath(String h_path){
         _realPath = h_path;
         try{
-            _Prop.load(new FileInputStream(_realPath + _conf));
+            //日本語の文字化け対策
+            InputStream a_is = new FileInputStream(_realPath + _conf);
+             InputStreamReader a_isr = new InputStreamReader(a_is, "UTF-8");
+             BufferedReader a_reader = new BufferedReader(a_isr);
+            _Prop.load(a_reader);
+            String a_tmp = _Prop.getProperty("mnt_sendmail_subject");
+             
+            //_Prop.load(new FileInputStream(_realPath + _conf));
             
             //ログパスを設定
             String a_sVal = _Prop.getProperty("log_path");

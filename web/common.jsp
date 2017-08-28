@@ -721,6 +721,7 @@ String Make_Input_Tag_Mnt_Date(
 
     if (h_coldef[COLUMN_DEF_LENGTH].equals("") == false){
         a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
+        h_val = h_val.substring(0, a_max_len);
     }
 
     if (h_isEdit == false){

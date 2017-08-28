@@ -867,7 +867,7 @@ create table loganalyzeschedule (
 id				number not null,
 logname			varchar2(32) not null,
 period			varchar2(5) not null,
-starttime		date not null,
+starttime		timestamp not null,
 findkeyword		varchar2(32) not null,
 sendmailaddress	varchar2(4096),
 primary key(id)

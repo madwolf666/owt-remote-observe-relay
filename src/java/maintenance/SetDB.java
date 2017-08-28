@@ -6,28 +6,16 @@
 package maintenance;
 
 import common.Environ;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import java.util.Date;
-import java.sql.Statement;
 
 /**
  *
@@ -58,6 +46,9 @@ public class SetDB implements Serializable {
 
     }
 
+    //--------------------------------------------------------------------------
+    //システム絶対パスを設定する
+    //--------------------------------------------------------------------------
     public void SetRealPath(
         String h_path
         ){
@@ -81,14 +72,23 @@ public class SetDB implements Serializable {
         _Environ._MyLogger.info("*** SetRealPath is finished. ***");
     }
     
-    //[2017.08.04]
+    //--------------------------------------------------------------------------
+    //DBテーブル・カラム情報を取得する
+    //--------------------------------------------------------------------------
     public  ArrayList<String> GetDbColumns(
         String h_table
         ) throws Exception{
         return _Environ.GetDbColumns(h_table);
     }
     
-    //登録
+    //--------------------------------------------------------------------------
+    //リモートDBデータを登録・更新する
+    // h_table      対象テーブル\t付加情報
+    // h_coldefs    DBテーブルのカラム定義情報
+    // h_act        n：登録、e：更新
+    // h_idx        更新時のキー（カンマ区切り）
+    // h_post_data  POSTデータ
+    //--------------------------------------------------------------------------
     public String[] EntryMnt(
         String h_table,
         ArrayList<String> h_coldefs,
@@ -114,7 +114,7 @@ public class SetDB implements Serializable {
         String a_sql_w = "";
         //int a_index = 0;
         String[] a_colNames = null;
-        String a_colName = "";
+        //String a_colName = "";
         String[] a_tableNames = null;
         String a_ness = "";
         String a_tableName = "";
@@ -130,16 +130,22 @@ public class SetDB implements Serializable {
         String a_user_number = "";
         //String a_monitoring_id = "";
         String a_pbxremotecustomer_id = "";
-        String a_ss9100flag = "";
+        //String a_ss9100flag = "";
         boolean a_isAuto = false;
         boolean a_isOK = true;
         boolean a_isFound = false;
         try{
+            //------------------------------------------------------------------
+            //対象テーブル情報の取得
+            //------------------------------------------------------------------
             a_table_split = h_table.split("\t");
             if (a_table_split.length<2){
                 return a_sRet;
             }
             
+            //------------------------------------------------------------------
+            //戻り値領域の確保
+            //------------------------------------------------------------------
             if (a_table_split[0].equals("pbxremotecustomer") == true){
                 a_sRet = new String[5];
             }else if (a_table_split[0].equals("irmsremotecustomer") == true){
@@ -149,6 +155,9 @@ public class SetDB implements Serializable {
             }
             a_sRet[0] = "";
             
+            //------------------------------------------------------------------
+            //対象テーブル・カラム情報の解析
+            //------------------------------------------------------------------
             a_column_split = a_table_split[1].split(",");
             a_key = new String[a_column_split.length];
             a_type = new String[a_column_split.length];
@@ -165,7 +174,9 @@ public class SetDB implements Serializable {
             a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
             a_con.setAutoCommit(false);
             
-            //DB更新するテーブルのSQLを組み立てる
+            //------------------------------------------------------------------
+            //DB更新するテーブルの解析＆抽出
+            //------------------------------------------------------------------
             for (int a_iCnt=0; a_iCnt<h_coldefs.size(); a_iCnt++){
                 String[] a_split = h_coldefs.get(a_iCnt).split("\t");
                 a_colNames = a_split[_Environ.COLUMN_DEF_NAME].split(":");
@@ -177,24 +188,32 @@ public class SetDB implements Serializable {
                     a_post_val = a_post_data[1];
                 }
                 if (h_act.equals("n") == true){
+                    //登録の場合
                 }else{
+                    //更新の場合
                     if (a_post_data[0].equals("usercode")){
+                        //カラム名がusercodeの場合
                         a_user_code = a_post_val;
                         if ((a_table_split[0].equals("pbxremotecustomer") == true)
                          || (a_table_split[0].equals("irmsremotecustomer") == true)
                            ){
+                            //テーブルがPBXリモートユーザ、IRMSユーザの場合
                             a_sRet[1] = a_user_code;
                         }
                     }else if (a_post_data[0].equals("usernumber")){
+                        //カラム名がusernumberの場合
                         a_user_number = a_post_val;
                         if ((a_table_split[0].equals("pbxremotecustomer") == true)
                          || (a_table_split[0].equals("irmsremotecustomer") == true)
                            ){
+                            //テーブルがPBXリモートユーザ、IRMSユーザの場合
                             a_sRet[2] = a_user_number;
                         }
                     }else if (a_post_data[0].equals("id")){
+                        //カラム名がidの場合
                             a_sRet[1] = a_post_val;
                     }else if (a_post_data[0].equals("num")){
+                        //カラム名がnumの場合
                             a_sRet[1] = a_post_val;
                     }
                 }
@@ -204,6 +223,7 @@ public class SetDB implements Serializable {
                     a_isOK = true;
                     if (a_tableName.equals("") == false){
                         if (a_ness.indexOf("a") >= 0){
+                            //カラムが自動付与の場合
                             a_isAuto = true;
                             /*
                             if ((a_tableName.equals("pbxremotecustomer") == false)
@@ -215,8 +235,11 @@ public class SetDB implements Serializable {
                             */
                         }
                         if (h_act.equals("n") == true){
+                            //登録の場合
                         }else{
+                            //更新の場合
                             if (a_isAuto == true){
+                                //カラムが自動付与の場合は、カラム追加対象外
                                 a_isOK = false;
                             }
                         }
@@ -243,22 +266,27 @@ public class SetDB implements Serializable {
                             for(int a_iCnt3=0; a_iCnt3<a_table_list.size(); a_iCnt3++){
                                 String a_sVal = a_table_list.get(a_iCnt3);
                                 if (a_sVal.equals(a_tableName) == true){
+                                    //既存テーブル情報への追加の場合
                                     a_isFound = true;
                                     if (h_act.equals("n") == true){
+                                        //登録の場合
                                         a_sql = a_table_sql_f.get(a_iCnt3);
                                         a_sql += "," + a_colNames[a_iCnt2];
                                         a_table_sql_f.set(a_iCnt3, a_sql);
                                         a_sql = a_table_sql_p.get(a_iCnt3);
                                         if (a_isAuto == false){
+                                            //カラムが自動付与以外の場合
                                             if (a_sql.trim().length() > 0){
                                                 a_sql += ",";
                                             }
                                             a_sql += "?";
                                         }else{
+                                            //カラムが自動付与の場合
                                             a_sql += "";
                                         }
                                         a_table_sql_p.set(a_iCnt3, a_sql);
                                     }else{
+                                        //更新の場合                                        
                                         a_sql = a_table_sql_p.get(a_iCnt3);
                                         if (a_sql.trim().length() > 0){
                                             a_sql += ",";
@@ -269,24 +297,30 @@ public class SetDB implements Serializable {
                                     
                                     a_sql = a_table_sql_t.get(a_iCnt3);
                                     if (a_isAuto == false){
+                                        //カラムが自動付与以外の場合
                                         a_sql += "\t" + a_split[_Environ.COLUMN_DEF_TYPE];
                                     }else{
+                                        //カラムが自動付与の場合
                                         a_sql += "\t";
                                     }
                                     a_table_sql_t.set(a_iCnt3, a_sql);
 
                                     a_sql = a_table_sql_v.get(a_iCnt3);
                                     if (a_isAuto == false){
+                                        //カラムが自動付与以外の場合
                                         a_sql += "\t" + a_post_val;
                                     }else{
+                                        //カラムが自動付与の場合
                                         a_sql += "\t";
                                     }
                                     a_table_sql_v.set(a_iCnt3, a_sql);
 
                                     a_sql = a_table_sql_c.get(a_iCnt3);
                                     if (a_isAuto == false){
+                                        //カラムが自動付与以外の場合
                                         a_sql += "\t" + a_colNames[a_iCnt2];
                                     }else{
+                                        //カラムが自動付与の場合
                                         a_sql += "\t";
                                     }
                                     a_table_sql_c.set(a_iCnt3, a_sql);
@@ -295,24 +329,31 @@ public class SetDB implements Serializable {
                                 }
                             }
                             if (a_isFound == false){
+                                //新規テーブル情報追加の場合
                                 a_table_list.add(a_tableName);
                                 if (h_act.equals("n") == true){
+                                    //登録の場合
                                     a_sql = a_colNames[a_iCnt2];
                                     a_table_sql_f.add(a_sql);
                                     if (a_isAuto == false){
+                                        //カラムが自動付与以外の場合
                                         a_table_sql_p.add("?");
                                     }else{
+                                        //カラムが自動付与の場合
                                         a_table_sql_p.add("");
                                     }                                    
                                 }else{
+                                    //更新の場合
                                     a_sql = a_colNames[a_iCnt2] + "=?";
                                     a_table_sql_p.add(a_sql);
                                 }
                                 if (a_isAuto == false){
+                                    //カラムが自動付与以外の場合
                                     a_table_sql_c.add(a_colNames[a_iCnt2]);
                                     a_table_sql_t.add(a_split[_Environ.COLUMN_DEF_TYPE]);
                                     a_table_sql_v.add(a_post_val);
                                 }else{
+                                    //カラムが自動付与の場合
                                     a_table_sql_c.add("");
                                     a_table_sql_t.add("");
                                     a_table_sql_v.add("");
@@ -323,10 +364,13 @@ public class SetDB implements Serializable {
                 }
             }
 
-            //テーブル数分更新
+            //------------------------------------------------------------------
+            //テーブル数分更新のSQLを組み立
+            //------------------------------------------------------------------
             for (int a_iCnt=0; a_iCnt<a_table_list.size(); a_iCnt++){
                 a_tableName = a_table_list.get(a_iCnt);
                 if (h_act.equals("n") == true){
+                    //登録の場合
                     a_sql = "INSERT INTO " + a_tableName + "(";
                     //自動付与するカラムを追加
                     if ((a_tableName.equals("customer") == true)
@@ -462,6 +506,7 @@ public class SetDB implements Serializable {
                     
                     a_sql += a_table_sql_p.get(a_iCnt) + ")";
                 }else{
+                    //更新の場合
                     a_sql = "UPDATE " + a_tableName + " SET " + a_table_sql_p.get(a_iCnt) + " WHERE ";
                     //WHERE句キーのSQL組み立て
                     a_sql_w = "";
@@ -504,6 +549,7 @@ public class SetDB implements Serializable {
                 }
 
                 if (h_act.equals("n") == true){
+                    //登録の場合
                     if (a_tableName.equals("newcustomermanage") == true){
                         a_sql += " RETURNING usercode";
                     /*}else if (a_tableName.equals("remotemonitoringcustomer") == true){
@@ -581,7 +627,8 @@ public class SetDB implements Serializable {
                         }else if (a_sType.indexOf("date") >= 0){
                             //date
                             if (a_sVal.equals("") == false){
-                                java.sql.Date a_dt = null;
+                                java.sql.Timestamp a_ts = null;
+                                //java.sql.Date a_dt = null;
                                 SimpleDateFormat a_sdf = null;
                                 if (a_sVal.indexOf(" ") >= 0){
                                     a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
@@ -589,8 +636,10 @@ public class SetDB implements Serializable {
                                 }else{
                                     a_sdf = new SimpleDateFormat("yyyy/MM/dd");
                                 }
-                                a_dt = new java.sql.Date(a_sdf.parse(a_sVal).getTime());
-                                a_ps.setDate(a_idx, a_dt);
+                                a_ts = new java.sql.Timestamp(a_sdf.parse(a_sVal).getTime());
+                                //a_dt = new java.sql.Date(a_sdf.parse(a_sVal).getTime());
+                                a_ps.setTimestamp(a_idx, a_ts);
+                                //a_ps.setDate(a_idx, a_dt);
                             }else{
                                 a_ps.setNull(a_idx, java.sql.Types.DATE);
                             }
@@ -642,6 +691,7 @@ public class SetDB implements Serializable {
                 int a_i = 0;
                 //a_i = a_ps.executeUpdate();
                 if (h_act.equals("n") == true){
+                    //登録の場合
                     if (a_tableName.equals("newcustomermanage") == true){
                         a_rs = a_ps.executeQuery();
                         while(a_rs.next()){
@@ -677,6 +727,7 @@ public class SetDB implements Serializable {
                         a_i = a_ps.executeUpdate();
                     }
                 }else{
+                    //更新の場合
                     a_i = a_ps.executeUpdate();
                 }
             }
@@ -707,7 +758,11 @@ public class SetDB implements Serializable {
         return a_sRet;
     }
 
-    //削除
+    //--------------------------------------------------------------------------
+    //リモートDBデータを削除する
+    // h_table  対象テーブル
+    // h_where  削除条件
+    //--------------------------------------------------------------------------
     public String DeleteMnt(
         String h_table,
         String h_where
@@ -795,7 +850,13 @@ public class SetDB implements Serializable {
         return a_sRet;
     }
     
-    //pagerの作成
+    //--------------------------------------------------------------------------
+    //リモートDBデータ一覧の件数を取得する
+    // h_kind       種別
+    // h_pageNo     表示ページ番号
+    // h_find_def   検索定義情報
+    // h_find_key   検索キー情報
+    //--------------------------------------------------------------------------
     public String MakePagerMnt(
         int h_kind,
         int h_pageNo,
@@ -877,6 +938,12 @@ public class SetDB implements Serializable {
         return a_sRet;
     }
     
+    //--------------------------------------------------------------------------
+    //リモートDBデータ一覧を取得する。
+    // h_pageNo     表示ページ番号
+    // h_find_def   検索定義情報
+    // h_find_key   検索キー情報
+    //--------------------------------------------------------------------------
     public  ArrayList<String> FindMnt(
         int h_pageNo,
         String[] h_find_def,
@@ -989,6 +1056,12 @@ public class SetDB implements Serializable {
         return a_arrayRet;
     }
     
+    //--------------------------------------------------------------------------
+    //リモートDBデータを検索する。
+    // h_table      対象テーブル情報
+    // h_coldefs    DBカラム定義情報
+    // h_idx        検索キー（カンマ区切り）
+    //--------------------------------------------------------------------------
     public  ArrayList<String> GetMnt(
         String h_table,
         ArrayList<String> h_coldefs,
@@ -1226,6 +1299,10 @@ public class SetDB implements Serializable {
         return a_arrayRet;
     }
 
+    //--------------------------------------------------------------------------
+    //次に付与するユーザコードを取得する。
+    // h_table      対象テーブル情報
+    //--------------------------------------------------------------------------
     public  String GetNextUserCode(
         String h_table
         ) throws Exception{
@@ -1287,7 +1364,13 @@ public class SetDB implements Serializable {
         return a_sRet;
     }
     
-    //pagerの作成
+    //--------------------------------------------------------------------------
+    //ポップアップ表示での一覧の件数を取得する
+    // h_kind       種別
+    // h_pageNo     表示ページ番号
+    // h_show_def   検索定義情報
+    // h_find_key   検索キー情報
+    //--------------------------------------------------------------------------
     public String MakePagerShowList(
         int h_kind,
         int h_pageNo,
@@ -1348,6 +1431,12 @@ public class SetDB implements Serializable {
         return a_sRet;
     }
     
+    //--------------------------------------------------------------------------
+    //ポップアップ表示での一覧を取得する
+    // h_pageNo     表示ページ番号
+    // h_show_def   検索定義情報
+    // h_find_key   検索キー情報
+    //--------------------------------------------------------------------------
     public  ArrayList<String> ShowList(
         int h_pageNo,
         String[] h_show_def,
@@ -1441,6 +1530,10 @@ public class SetDB implements Serializable {
         return a_arrayRet;
     }
     
+    //--------------------------------------------------------------------------
+    //SIO機種の名称を取得する
+    // h_id       キー
+    //--------------------------------------------------------------------------
     public String GetEquipmentTypeName(
         String h_id
         ) throws Exception{
@@ -1484,6 +1577,12 @@ public class SetDB implements Serializable {
         return a_sRet;
     }
     
+    //--------------------------------------------------------------------------
+    //LTIC・TN拠点／機器データを取得する
+    // h_table      対象テーブル情報
+    // h_coldefs    DBカラム定義情報
+    // h_user_code  検索ユーザコード
+    //--------------------------------------------------------------------------
     public  ArrayList<String>[] GetPluralMnt(
         String h_table,
         ArrayList<String> h_coldefs,
@@ -1624,7 +1723,11 @@ public class SetDB implements Serializable {
         return a_arrayRet;
     }
     
-    //RPT使用状況の取得
+    //--------------------------------------------------------------------------
+    //RPT使用状況データを取得する
+    // h_plurals        DBカラム定義情報
+    // h_monitoring_id  検索キー
+    //--------------------------------------------------------------------------
     public  String GetRPTMnt(
         ArrayList<String> h_plurals,
         String h_monitoring_id
@@ -1776,7 +1879,13 @@ public class SetDB implements Serializable {
         return a_sRet;
     }
 
-    //RPT使用状況登録
+    //--------------------------------------------------------------------------
+    //RPT使用状況データを登録する
+    // h_plurals        DBカラム定義情報
+    // h_act            n：登録、e：更新
+    // h_use_code       対象ユーザコード
+    // h_post_data      POSTデータ
+    //--------------------------------------------------------------------------
     public String EntryRPTMnt(
         ArrayList<String> h_plurals,
         String h_act,
@@ -1934,7 +2043,14 @@ public class SetDB implements Serializable {
         return a_sRet;
     }
     
-    //LTIC・TN/ユーザ機器登録
+    //--------------------------------------------------------------------------
+    //LTIC・TN/ユーザ機器データを登録する
+    // h_table      対象テーブル情報
+    // h_plurals    DBカラム定義情報
+    // h_act        n：登録、e：更新
+    // h_idx        更新キー
+    // h_post_data  POSTデータ
+    //--------------------------------------------------------------------------
     public String[] EntryPluralMnt(
         String h_table,
         ArrayList<String> h_plurals,
