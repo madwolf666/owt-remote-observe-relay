@@ -331,6 +331,7 @@ function select_plural_list(h_mode, h_is_edit, h_user_code, h_seq){
             $("#show-list").empty().append(data);
             $("#select-plural-seq").val(h_seq);
             $("#delete-plural-mnt").show();
+            change_ss9100flag();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown.message);
@@ -356,7 +357,7 @@ function select_plural_list(h_mode, h_is_edit, h_user_code, h_seq){
 }
 
 function delete_plural_mnt(h_mode, h_is_edit, h_user_code, h_idx, h_opt1){
-    alert(h_opt1);
+    //alert(h_opt1);
     var a_seq = $("#select-plural-seq").val();
 
     if (!confirm("削除します。よろしいですか？")){
@@ -489,4 +490,18 @@ function delete_table_mnt(){
        complete: function (data) {
        }
    });	
+}
+
+function change_ss9100flag(){
+    //alert('');
+    var a_val = $('[name=p_ss9100flag] option:selected').val();
+    //alert(a_val);
+    if (a_val == '1'){
+        //alert('SS9100');");
+        $('#p_cabno').val('-99');
+        $('#p_cabno').attr('readonly', true);
+    }else{
+        //alert('DISCOVERY');
+        $('#p_cabno').attr('readonly', false);
+    }
 }

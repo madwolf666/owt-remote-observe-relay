@@ -64,14 +64,12 @@
                   <!-- main -->
                   <div id="hpb-main" style="text-align:left;">
                     <ui:insert name="box">
-                        <table border="0">
-                            <tr>
-                                <td valign="top"><div id="delete-mnt"><input id="change_submit" type="button" value="　削除　" onclick="delete_log_analyze_mnt('n','');" /></div></td>
-                                <td valign="top"><div id="new-mnt"><input id="change_submit" type="button" value="　新規登録　" onclick="make_log_analyze_edit_mnt('n','');" /></div></td>
-                                <td valign="top"><div id="entry-mnt"><input id="change_submit" type="button" value="　登録終了　" onclick="entry_log_analyze_mnt();" /></div></td>
-                                <td valign="top"><div id="back-mnt"><input id="change_submit" type="button" value="　戻る　" onclick="make_log_analyze_list_mnt(-1);" /></div></td>
-                            </tr>
-                        </table>
+                        <div class="div-container">
+                            <div class="div-table-cell" id="delete-mnt">&nbsp;&nbsp;<input id="change_submit" type="button" value="　削除　" onclick="delete_log_analyze_mnt('n','');" /></div>
+                            <div class="div-table-cell" id="new-mnt">&nbsp;&nbsp;<input id="change_submit" type="button" value="　新規登録　" onclick="make_log_analyze_edit_mnt('n','');" /></div>
+                            <div class="div-table-cell" id="entry-mnt">&nbsp;&nbsp;<input id="change_submit" type="button" value="　登録終了　" onclick="entry_log_analyze_mnt();" /></div>
+                            <div class="div-table-cell" id="back-mnt">&nbsp;&nbsp;<input id="change_submit" type="button" value="　戻る　" onclick="make_log_analyze_list_mnt(-1);" /></div>
+                        </div>
                         <div id="my-pager">&nbsp;&nbsp;&nbsp;&nbsp;</div>
                     </ui:insert>
                   </div>

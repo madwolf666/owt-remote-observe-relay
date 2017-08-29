@@ -174,11 +174,11 @@
         }
         out.print("</table>");
         
-        out.print("<table><tr>");
-        out.print("<td rowspan='1' valign='top'><div id='delete-plural-mnt' style='display:none;'><input id='change_submit' type='button' value='　削除　' onclick='delete_plural_mnt(\"" + a_mode + "\",\"" + a_is_edit + "\",\"" + a_user_code + "\",\"" + a_IDX + "\",\"" + a_user_ipaddr + "\");' /></div></td>");
-        out.print("<td rowspan='1' valign='top'><div id='entry-plural-mnt'><input id='change_submit' type='button' value='　登録　' onclick='entry_plural_mnt();' /></div></td>");
+        out.print("<div class='div-container'>");
+        out.print("<div class='div-table-cell' id='delete-plural-mnt' style='display:none;'>&nbsp;&nbsp;<input id='change_submit' type='button' value='　削除　' onclick='delete_plural_mnt(\"" + a_mode + "\",\"" + a_is_edit + "\",\"" + a_user_code + "\",\"" + a_IDX + "\",\"" + a_user_ipaddr + "\");' /></div>");
+        out.print("<div class='div-table-cell' id='entry-plural-mnt'>&nbsp;&nbsp;<input id='change_submit' type='button' value='　登録　' onclick='entry_plural_mnt();' /></div>");
         out.print("<input type='hidden' name='select-plural-seq' id='select-plural-seq' value=''>");
-        out.print("</tr></table>");
+        out.print("</div>");
     }
     
     out.print("<a href='#' onclick=\"$('.popup').hide();\">閉じる</a>");
@@ -195,17 +195,7 @@
 
     out.print("$(function () {");
     out.print("$('#p_ss9100flag').change(function(){");
-    //out.print("    alert('');");
-    out.print("    var a_val = $('[name=p_ss9100flag] option:selected').val();");
-    //out.print("    alert(a_val);");
-    out.print("    if (a_val == '1'){");
-    //out.print("    alert('SS9100');");
-    out.print("        $('#p_cabno').val('-99');");
-    out.print("        $('#p_cabno').attr('readonly', true);");
-    out.print("    }else{");
-    out.print("    alert('DISCOVERY');");
-    out.print("        $('#p_cabno').attr('readonly', false);");
-    out.print("    }");
+    out.print("    change_ss9100flag();");
     out.print("});");
     out.print("})");
 
