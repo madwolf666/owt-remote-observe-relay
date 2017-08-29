@@ -222,13 +222,13 @@ public class AnalyzeLog implements Serializable {
                     //検知名称の設定
                     a_mail_body = "検知名称：";
                     a_mail_body += a_find_keyword;
-                    //備考の設定
-                    a_mail_body += a_linecd + "備考：";
+                    //備考の設定：今回は不要
+                    //a_mail_body += a_linecd + "備考：";
                     //時刻の設定
                     a_mail_body += a_linecd + "時刻：";
                     a_mail_body += h_find_time.replace("-", "/");
-                    //検出種別の設定
-                    a_mail_body += a_linecd + "検知種別：";
+                    //検出種別の設定：今回は不要
+                    //a_mail_body += a_linecd + "検知種別：";
                     //顧客の設定
                     a_mail_body += a_linecd + "顧客：";
                     for (int a_iCnt=0; a_iCnt<a_user_code.size(); a_iCnt++){
@@ -253,8 +253,8 @@ public class AnalyzeLog implements Serializable {
                             break;
                         }
                     }
-                    //整形ログファイル名の設定
-                    a_mail_body += a_linecd + "整形ログファイル名：";
+                    //整形ログファイル名の設定：今回は不要
+                    //a_mail_body += a_linecd + "整形ログファイル名：";
                 }
                 
                 //--------------------------------------------------------------

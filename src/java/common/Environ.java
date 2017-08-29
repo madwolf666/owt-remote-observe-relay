@@ -16,9 +16,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.NumberFormat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -176,7 +179,9 @@ public class Environ {
         */
         //[2016.09.21]bug-fixed:testing↑
        
-        String a_sRet = "&nbsp;&nbsp;件数：" + String.valueOf(h_iSum) + "件&nbsp;&nbsp";
+        NumberFormat a_nfNum = NumberFormat.getNumberInstance();
+        String a_sRet = "&nbsp;&nbsp;件数：" + a_nfNum.format(h_iSum) + "件&nbsp;&nbsp";
+        //String a_sRet = "&nbsp;&nbsp;件数：" + String.valueOf(h_iSum) + "件&nbsp;&nbsp";
         String a_sFunc ="";
         switch (h_kind){
             case 1: //1：SFケース詳細
@@ -310,6 +315,30 @@ public class Environ {
         }
         
         return a_iRet;
+    }
+
+    public String ExistDBTimestamp(ResultSet h_rs, String h_name) throws Exception{
+        String a_sRet = "";
+        
+        if (h_rs.getTimestamp(h_name) != null){
+            SimpleDateFormat a_sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Timestamp a_ts = h_rs.getTimestamp(h_name);
+            a_sRet = a_sdf.format(a_ts);
+        }
+        
+        return a_sRet;
+    }
+
+    public String ExistDBDate(ResultSet h_rs, String h_name) throws Exception{
+        String a_sRet = "";
+        
+        if (h_rs.getDate(h_name) != null){
+            SimpleDateFormat a_sdf = new SimpleDateFormat("yyyy/MM/dd");
+            Date a_ts = h_rs.getDate(h_name);
+            a_sRet = a_sdf.format(a_ts);
+        }
+        
+        return a_sRet;
     }
 
     public String ToTroubleLevelString(int h_level){

@@ -881,7 +881,7 @@ public class SetDB implements Serializable {
         String a_find_sql = "";
         try{
             //a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1";
-            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (";
+            a_sql = "SELECT COUNT(*) AS REC_SUM FROM (";
             if (h_find_key.equals("") == false){
                 a_find_key = h_find_key.split("\t");
                 a_where += " WHERE ";
@@ -963,7 +963,7 @@ public class SetDB implements Serializable {
         String a_find_sql = "";
         //int a_iRet = 0;
         try{
-            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (";
+            a_sql = "SELECT COUNT(*) AS REC_SUM FROM (";
             if (h_find_key.equals("") == false){
                 a_find_key = h_find_key.split("\t");
                 a_where += " WHERE ";
@@ -1261,12 +1261,14 @@ public class SetDB implements Serializable {
                         a_sVal = _Environ.ExistDBString(a_rs, a_columns[0]);
                         if (a_sVal != ""){
                             //0番目のカラムを使用
-                            if ((a_types[0].indexOf("time") >= 0) || (a_types[0].indexOf("date") >= 0)){
-                                //日付
-                                a_sVal = a_sVal.replace("-", "/");
+                            //if ((a_types[0].indexOf("time") >= 0) || (a_types[0].indexOf("date") >= 0)){
+                            if (a_types[0].indexOf("date") >= 0){
                                 if (a_times[0].equals("n")){
                                     //時刻指定なし
-                                    a_sVal = a_sVal.substring(0, 10);
+                                    a_sVal = _Environ.ExistDBDate(a_rs, a_columns[0]);
+                                }else{
+                                    //時刻指定あり
+                                    a_sVal = _Environ.ExistDBTimestamp(a_rs, a_columns[0]);
                                 }
                             }
                         }
@@ -1390,7 +1392,7 @@ public class SetDB implements Serializable {
         int a_iSum = -1;
         String a_sRet = "";
         try{
-            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (" + h_show_def[_Environ.SHOWLIST_FIND_SQL] + ") t1";
+            a_sql = "SELECT COUNT(*) AS REC_SUM FROM (" + h_show_def[_Environ.SHOWLIST_FIND_SQL] + ") t1";
 
             Class.forName (_db_driver);
             // データベースとの接続
@@ -1452,7 +1454,7 @@ public class SetDB implements Serializable {
         String[] a_items = h_show_def[_Environ.SHOWLIST_ITEM_NAME].split(":");
         //int a_iRet = 0;
         try{
-            a_sql = "SELECT COUNT(t1.*) AS REC_SUM FROM (" + h_show_def[_Environ.SHOWLIST_FIND_SQL] + ") t1";
+            a_sql = "SELECT COUNT(*) AS REC_SUM FROM (" + h_show_def[_Environ.SHOWLIST_FIND_SQL] + ") t1";
             
             Class.forName (_db_driver);
             // データベースとの接続

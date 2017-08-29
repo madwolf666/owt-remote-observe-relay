@@ -83,7 +83,7 @@
     g_JScript_IsRequired = "";
     g_Post_Data = "";
     
-    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:auto;'>");
+    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='margin-left:20px;width:640px;'>");
 
     //データ部
     if (a_arrayList != null){
@@ -99,7 +99,7 @@
             }
             if (a_isOK == true){
                 out.print("<tr>");
-                out.print("<td bgcolor='#003366' style='text-align:left;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
+                out.print("<td bgcolor='#003366' style='text-align:left; width:140px;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
                 if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
                     out.print("<font color='#ffff00'>*</font>");
                 }
@@ -117,7 +117,7 @@
             String a_colName = a_colNames[0];
             String a_val = "";
             out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
+            out.print("<td bgcolor='#003366' style='text-align:left; width:140px;'><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
             if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
                 out.print("<font color='#ffff00'>*</font>");
             }

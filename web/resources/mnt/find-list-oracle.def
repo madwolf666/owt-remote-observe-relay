@@ -1,0 +1,13 @@
+テーブル名	カラム名（複数）	型（n/s/time/date）	プルダウン（n/y/l）	検索カラム名（複数）	選択キー（番号）	取得SQL	項目表示
+pbxremotecustomer	remotesetid:usernumber:username:usercode	n:n:s:s	y:n:n:n	remotesetid	3	SELECT s1.remotesetid,s1.usernumber,s2.username,s1.usercode FROM (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '0%') AND (stationid=7)) s1 LEFT JOIN newcustomermanage s2 ON (s1.usercode=s2.usercode) ORDER BY s1.usercode	SET:REC:名称:ユーザコード
+irmsremotecustomer	remotesetid:usernumber:username:usercode	n:n:s:s	y:n:n:n	remotesetid	3	SELECT s1.remotesetid,s1.usernumber,s2.username,s1.usercode FROM (SELECT * FROM remotemonitoringcustomer WHERE (usercode like '1%') AND (remotesetid=4)) s1 LEFT JOIN newcustomermanage s2 ON (s1.usercode=s2.usercode) ORDER BY s1.usercode	SET:REC:名称:ユーザコード
+nodeinfo	nodecode:vendercode:nodename:version:oid:commentary	s:s:s:s:s:s	n:n:n:n:n:n		0	SELECT s1.* FROM nodeinfo s1 ORDER BY s1.nodecode	機器コード:ベンダーコード:機器名:バージョン:オブジェクトID:備考
+discoveryneotrbinfo	num:msgid:flttitle:class:summary:action:commentary	n:s:s:s:s:s:s	n:n:n:y:n:n:n		0	SELECT s1.* FROM discoveryneotrbinfo s1 ORDER BY s1.num	項番:MSGID:タイトル:障害レベル:概要:対策:備考
+discoverytrbinfo	num:msgid:flttitle:class:summary:action:commentary	n:s:s:s:s:s:s	n:n:n:y:n:n:n		0	SELECT s1.* FROM discoverytrbinfo s1 ORDER BY s1.num	項番:MSGID:タイトル:障害レベル:概要:対策:備考
+ss9100trbinfo	num:msgid:flttitle:class:summary:action:commentary	n:s:s:s:s:s:s	n:n:n:y:n:n:n		0	SELECT s1.* FROM ss9100trbinfo s1 ORDER BY s1.num	項番:MSGID:タイトル:障害レベル:概要:対策:備考
+ss9100provtrbinfo	num:msgid:flttitle:class:summary:action:commentary	n:s:s:s:s:s:s	n:n:n:y:n:n:n		0	SELECT s1.* FROM ss9100provtrbinfo s1 ORDER BY s1.num	項番:MSGID:タイトル:障害レベル:概要:対策:備考
+ssclustertrbinfo	num:msgid:flttitle:class:summary:action:commentary	n:s:s:s:s:s:s	n:n:n:y:n:n:n		0	SELECT s1.* FROM ssclustertrbinfo s1 ORDER BY s1.num	項番:MSGID:タイトル:障害レベル:概要:対策:備考
+croscoretrbinfo	num:flttype:fltcode:fltname:class	n:s:s:s:s	n:y:n:n:y		0	SELECT s1.* FROM croscoretrbinfo s1 ORDER BY s1.num	項番:障害タイプ:FLTCODE:障害概要:障害レベル
+snmpctrbinfo	num:trapcode:trapname:module:class:system:action:commentary	n:s:s:s:s:s:s:s	n:n:n:y:y:n:n:n		0	SELECT s1.* FROM snmpctrbinfo s1 ORDER BY s1.num	項番:トラップコード:障害名称:検出モジュール:障害レベル:障害内容:対策:備考
+raspingtrbinfo	num:rascode:fltname:class	n:s:s:s	n:n:n:y		0	SELECT s1.* FROM raspingtrbinfo s1 ORDER BY s1.num	項番:RASCODE:障害名称:障害レベル
+loganalyzeschedule	id:logname:period:starttime:findkeyword:sendmailaddress	n:s:s:date:s:s	n:y:n:n:n:n		0	SELECT s1.id,s1.logname,s1.period,SUBSTR(TO_CHAR(s1.starttime,'YYYY-MM-DD HH24:MI'),0,17) AS starttime,s1.findkeyword,s1.sendmailaddress FROM loganalyzeschedule s1 ORDER BY s1.id	ID:検索対象テーブル:検索期間:検索開始時間:検索キーワード:通知メールアドレス設定

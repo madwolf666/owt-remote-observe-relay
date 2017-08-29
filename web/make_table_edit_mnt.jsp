@@ -124,7 +124,7 @@
     g_JScript_IsRequired = "";
     g_Post_Data = "";
     
-    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:660px;'>");
+    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='margin-left:20px;width:640px;'>");
     //out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='width:768px;'>");
 
     String a_monitoring_id = "";
@@ -159,7 +159,7 @@
                     a_user_code = a_val;
                 }
                 out.print("<tr>");
-                out.print("<td bgcolor='#003366' style='text-align:left;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
+                out.print("<td bgcolor='#003366' style='text-align:left; width:130px;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
                 if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
                     out.print("<font color='#ffff00'>*</font>");
                 }
@@ -197,7 +197,7 @@
                 ArrayList<String> a_plurals = GetDef_Plurals(a_envPath + "prt_status.def");
                 String a_prt_status_data = SetDB.GetRPTMnt(a_plurals, a_monitoring_id);
                 out.print("<tr>");
-                out.print("<td bgcolor='#003366' style='text-align:left;' nowrap><font color='#ffffff'>" + a_prt_status_def[COLUMN_DEF_COMMENT] + "</font>");
+                out.print("<td bgcolor='#003366' style='text-align:left; width:130px;' nowrap><font color='#ffffff'>" + a_prt_status_def[COLUMN_DEF_COMMENT] + "</font>");
                 out.print("<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(a_envPath, true, true, false, a_ACT, a_prt_status_def, a_column_split, a_pulldown, a_showlist, a_prt_status_data) + "</td>");
                 out.print("</tr>");
             }
@@ -233,7 +233,7 @@
             }
             */
             out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
+            out.print("<td bgcolor='#003366' style='text-align:left; width:130px;'><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
             if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
                 out.print("<font color='#ffff00'>*</font>");
             }

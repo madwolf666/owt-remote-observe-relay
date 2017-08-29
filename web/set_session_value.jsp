@@ -36,17 +36,39 @@
     String Mnt_Find_Condition = request.getParameter("Mnt_Find_Condition");
             
     //セッション変数を設定
-    session.setAttribute("txt_UserCode", UserCode);
-    session.setAttribute("txt_SetNo", SetNo);
-    session.setAttribute("txt_RecNo", RecNo);
-    session.setAttribute("txt_UserName", UserName);
-    session.setAttribute("entry_timeS", TimeS);
-    session.setAttribute("entry_timeE", TimeE);
-    session.setAttribute("txt_TroubleMsg", TroubleMsg);
-    session.setAttribute("chk_TroubleKind_MJ", TroubleKind_MJ);
-    session.setAttribute("chk_TroubleKind_MN", TroubleKind_MN);
-    session.setAttribute("chk_TroubleKind_GN", TroubleKind_GN);
-    session.setAttribute("chk_Contact", Contact);
+    if (UserCode != null){
+        session.setAttribute("txt_UserCode", UserCode);
+    }
+    if (SetNo != null){
+        session.setAttribute("txt_SetNo", SetNo);
+    }
+    if (RecNo != null){
+        session.setAttribute("txt_RecNo", RecNo);
+    }
+    if (UserName != null){
+        session.setAttribute("txt_UserName", UserName);
+    }
+    if (TimeS != null){
+        session.setAttribute("entry_timeS", TimeS);
+    }
+    if (TimeE != null){
+        session.setAttribute("entry_timeE", TimeE);
+    }
+    if (TroubleMsg != null){
+        session.setAttribute("txt_TroubleMsg", TroubleMsg);
+    }
+    if (TroubleKind_MJ != null){
+        session.setAttribute("chk_TroubleKind_MJ", TroubleKind_MJ);
+    }
+    if (TroubleKind_MN != null){
+        session.setAttribute("chk_TroubleKind_MN", TroubleKind_MN);
+    }
+    if (TroubleKind_GN != null){
+        session.setAttribute("chk_TroubleKind_GN", TroubleKind_GN);
+    }
+    if (Contact != null){
+        session.setAttribute("chk_Contact", Contact);
+    }
 
     if (Mnt_Table != null){
         session.setAttribute("Mnt_Table", Mnt_Table);   //[2017.07.27]

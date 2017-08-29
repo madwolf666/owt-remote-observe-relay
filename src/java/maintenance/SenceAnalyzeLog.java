@@ -101,22 +101,22 @@ public class SenceAnalyzeLog{
         if (_AnalyzeLog._db_driver.equals("oracle.jdbc.driver.OracleDriver")){
             //Oracleの場合
             a_sql = 
-                "SELECT *,TO_CHAR(SYSDATE-1,'YYYY-MM-DD ')||PERIOD AS START_EXECTIME" +
-                ",TO_CHAR(SYSDATE,'YYYY-MM-DD ')||PERIOD AS END_EXECTIME";
+                "SELECT s1.*,TO_CHAR(SYSDATE-1,'YYYY-MM-DD ')||s1.PERIOD AS START_EXECTIME" +
+                ",TO_CHAR(SYSDATE,'YYYY-MM-DD ')||s1.PERIOD AS END_EXECTIME";
         }else if (_AnalyzeLog._db_driver.equals("org.postgresql.Driver")){
             //PostgreSQLの場合
             a_sql = 
-                "SELECT *,TO_CHAR(CURRENT_TIMESTAMP+'-1 days','YYYY-MM-DD ')||PERIOD AS START_EXECTIME" +
-                ",TO_CHAR(CURRENT_TIMESTAMP,'YYYY-MM-DD ')||PERIOD AS END_EXECTIME";
+                "SELECT s1.*,TO_CHAR(CURRENT_TIMESTAMP+'-1 days','YYYY-MM-DD ')||s1.PERIOD AS START_EXECTIME" +
+                ",TO_CHAR(CURRENT_TIMESTAMP,'YYYY-MM-DD ')||s1.PERIOD AS END_EXECTIME";
         }
         a_sql += 
-            " FROM LOGANALYZESCHEDULE WHERE" +
-            " (TO_CHAR(STARTTIME,'YYYY-MM-DD HH24:MI')<='" + a_sNowTime.substring(0,16) + ":00')" +
-            " AND (PERIOD>='" + a_sNowTime.substring(11,16) + "')" +
-            " AND (PERIOD<'" + a_sPeriodTime.substring(11,16) + "')";
+            " FROM LOGANALYZESCHEDULE s1 WHERE" +
+            " (TO_CHAR(s1.STARTTIME,'YYYY-MM-DD HH24:MI')<='" + a_sNowTime.substring(0,16) + ":00')" +
+            " AND (s1.PERIOD>='" + a_sNowTime.substring(11,16) + "')" +
+            " AND (s1.PERIOD<'" + a_sPeriodTime.substring(11,16) + "')";
         
-        a_sql = "SELECT t1.* FROM (" + a_sql + ") t1 ORDER BY START_EXECTIME"; 
-        a_sql += ";";
+        a_sql = "SELECT t1.* FROM (" + a_sql + ") t1 ORDER BY t1.START_EXECTIME"; 
+        //a_sql += ";"; //セミコロンは不要
         _AnalyzeLog._Environ._MyLogger.finest("[ExecAalyzeLog]" + a_sql);
         
         //h_kind⇒1：発報試験、0：スケジューラ

@@ -404,7 +404,7 @@ String Make_Tag_Mnt(
                                 }
                             }
                             if (a_now_split[COLUMN_DEF_COMMENT].equals("") == false){
-                                a_sRet += "<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>" + a_now_split[COLUMN_DEF_COMMENT] + "</font>";
+                                a_sRet += "<td bgcolor='#003366' style='text-align:left; width:100px;'><font color='#ffffff'>" + a_now_split[COLUMN_DEF_COMMENT] + "</font>";
                             }else{
                             }
                             if (a_now_split[COLUMN_DEF_NESS].indexOf("y")>=0){
@@ -431,7 +431,19 @@ String Make_Tag_Mnt(
                             if (h_isFirst == true){
                                 a_val = a_now_split[COLUMN_DEF_INIT];
                             }
-                            a_sRet += "<td bgcolor='transparent' style='text-align:left;'>" + Make_Tag_Mnt(h_envPath, h_isMain, h_isEdit, h_isFirst, h_act, a_now_split, h_key, h_pulldown, h_showlist, a_val) + "</font></td>";
+
+                            String a_style_add = "";
+                            if (a_now_split[COLUMN_DEF_NAME].equals("id") == true){
+                                a_style_add = "width:24px;";
+                            }else if (a_now_split[COLUMN_DEF_NAME].equals("keyword") == true){
+                                a_style_add = "width:60px;";
+                            }else if (a_now_split[COLUMN_DEF_NAME].equals("equipmenttypemasterid") == true){
+                                a_style_add = "width:10px;";
+                            }else if (a_now_split[COLUMN_DEF_NAME].equals("m0") == true){
+                                a_style_add = "width:10px;";
+                            }
+
+                            a_sRet += "<td bgcolor='transparent' style='text-align:left;" + a_style_add + "'>" + Make_Tag_Mnt(h_envPath, h_isMain, h_isEdit, h_isFirst, h_act, a_now_split, h_key, h_pulldown, h_showlist, a_val) + "</font></td>";
                         }
                         if (a_append.indexOf("a") >= 0){
                             a_sRet += "<td bgcolor='transparent' style='text-align:center;'>";
@@ -531,13 +543,23 @@ String Make_Tag_Mnt(
             a_sRet += h_val;
         }
         if (h_act.equals("l") == false){
-            a_sRet += "<input type='";
             if (h_isEdit == true){
-                a_sRet += "text";
+                if (a_field.indexOf("equipmenttype_name")>=0){
+                    a_sRet += "<textarea";
+                }else{
+                    a_sRet += "<input type='";
+                    a_sRet += "text";
+                }
             }else{
+                a_sRet += "<input type='";
                 a_sRet += "hidden";
             }
-            a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='width:200px;' value='" + h_val + "' readonly='true'>";
+            if (a_field.indexOf("equipmenttype_name")>=0){
+                a_sRet += " name='"+ a_field + "' id='" + a_field + "' style='width:100%;height:30px;' readonly='true'>" + h_val + "</textarea>";
+            }else{
+                a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='width:100%;' value='" + h_val + "' readonly='true'>";
+            }
+            //a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='width:200px;' value='" + h_val + "' readonly='true'>";
         }
     }
 
@@ -634,9 +656,10 @@ String Make_Input_Tag_Mnt_String(
     }
 
     if (h_act.equals("l") == false){
-        if (a_max_len > 256){
+        if (a_max_len > 128){
             if (h_isEdit == true){
-                a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + HtmlEncode(h_val) + "</textarea>";
+                a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:90px;'>" + HtmlEncode(h_val) + "</textarea>";
+                //a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + HtmlEncode(h_val) + "</textarea>";
             }else{
                 a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' value='" + HtmlEncode(h_val) + "'>";
             }
@@ -721,7 +744,9 @@ String Make_Input_Tag_Mnt_Date(
 
     if (h_coldef[COLUMN_DEF_LENGTH].equals("") == false){
         a_max_len = Integer.valueOf(h_coldef[COLUMN_DEF_LENGTH]);
-        h_val = h_val.substring(0, a_max_len);
+        if (h_val.equals("") == false){
+            h_val = h_val.substring(0, a_max_len);
+        }
     }
 
     if (h_isEdit == false){
@@ -841,7 +866,8 @@ String Make_Input_Tag_Mnt_ShowList(
 
     if (a_max_len > 128){
         if (h_isEdit == true){
-            a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
+            a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:90px;'>" + h_val + "</textarea>";
+            //a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' rows=5>" + h_val + "</textarea>";
         }else{
             a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
         }

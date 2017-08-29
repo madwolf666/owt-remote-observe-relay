@@ -30,7 +30,7 @@
         out.print("<input type='hidden' id='txt_JobId' value=''>");
     }
     
-    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0'>");
+    out.print("<table id='tbl_list' border='1' cellspacing='0' cellpadding='0' style='margin-left:20px;'>");
     //ヘッダ部
     out.print("<tr>");
     out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>顧客名</font></td>");
