@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import java.util.Properties;
@@ -82,11 +83,13 @@ public class AnalyzeLog implements Serializable {
 
     //--------------------------------------------------------------------------
     //保全データを解析する
-    // h_kind   種別
-    // h_rs     スケジュール検索レコード
+    // h_kind       種別
+    // h_find_time  検知時刻
+    // h_rs         スケジュール検索レコード
     //--------------------------------------------------------------------------
     public void analyze_Log(
         int h_kind,
+        String h_find_time,
         ResultSet h_rs
         ) throws Exception{
         int a_idx = 0;
@@ -109,13 +112,33 @@ public class AnalyzeLog implements Serializable {
                 String a_logname = _Environ.ExistDBString(h_rs, "logname");
                 String a_start_time = _Environ.ExistDBString(h_rs, "START_EXECTIME");
                 String a_end_time = _Environ.ExistDBString(h_rs, "END_EXECTIME");
-                String a_findkeyword = _Environ.ExistDBString(h_rs, "findkeyword");
-                String a_mailaddr = _Environ.ExistDBString(h_rs, "sendmailaddress");
-                        
+                String a_find_keyword = _Environ.ExistDBString(h_rs, "findkeyword");     //検知名称
+                String a_mail_addr = _Environ.ExistDBString(h_rs, "sendmailaddress");
+                String a_mail_body = "";
+                String a_linecd = System.getProperty("line.separator");
+                String a_pull_down_file = _Environ._realPath;
+                if (_Environ._CheckAny.isWindows() == true){
+                    a_pull_down_file += "\\resources\\mnt\\" + _Environ.GetEnvironValue("mnt_pulldown_info");
+                }else{
+                    a_pull_down_file += "/resources/mnt/" + _Environ.GetEnvironValue("mnt_pulldown_info");
+                }
+                String[] a_pull_down_def = _Environ.GetDef_PullDown(a_pull_down_file, "logname");
+                String[] a_options = a_pull_down_def[1].split(",");
+                ArrayList<String> a_user_code = new ArrayList<String>();
+                ArrayList<String> a_user_name = new ArrayList<String>();
+                String a_find_msg_sum = "";
+                String a_find_msg = "";
+                
                 //--------------------------------------------------------------
                 //ログ検索SQLの組み立て
                 //--------------------------------------------------------------
-                a_sql = "SELECT * FROM " + a_logname + " WHERE ";
+                a_sql = "SELECT *,(SELECT username FROM newcustomermanage WHERE (usercode=" + a_logname + ".usercode)) AS username";
+                /*if ((a_logname.equals("mss2operationlog") == true) || (a_logname.equals("operationlog") == true)){
+                    a_sql += ",COUNT(DISTINCT(RASCODE)) AS msg_sum";
+                }else if (a_logname.equals("pbxoperationlog") == true){
+                    a_sql += ",COUNT(DISTINCT(DETAIL)) AS msg_sum";
+                }*/
+                a_sql += " FROM " + a_logname + " WHERE ";
                 if ((a_logname.equals("mss2operationlog") == true) || (a_logname.equals("operationlog") == true)){
                     //mss2operationlog、operationlogの場合
                     //RASCODE：英数4文字完全一致で検索
@@ -155,25 +178,91 @@ public class AnalyzeLog implements Serializable {
                 a_ps.setTimestamp(2, a_ts);
                 if ((a_logname.equals("mss2operationlog") == true) || (a_logname.equals("operationlog") == true)){
                     //mss2operationlog、operationlogの場合
-                    a_ps.setString(3, a_findkeyword);
+                    a_ps.setString(3, a_find_keyword);
                 }else if (a_logname.equals("pbxoperationlog") == true){
                     //pbxoperationlogの場合
-                    a_ps.setString(3, "%" + a_findkeyword + "%");
+                    a_ps.setString(3, "%" + a_find_keyword + "%");
                 }
 
                 a_rs = a_ps.executeQuery();
+                int a_idx2 = 0;
                 while(a_rs.next()){
                     a_isFound = true;
+                    if (a_idx2 == 0){
+                        //検出メッセージ数
+                        //a_find_msg_sum = _Environ.ExistDBString(a_rs, "msg_sum");
+                        //検出メッセージ
+                        if ((a_logname.equals("mss2operationlog") == true) || (a_logname.equals("operationlog") == true)){
+                            a_find_msg = _Environ.ExistDBString(a_rs, "rascode");
+                        }else if (a_logname.equals("pbxoperationlog") == true){
+                            a_find_msg = _Environ.ExistDBString(a_rs, "detail");
+                        }
+                    }
+                    //顧客情報
+                    boolean a_isExists = false;
+                    String a_uc = _Environ.ExistDBString(a_rs, "usercode");
+                    for (int a_iCnt=0; a_iCnt<a_user_code.size(); a_iCnt++){
+                        String a_ucl = a_user_code.get(a_iCnt);
+                        if (a_ucl.equals(a_uc) == true){
+                            a_isExists = true;
+                            break;
+                        }
+                    }
+                    if (a_isExists == false){
+                        a_user_code.add(a_uc);
+                        a_user_name.add(_Environ.ExistDBString(a_rs, "username"));
+                    }
+
+                    a_idx2++;
                 }
                 a_rs.close();
                 a_ps.close();
+                
+                if (a_isFound == true){
+                    //検知名称の設定
+                    a_mail_body = "検知名称：";
+                    a_mail_body += a_find_keyword;
+                    //備考の設定
+                    a_mail_body += a_linecd + "備考：";
+                    //時刻の設定
+                    a_mail_body += a_linecd + "時刻：";
+                    a_mail_body += h_find_time.replace("-", "/");
+                    //検出種別の設定
+                    a_mail_body += a_linecd + "検知種別：";
+                    //顧客の設定
+                    a_mail_body += a_linecd + "顧客：";
+                    for (int a_iCnt=0; a_iCnt<a_user_code.size(); a_iCnt++){
+                        a_mail_body += a_linecd + a_user_code.get(a_iCnt) + "," + a_user_name.get(a_iCnt);
+                    }
+                    //期間の設定
+                    a_mail_body += a_linecd + "期間：";
+                    a_mail_body += a_start_time.replace("-", "/") + " - " + a_end_time.replace("-", "/");
+                    //検出メッセージ数の設定
+                    a_mail_body += a_linecd + "検出メッセージ数：";
+                    a_mail_body += String.valueOf(a_idx2) + "件";
+                    //a_mail_body += a_find_msg_sum;
+                    //検出メッセージの設定
+                    a_mail_body += a_linecd + "検出メッセージ：";
+                    a_mail_body += a_find_msg;
+                    //検出ログテーブルの設定
+                    a_mail_body += a_linecd + "検出ログテーブル：";
+                    for (int a_iCnt=0; a_iCnt<a_pull_down_def.length; a_iCnt++){
+                        String[] a_split = a_options[a_iCnt].split(":");
+                        if (a_split[0].equals(a_logname) == true){
+                            a_mail_body += a_split[1];
+                            break;
+                        }
+                    }
+                    //整形ログファイル名の設定
+                    a_mail_body += a_linecd + "整形ログファイル名：";
+                }
                 
                 //--------------------------------------------------------------
                 //メールを送信する。
                 //--------------------------------------------------------------
                 if (a_isFound == true){
-                    if (a_mailaddr.equals("") == false){
-                        _sendmail(a_mailaddr);
+                    if (a_mail_addr.equals("") == false){
+                        _sendmail(a_mail_addr, a_mail_body);
                     }
                 }
             }
@@ -198,8 +287,12 @@ public class AnalyzeLog implements Serializable {
     //--------------------------------------------------------------------------
     //メールを送信する
     // h_mailaddr   送信先メールアドレス
+    // h_mail_body  送信本文
     //--------------------------------------------------------------------------
-    private void _sendmail(String h_mailaddr){
+    private void _sendmail(
+        String h_mail_addr,
+        String h_mail_body
+        ){
         String[] a_mailToAddr = null;
         String[] a_sVal = null;
 
@@ -232,7 +325,7 @@ public class AnalyzeLog implements Serializable {
             //------------------------------------------------------------------
             // 送信先メールアドレスの取得
             //------------------------------------------------------------------
-            a_mailToAddr = h_mailaddr.split(";");	
+            a_mailToAddr = h_mail_addr.split(";");	
             InternetAddress[] a_toAddress = new InternetAddress[a_mailToAddr.length];	//●To
             for (int a_i=0; a_i<a_mailToAddr.length; a_i++){
                     a_toAddress[a_i] = new InternetAddress(a_mailToAddr[a_i].trim());
@@ -263,7 +356,7 @@ public class AnalyzeLog implements Serializable {
             //------------------------------------------------------------------
             MimeBodyPart a_textBodyPart = new MimeBodyPart();
             //[2015.02.19]---↓
-            a_textBodyPart.setText("This is test.", "shift-jis", "plain");  
+            a_textBodyPart.setText(h_mail_body, "shift-jis", "plain");  
             a_textBodyPart.setHeader("Content-Transfer-Encoding", "base64");  
             a_mixedPart.addBodyPart(a_textBodyPart);  
 

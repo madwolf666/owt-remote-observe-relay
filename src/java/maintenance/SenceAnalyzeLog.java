@@ -5,7 +5,6 @@
  */
 package maintenance;
 
-import warn.*;
 import common.Environ;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,8 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  *
@@ -53,7 +50,15 @@ public class SenceAnalyzeLog{
         //現在時刻を取得
         java.util.Date a_date_start = new java.util.Date();
         SimpleDateFormat a_sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        _sPrevTime = a_sdf1.format(a_date_start);
+        //_sPrevTime = a_sdf1.format(a_date_start);
+
+        Calendar a_cal1 = Calendar.getInstance();
+        a_cal1.setTime(a_date_start);
+        //最初は1分前に設定
+        a_cal1.add(Calendar.MINUTE, -1);
+        //0秒に揃える
+        a_cal1.set(Calendar.SECOND, 0);
+        _sPrevTime = a_sdf1.format(a_cal1.getTime());
 
         while(true){
             try{
@@ -82,6 +87,8 @@ public class SenceAnalyzeLog{
         Calendar a_cal1 = Calendar.getInstance();
         a_cal1.setTime(a_date_start);
         a_cal1.add(Calendar.SECOND, _period / 1000);
+        //0秒に揃える
+        a_cal1.set(Calendar.SECOND, 0);
         String a_sPeriodTime = a_sdf1.format(a_cal1.getTime());
 
         String a_sql = "";
@@ -125,7 +132,7 @@ public class SenceAnalyzeLog{
             a_rs = a_ps.executeQuery();
             try{
                 //保全データを解析
-                _AnalyzeLog.analyze_Log(0,a_rs);
+                _AnalyzeLog.analyze_Log(0, a_sPeriodTime, a_rs);
             } catch (Exception e){
                 _AnalyzeLog._Environ._MyLogger.severe("[ExecAalyzeLog]" + e.getMessage());
             }

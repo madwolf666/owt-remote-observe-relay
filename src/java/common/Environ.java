@@ -33,7 +33,7 @@ public class Environ {
 
     private String _conf = "/resources/environ.conf";
     private Properties _Prop = new Properties();
-    private String _realPath = "";
+    public String _realPath = "";
     
     public String _db_driver = "";
     public String _db_server = "";
@@ -616,5 +616,38 @@ public class Environ {
         _MyLogger.info("*** GetDbColumns is finished. ***");
         
         return a_arrayRet;
+    }
+
+    //プルダウン表示
+    public String[] GetDef_PullDown(
+        String h_pulldown,
+        String h_col_name
+        ){
+        String[] a_pull_def = null;
+        try{
+            FileInputStream a_fs = new FileInputStream(h_pulldown);
+            InputStreamReader a_isr = new InputStreamReader(a_fs, "UTF8");
+            BufferedReader a_br = new BufferedReader(a_isr);
+            String a_line = "";
+            int a_rec = 0;
+            while ((a_line = a_br.readLine())!=null){
+                //1行目はタイトル
+                if (a_rec > 0){
+                    a_pull_def = a_line.split("\t");
+                    if (a_pull_def[0].equals(h_col_name) == true){
+                        break;
+                    }
+                }
+                a_rec++;
+            }
+            a_br.close();
+            a_isr.close();
+            a_fs.close();
+
+        }catch(Exception e){
+
+        }
+
+        return a_pull_def;
     }
 }
