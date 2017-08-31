@@ -434,13 +434,13 @@ String Make_Tag_Mnt(
 
                             String a_style_add = "";
                             if (a_now_split[COLUMN_DEF_NAME].equals("id") == true){
-                                a_style_add = "width:24px;";
+                                a_style_add = "width:20px;";
                             }else if (a_now_split[COLUMN_DEF_NAME].equals("keyword") == true){
-                                a_style_add = "width:60px;";
+                                a_style_add = "width:50px;";
                             }else if (a_now_split[COLUMN_DEF_NAME].equals("equipmenttypemasterid") == true){
-                                a_style_add = "width:10px;";
+                                a_style_add = "width:14px;";
                             }else if (a_now_split[COLUMN_DEF_NAME].equals("m0") == true){
-                                a_style_add = "width:10px;";
+                                a_style_add = "width:14px;";
                             }
 
                             a_sRet += "<td bgcolor='transparent' style='text-align:left;" + a_style_add + "'>" + Make_Tag_Mnt(h_envPath, h_isMain, h_isEdit, h_isFirst, h_act, a_now_split, h_key, h_pulldown, h_showlist, a_val) + "</font></td>";
@@ -545,20 +545,18 @@ String Make_Tag_Mnt(
         if (h_act.equals("l") == false){
             if (h_isEdit == true){
                 if (a_field.indexOf("equipmenttype_name")>=0){
-                    a_sRet += "<textarea";
+                    a_sRet += "<textarea name='"+ a_field + "' id='" + a_field + "' style='width:100%;height:30px;' readonly='true'>" + h_val + "</textarea>";
                 }else{
-                    a_sRet += "<input type='";
-                    a_sRet += "text";
+                    a_sRet += "<input type='text' name='"+ a_field + "' id='" + a_field + "' style='width:100%;' value='" + h_val + "' readonly='true'>";
                 }
             }else{
-                a_sRet += "<input type='";
-                a_sRet += "hidden";
+                a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field + "' style='width:100%;' value='" + h_val + "' readonly='true'>";
             }
-            if (a_field.indexOf("equipmenttype_name")>=0){
+            /*if (a_field.indexOf("equipmenttype_name")>=0){
                 a_sRet += " name='"+ a_field + "' id='" + a_field + "' style='width:100%;height:30px;' readonly='true'>" + h_val + "</textarea>";
             }else{
                 a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='width:100%;' value='" + h_val + "' readonly='true'>";
-            }
+            }*/
             //a_sRet += "' name='"+ a_field + "' id='" + a_field + "' style='width:200px;' value='" + h_val + "' readonly='true'>";
         }
     }

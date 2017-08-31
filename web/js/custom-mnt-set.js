@@ -28,7 +28,7 @@ function set_session_value_mnt_table(h_table){
             //alert("set_session_value_mnt--->" + g_IsSet_Session);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -52,7 +52,7 @@ function set_session_value_mnt_pageNo(h_pageNo){
             //alert("set_session_value_mnt--->" + g_IsSet_Session);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -80,7 +80,7 @@ function make_table_select_mnt(){
             $("#my-table-select").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -169,7 +169,7 @@ function make_table_list_mnt(h_pageNo){
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -207,7 +207,7 @@ function make_table_edit_mnt(h_act, h_idx){
             //alert($("#my-list").text());
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -262,7 +262,7 @@ function show_equipmenttype_name(h_id, h_name){
                         //$("#" + h_name).empty().append(data.trim());
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        alert(errorThrown.message);
+                        alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
                     },
                    complete: function (data) {
                    }
@@ -292,7 +292,7 @@ function set_irms_plural(h_mode, h_is_edit, h_user_code){
             $("#show-list").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -334,7 +334,7 @@ function select_plural_list(h_mode, h_is_edit, h_user_code, h_seq){
             change_ss9100flag();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -382,7 +382,7 @@ function delete_plural_mnt(h_mode, h_is_edit, h_user_code, h_idx, h_opt1){
             set_irms_plural(h_mode, h_is_edit, h_user_code);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -408,7 +408,7 @@ function make_table_find_condition(){
             $("#my-find-condition").empty().append(a_result);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -442,7 +442,7 @@ function set_session_value_mnt_find(){
             //alert("set_session_value_mnt--->" + g_IsSet_Session);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -485,7 +485,7 @@ function delete_table_mnt(){
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }

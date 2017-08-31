@@ -25,7 +25,7 @@ function set_session_value_mnt_log_analyze(h_table){
             //alert("set_session_value_mnt--->" + g_IsSet_Session);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -49,7 +49,7 @@ function set_session_value_mnt_log_analyze_pageNo(h_pageNo){
             //alert("set_session_value_mnt--->" + g_IsSet_Session);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -74,7 +74,7 @@ function make_log_analyze_select_mnt(){
             $("#my-table-select").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -135,7 +135,7 @@ function make_log_analyze_list_mnt(h_pageNo){
             $("#back-mnt").hide();
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -170,7 +170,10 @@ function make_log_analyze_edit_mnt(h_act, h_idx){
             //alert($("#my-list").text());
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            /*alert(XMLHttpRequest.status);
+            alert(textStatus);*/
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
+            //alert(errorThrown.message);
         },
        complete: function (data) {
        }
@@ -198,7 +201,7 @@ function delete_log_analyze_mnt(){
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }

@@ -42,7 +42,7 @@ function make_menu(){
             //$("#hpb-nav").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -183,7 +183,7 @@ function make_pager(h_kind,h_pageNo){
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -234,7 +234,7 @@ function set_session_value(h_kind){
         success: function(data, dataType){
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -275,7 +275,7 @@ function make_sf_remote_trouble_list(h_pageNo){
             $("#my-list").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -295,7 +295,7 @@ function make_sf_info(){
             $("#my-sf").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -360,7 +360,7 @@ function make_remote_trouble_list(h_pageNo){
             $("#my-list").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -407,7 +407,7 @@ function select_user(h_pageNo){
             //make_pager(6,h_pageNo); //[2016.03.03]bug-fixed.
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -479,7 +479,7 @@ function get_report_status(){
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -501,7 +501,7 @@ function make_report_user_list(h_pageNo){
             $("#my-list").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -575,7 +575,7 @@ function make_report_monthly(){
             //document.location.href = './schedule.xhtml';
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -614,7 +614,7 @@ function make_schedule_list(h_pageNo){
             $("#my-list").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -635,7 +635,7 @@ function make_edit_warn_list(){
             $("#my-list").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -669,7 +669,7 @@ function make_log_check_list(h_pageNo){
             $("#my-list").empty().append(data);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -798,7 +798,7 @@ function check_WarnInput(){
             document.location.href = './schedule.xhtml';
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -892,7 +892,7 @@ function delete_Warn(){
             document.location.href = './schedule.xhtml';
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -923,7 +923,7 @@ function test_Alarm(){
             //document.location.href = './schedule.xhtml';
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -970,7 +970,7 @@ function make_show_list(h_pageNo){
             //make_pager(6,h_pageNo); //[2016.03.03]bug-fixed.
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }
@@ -1026,7 +1026,7 @@ function make_show_list2(h_pageNo){
             //make_pager(6,h_pageNo); //[2016.03.03]bug-fixed.
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown.message);
+            alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
        }

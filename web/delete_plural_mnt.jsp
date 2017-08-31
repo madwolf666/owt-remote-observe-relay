@@ -27,6 +27,10 @@
 
     //セッション変数
     String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
+    if (a_Mnt_Table == null){
+        response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
+        return;
+    }
     String[] a_table_split = null;
     String[] a_column_split = null;
     ArrayList<String> a_coldefs = null;
@@ -67,6 +71,10 @@
             /*}else if (a_mode.equals("3") == true){
                 a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_Machine_Code");*/
             }
+            if (a_coldefs == null){
+                response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
+                return;
+            }
         }
 
         ArrayList<String>[] a_arrayList_src = null;
@@ -82,6 +90,10 @@
                     a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
                 /*}else if (a_mode.equals("3") == true){
                     a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");*/
+                }
+                if (a_arrayList_src == null){
+                    response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
+                    return;
                 }
             }
             

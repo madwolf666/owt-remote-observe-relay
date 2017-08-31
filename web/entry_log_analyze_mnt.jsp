@@ -27,6 +27,10 @@
     String a_Mnt_Table = request.getParameter("logname") + "\tid:n:n:y";
     //String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Log_Analyze_Table"));
     ArrayList<String> a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Log_Analyze_Coldefs");
+    if ((a_Mnt_Table == null) || (a_coldefs == null)){
+        response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
+        return;
+    }
     String[] a_table_split = null;
     String[] a_column_split = null;
     if (a_Mnt_Table != ""){

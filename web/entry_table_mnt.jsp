@@ -26,6 +26,10 @@
     //セッション変数
     String a_Mnt_Table = GetSessionValue(session.getAttribute("Mnt_Table"));
     ArrayList<String> a_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs");
+    if ((a_Mnt_Table == null) || (a_coldefs == null)){
+        response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
+        return;
+    }
     String[] a_table_split = null;
     String[] a_column_split = null;
     if (a_Mnt_Table != ""){
@@ -114,10 +118,18 @@
                 String a_user_code = a_sRets[1];
                 ArrayList<String> a_sub_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
                 ArrayList<String>[] a_sub_post_data = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");
+                if ((a_sub_coldefs == null) || (a_sub_post_data == null)){
+                    response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
+                    return;
+                }
                 a_sRets = SetDB.EntryPluralMnt(a_Mnt_Table, a_sub_coldefs, ACT, a_user_code, a_sub_post_data);
                 if (a_sRets[0].equals("") == true){
                     a_sub_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
                     a_sub_post_data = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
+                    if ((a_sub_coldefs == null) || (a_sub_post_data == null)){
+                        response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
+                        return;
+                    }
                     a_sRets = SetDB.EntryPluralMnt(a_Mnt_Table, a_sub_coldefs, ACT, a_user_code, a_sub_post_data);
                     if (a_sRets[0].equals("") == true){
                     }else{
