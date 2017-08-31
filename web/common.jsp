@@ -361,9 +361,9 @@ String Make_Tag_Mnt(
     String a_field = h_coldef[COLUMN_DEF_FIELD];
     String a_comment = h_coldef[COLUMN_DEF_COMMENT];
 
-    if (a_field.equals("patrolmethod2") == true){
+    /*if (a_field.equals("patrolmethod2") == true){
         int a_i = 0;
-    }
+    }*/
 
     if (h_act.equals("l") == false){
         //複数入力
