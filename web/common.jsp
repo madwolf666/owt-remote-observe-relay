@@ -361,6 +361,10 @@ String Make_Tag_Mnt(
     String a_field = h_coldef[COLUMN_DEF_FIELD];
     String a_comment = h_coldef[COLUMN_DEF_COMMENT];
 
+    if (a_field.equals("patrolmethod2") == true){
+        int a_i = 0;
+    }
+
     if (h_act.equals("l") == false){
         //複数入力
         if (h_coldef[COLUMN_DEF_PULLDOWN].indexOf("p") >= 0){
@@ -439,6 +443,8 @@ String Make_Tag_Mnt(
                                 a_style_add = "width:50px;";
                             }else if (a_now_split[COLUMN_DEF_NAME].equals("equipmenttypemasterid") == true){
                                 a_style_add = "width:14px;";
+                            /*}else if (a_now_split[COLUMN_DEF_NAME].equals("") == true){
+                                a_style_add = "width:140px;";*/
                             }else if (a_now_split[COLUMN_DEF_NAME].equals("m0") == true){
                                 a_style_add = "width:14px;";
                             }
@@ -563,6 +569,10 @@ String Make_Tag_Mnt(
 
     if (h_isMain == true){
         g_Post_Data += "            ,'" + a_field + "': $('#" + a_field + "').val()";
+        if (a_colName.equals("patrolmethod2") == true){
+            //カラムが接続方法の場合
+            g_Post_Data += " + $('#" + a_field + "_add_info').val()";
+        }
     }else{
         g_Post_Data_Plural += "            ,'" + a_field + "': $('#" + a_field + "').val()";
     }
@@ -805,16 +815,46 @@ String Make_Input_Tag_Mnt_Option(
     a_split1 = h_option[1].split(",");
 
     if (h_isEdit == false){
-        for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
-            a_split2 = a_split1[a_iCnt].split(":");
-            if (a_split2[0].equals(h_val) == true){
-                a_sRet += a_split2[1];
-                break;
+        if (a_colName.equals("patrolmethod2") == false){
+            //カラムが接続方法以外の場合
+            for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
+                a_split2 = a_split1[a_iCnt].split(":");
+                if (a_split2[0].equals(h_val) == true){
+                    a_sRet += a_split2[1];
+                    break;
+                }
             }
+        }else{
+            //カラムが接続方法の場合
+            a_sRet += h_val;
         }
     }
 
     if (h_act.equals("l") == false){
+        String a_chk_val = h_val;
+        String a_add_info = "";
+        if (a_colName.equals("patrolmethod2") == true){
+            h_style = "width:45%;";
+            //カラムが接続方法の場合
+            if (a_chk_val.equals("") == false){
+                for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
+                    a_split2 = a_split1[a_iCnt].split(":");
+                    int a_pos = h_val.indexOf(a_split2[0]);
+                    if (a_pos >= 0){
+                        a_chk_val = a_split2[0];
+                        a_add_info = h_val.replace(a_chk_val, "");
+                        break;
+                    }
+                }
+                /*String[] a_split = a_chk_val.split("#");
+                a_chk_val = a_split[0];
+                if (a_split.length>1){
+                    a_chk_val += "#";
+                    //#以降の文字
+                    a_add_info = a_split[1];
+                }*/
+            }
+        }
         if (h_isEdit == true){
             a_sRet += "<select id='" + a_field + "' name='" + a_field + "' style='" + h_style + "'>";
             a_sRet += "<option value=''></option>";
@@ -822,14 +862,21 @@ String Make_Input_Tag_Mnt_Option(
             for (int a_iCnt=0; a_iCnt<a_split1.length; a_iCnt++){
                 a_split2 = a_split1[a_iCnt].split(":");
                 a_sRet += "<option value='" + a_split2[0] + "'";
-                if (a_split2[0].equals(h_val) == true){
+                if (a_split2[0].equals(a_chk_val) == true){
                     a_sRet += " selected";
                 }
                 a_sRet += ">" + a_split2[1] + "</option>";
             }
             a_sRet += "</select>";
+            if (a_colName.equals("patrolmethod2") == true){
+                //カラムが接続方法の場合
+                a_sRet += "&nbsp;&nbsp;<input type='text' name='"+ a_field + "_add_info' id='" + a_field  + "_add_info' style='" + h_style + "height:100%;' value='" + a_add_info + "'>";
+            }
         }else{
             a_sRet += "<input type='hidden' name='"+ a_field + "' id='" + a_field  + "' style='" + h_style + "height:100%;' value='" + h_val + "'>";
+            if (a_colName.equals("patrolmethod2") == true){
+                a_sRet += "<input type='hidden' name='"+ a_field + "_add_info' id='" + a_field  + "_add_info' style='" + h_style + "height:100%;' value=''>";
+            }
         }
     }else{
 
@@ -983,7 +1030,7 @@ String Make_Confirm_Table_Mnt(String h_act, String h_idx){
         a_sRet += g_JScript_IsRequired;
     //}
 
-    //a_sRet += "alert($(\"#ext\").val());";
+    //a_sRet += "alert($(\"#patrolmethod2\").val());";
 
     a_sRet += " $.ajax({";
     a_sRet += "     url: m_parentURL + \"confirm_table_mnt.jsp\",";

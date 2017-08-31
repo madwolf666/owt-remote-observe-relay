@@ -89,6 +89,9 @@
         }else{
             if (request.getParameter(a_field) != null){
                 String a_val = request.getParameter(a_field);
+                /*if (a_field.equals("patrolmethod2") == true){
+                    int a_i = 0;
+                }*/ 
                 //String a_val = HtmlEncode(request.getParameter(a_field));
                 if (a_val.length()>0){
                     a_post_data.add(a_field + "\t" + a_val);
@@ -118,7 +121,7 @@
         }
         //splitは値が入っている所までしかlengthが返らない[2017.07.31]
         out.print("<tr>");
-        out.print("<td bgcolor='#003366' style='text-align:left; width:130px;'><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
+        out.print("<td bgcolor='#003366' style='text-align:left; width:130px;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
         if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
             out.print("<font color='#ffff00'>*</font>");
         }

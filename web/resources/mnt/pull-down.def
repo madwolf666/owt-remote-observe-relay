@@ -17,7 +17,7 @@ comatr	300_E71__N:300_E71__N,300_N81__N:300_N81__N,1200N81__N:1200N81__N,2400N81
 ctbt	CT:CT,BT:BT
 terminalline	ユーザ:ユーザ,OWT:OWT,営業:営業,その他:その他
 iocsel	ユーザ:ユーザ,OWT:OWT,営業:営業,その他:その他
-rim	ユーザ:ユーザ,OWT:OWT,営業:営業,その他:その他
+rmi	ユーザ:ユーザ,OWT:OWT,営業:営業,その他:その他
 autoalarmreset	1:実行する,0:実行しない
 retransflg	1:有,0:無
 ext	0:外線,1:内線

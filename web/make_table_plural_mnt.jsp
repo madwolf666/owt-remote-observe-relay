@@ -176,7 +176,7 @@
                 }
             }
             out.print("<tr>");
-            out.print("<td bgcolor='#003366' style='text-align:left;'><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
+            out.print("<td bgcolor='#003366' style='text-align:left;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
             if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
                 out.print("<font color='#ffff00'>*</font>");
             }
