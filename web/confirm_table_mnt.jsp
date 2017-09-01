@@ -121,7 +121,15 @@
         }
         //splitは値が入っている所までしかlengthが返らない[2017.07.31]
         out.print("<tr>");
-        out.print("<td bgcolor='#003366' style='text-align:left; width:130px;' nowrap><font color='#ffffff'>" + a_split[COLUMN_DEF_COMMENT] + "</font>");
+        out.print("<td bgcolor='#003366' style='text-align:left; width:130px;' nowrap><font color='#ffffff'>");
+            /*if (a_iCnt == 0){
+                out.print("<a name='my-list-top'>");
+            }*/
+            out.print(a_split[COLUMN_DEF_COMMENT]);
+            /*if (a_iCnt == 0){
+                out.print("</a>");
+            }*/
+            out.print("</font>");
         if (a_split[COLUMN_DEF_NESS].indexOf("y")>=0){
             out.print("<font color='#ffff00'>*</font>");
         }

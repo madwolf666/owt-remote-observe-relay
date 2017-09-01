@@ -167,6 +167,7 @@ function make_table_list_mnt(h_pageNo){
                 $("#cancel-mnt").hide();
                 $("#list-mnt").hide();
             }
+            scrollTo(0,0);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
@@ -205,6 +206,8 @@ function make_table_edit_mnt(h_act, h_idx){
             $("#cancel-mnt").hide();
             $("#list-mnt").show();
             //alert($("#my-list").text());
+            //window.location.hash = "my-list-top";
+            scrollTo(0,0);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");

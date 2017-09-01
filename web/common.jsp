@@ -1062,6 +1062,9 @@ String Make_Confirm_Table_Mnt(String h_act, String h_idx){
     a_sRet += "         $(\"#back-mnt\").show();";
     a_sRet += "         $(\"#cancel-mnt\").show();";
     a_sRet += "         $(\"#list-mnt\").show();";
+    /*a_sRet += "         window.location.hash='';";
+    a_sRet += "         window.location.hash='my-list-top';";*/
+    a_sRet += "         scrollTo(0,0);";
     a_sRet += "     },";
     a_sRet += "     error: function (XMLHttpRequest, textStatus, errorThrown) {";
     a_sRet += "         alert(errorThrown.message);";
@@ -1098,6 +1101,7 @@ String Make_Confirm_Table_Mnt(String h_act, String h_idx){
     a_sRet += "         $(\"#back-mnt\").hide();";
     a_sRet += "         $(\"#cancel-mnt\").hide();";
     a_sRet += "         $(\"#list-mnt\").show();";
+    a_sRet += "         scrollTo(0,0);";
     a_sRet += "     },";
     a_sRet += "     error: function (XMLHttpRequest, textStatus, errorThrown) {";
     a_sRet += "         alert(errorThrown.message);";
