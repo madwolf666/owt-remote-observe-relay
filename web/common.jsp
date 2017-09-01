@@ -373,7 +373,7 @@ String Make_Tag_Mnt(
             String[] a_plural_datas = h_val.split("\b\b\b");
             if (a_plurals != null){
                 String a_table_id = "tbl_list_" + a_field;
-                a_sRet += "<table id='" + a_table_id + "' border='1' cellspacing='0' cellpadding='0' style='width:auto;'>";
+                a_sRet += "<table id='" + a_table_id + "' border='1' cellspacing='0' cellpadding='0' style='width:100%;'>";
 
                 String a_append = "";
                 for (int a_iCnt=0; a_iCnt<a_plurals.size(); a_iCnt++){
@@ -1150,6 +1150,18 @@ String Make_Entry_Table_Mnt(String h_act, String h_idx){
     //a_sRet += "alert(a_result);";
     a_sRet += "         if (a_result != \"\"){";
     a_sRet += "             $(\"#my-pager\").empty().append(\"<font color='#ff0000'>\" + data + \"</font>\");";
+    //if (h_act == "n"){
+/**/
+    a_sRet += "             if (a_result.indexOf(\"[EntryRPTMnt]\") >= 0){";
+    a_sRet += "                 alert(\"RPT使用状況が正しく登録されませんでした。\\r\\n一覧へ戻り、登録された該ユーザ情報を確認してください。\");";
+    a_sRet += "                 make_table_list_mnt(-1);";
+    a_sRet += "             }";
+    a_sRet += "             if (a_result.indexOf(\"[EntryPluralMnt]\") >= 0){";
+    a_sRet += "                 alert(\"LTIC・TN拠点情報もしくは機器情報が正しく登録されませんでした。\\r\\n一覧へ戻り、登録された該ユーザ情報を確認してください。\");";
+    a_sRet += "                 make_table_list_mnt(-1);";
+    a_sRet += "             }";
+    //}
+/**/
     a_sRet += "         } else{";
     a_sRet += "             $(\"#my-pager\").empty();";
     a_sRet += "             alert(\"登録しました。\");";

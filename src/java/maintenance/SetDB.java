@@ -738,13 +738,13 @@ public class SetDB implements Serializable {
                 a_con.rollback();
             }
             _Environ._MyLogger.severe("[EntryMnt]" + e.getMessage());
-            a_sRet[0] = e.getMessage();
+            a_sRet[0] = "[EntryMnt]" + e.getMessage();
         } catch (ClassNotFoundException ex) {
             if (a_con != null){
                 a_con.rollback();
             }
             _Environ._MyLogger.severe("[EntryMnt]" + ex.getMessage());
-            a_sRet[0] = ex.getMessage();
+            a_sRet[0] = "[EntryMnt]" + ex.getMessage();
         } finally{
             if (a_ps != null){
                 a_ps.close();
@@ -830,13 +830,13 @@ public class SetDB implements Serializable {
                 a_con.rollback();
             }
             _Environ._MyLogger.severe("[DeleteMnt]" + e.getMessage());
-            a_sRet = e.getMessage();
+            a_sRet = "[DeleteMnt]" + e.getMessage();
         } catch (ClassNotFoundException ex) {
             if (a_con != null){
                 a_con.rollback();
             }
             _Environ._MyLogger.severe("[DeleteMnt]" + ex.getMessage());
-            a_sRet = ex.getMessage();
+            a_sRet = "[DeleteMnt]" + ex.getMessage();
         } finally{
             if (a_ps != null){
                 a_ps.close();
@@ -2037,7 +2037,7 @@ public class SetDB implements Serializable {
             
         } catch (Exception e) {
             _Environ._MyLogger.severe("[EntryRPTMnt]" + e.getMessage());
-            a_sRet = e.getMessage();
+            a_sRet = "[EntryRPTMnt]" + e.getMessage();
         } finally{
         }
 
@@ -2075,7 +2075,7 @@ public class SetDB implements Serializable {
             
         } catch (Exception e) {
             _Environ._MyLogger.severe("[EntryPluralMnt]" + e.getMessage());
-            a_sRet[0] = e.getMessage();
+            a_sRet[0] = "[EntryPluralMnt]" + e.getMessage();
         } finally{
         }
 
