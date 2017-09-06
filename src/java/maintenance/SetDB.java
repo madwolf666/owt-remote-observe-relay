@@ -1007,7 +1007,7 @@ public class SetDB implements Serializable {
                 int a_end_idx = (h_pageNo*_max_line_page);
                 
                 if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
-                    a_sql = "SELECT t1.* FROM (" + a_find_sql + ") t1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                    a_sql = "SELECT t1.* FROM (" + a_find_sql + ") t1 WHERE (ROWNUM1 BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                     //a_sql = "SELECT t1.* FROM (" + h_find_def[_Environ.FINDLIST_FIND_SQL] + ") t1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }else if (_db_driver.equals("org.postgresql.Driver")){
                     a_sql = "SELECT t1.* FROM (" + a_find_sql + ") t1 WHERE (t1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
@@ -1481,7 +1481,7 @@ public class SetDB implements Serializable {
                 int a_end_idx = (h_pageNo*_max_line_page);
                 
                 if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
-                    a_sql = "SELECT t1.* FROM (" + h_show_def[_Environ.SHOWLIST_FIND_SQL] + ") t1 WHERE (ROWNUM BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
+                    a_sql = "SELECT t1.* FROM (" + h_show_def[_Environ.SHOWLIST_FIND_SQL] + ") t1 WHERE (ROWNUM1 BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }else if (_db_driver.equals("org.postgresql.Driver")){
                     a_sql = "SELECT t1.* FROM (" + h_show_def[_Environ.SHOWLIST_FIND_SQL] + ") t1 WHERE (t1.row_number BETWEEN " + String.valueOf(a_start_idx) + " AND " + String.valueOf(a_end_idx) + ")";
                 }
