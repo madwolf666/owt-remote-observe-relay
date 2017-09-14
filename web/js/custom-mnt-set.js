@@ -136,6 +136,7 @@ function make_table_list_mnt_first(h_table){
 
 //一覧表示
 function make_table_list_mnt(h_pageNo){
+    m_ProgressMsg('処理中...<br><img src="./img/upload.gif" /> ');
     //alert(m_parentURL);
     $.ajax({
         url: m_parentURL + "make_table_list_mnt.jsp",
@@ -173,12 +174,14 @@ function make_table_list_mnt(h_pageNo){
             alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
+            $.unblockUI();
        }
     });	
 }
 
 //テーブル情報編集
 function make_table_edit_mnt(h_act, h_idx){
+    m_ProgressMsg('処理中...<br><img src="./img/upload.gif" /> ');
     //alert("make_table_edit_mnt");
     $.ajax({
         url: m_parentURL + "make_table_edit_mnt.jsp",
@@ -213,6 +216,7 @@ function make_table_edit_mnt(h_act, h_idx){
             alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
+            $.unblockUI();
        }
    });	
 }
@@ -367,6 +371,8 @@ function delete_plural_mnt(h_mode, h_is_edit, h_user_code, h_idx, h_opt1){
         return false;
     }
 
+    m_ProgressMsg('処理中...<br><img src="./img/upload.gif" /> ');
+
     $.ajax({
         url: m_parentURL + "delete_plural_mnt.jsp",
         type: 'POST',
@@ -388,6 +394,7 @@ function delete_plural_mnt(h_mode, h_is_edit, h_user_code, h_idx, h_opt1){
             alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
+            $.unblockUI();
        }
     });
 }
@@ -471,6 +478,9 @@ function delete_table_mnt(){
     if (!confirm("削除します。よろしいですか？")){
          return false;
     }
+    
+    m_ProgressMsg('処理中...<br><img src="./img/upload.gif" /> ');
+
     var a_idx = $('#edit_idx').val();
     $.ajax({
         url: m_parentURL + "delete_table_mnt.jsp",
@@ -482,7 +492,7 @@ function delete_table_mnt(){
         },
         success: function(data, dataType){
             var a_result = data.trim();
-            if (a_resut == ""){
+            if (a_result == ""){
                 alert("削除しました。");
                 make_table_list_mnt(1);
             }
@@ -491,6 +501,7 @@ function delete_table_mnt(){
             alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
+            $.unblockUI();
        }
    });	
 }

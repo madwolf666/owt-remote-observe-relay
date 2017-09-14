@@ -1135,6 +1135,8 @@ String Make_Entry_Table_Mnt(String h_act, String h_idx){
     a_sRet += "     return false;";
     a_sRet += " }";
 
+    a_sRet += "    m_ProgressMsg(\"処理中...<br><img src='./img/upload.gif' />\");";
+
     a_sRet += " $.ajax({";
     a_sRet += "     url: m_parentURL + \"entry_table_mnt.jsp\",";
     a_sRet += "     type: 'POST',";
@@ -1176,6 +1178,9 @@ String Make_Entry_Table_Mnt(String h_act, String h_idx){
     a_sRet += "         alert(errorThrown.message);";
     a_sRet += "     },";
     a_sRet += "     complete: function (data) {";
+
+    a_sRet += "         $.unblockUI();";
+
     a_sRet += "     }";
     a_sRet += " });";
     a_sRet += " return true;";
@@ -1203,6 +1208,8 @@ String Make_Entry_Plural_Mnt(String h_mode, String h_is_edit, String h_user_code
     a_sRet += "     return false;";
     a_sRet += " }";
 
+    a_sRet += "    m_ProgressMsg(\"処理中...<br><img src='./img/upload.gif' />\");";
+
     a_sRet += " $.ajax({";
     a_sRet += "     url: m_parentURL + \"entry_plural_mnt.jsp\",";
     a_sRet += "     type: 'POST',";
@@ -1227,6 +1234,9 @@ String Make_Entry_Plural_Mnt(String h_mode, String h_is_edit, String h_user_code
     a_sRet += "         alert(errorThrown.message);";
     a_sRet += "     },";
     a_sRet += "     complete: function (data) {";
+
+    a_sRet += "         $.unblockUI();";
+
     a_sRet += "     }";
     a_sRet += " });";
 
@@ -1301,6 +1311,8 @@ String Make_Entry_Log_Analyze_mnt(String h_act, String h_idx){
     a_sRet += "     return false;";
     a_sRet += " }";
 
+    a_sRet += "    m_ProgressMsg(\"処理中...<br><img src='./img/upload.gif' />\");";
+
     a_sRet += " $.ajax({";
     a_sRet += "     url: m_parentURL + \"entry_log_analyze_mnt.jsp\",";
     a_sRet += "     type: 'POST',";
@@ -1328,6 +1340,9 @@ String Make_Entry_Log_Analyze_mnt(String h_act, String h_idx){
     a_sRet += "         alert(errorThrown.message);";
     a_sRet += "     },";
     a_sRet += "     complete: function (data) {";
+
+    a_sRet += "         $.unblockUI();";
+
     a_sRet += "     }";
     a_sRet += " });";
     a_sRet += " return true;";

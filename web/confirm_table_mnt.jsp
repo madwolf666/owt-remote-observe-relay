@@ -39,6 +39,13 @@
     //POSTデータを取得
     String a_ACT = request.getParameter("ACT");
     String a_IDX = request.getParameter("IDX");
+    
+    out.print("<input type='hidden' id='edit_idx' name='edit_idx' value='");
+    if (a_ACT.equals("e") == true){
+        out.print(a_IDX);
+    }
+    out.print("'>");
+    
     ArrayList<String> a_post_data = new ArrayList<String>();
     for (int a_iCnt=0; a_iCnt<a_coldefs.size(); a_iCnt++){
         String[] a_split = a_coldefs.get(a_iCnt).split("\t");

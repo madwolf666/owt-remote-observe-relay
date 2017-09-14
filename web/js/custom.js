@@ -4,6 +4,32 @@ var m_parentURL = "//localhost:8080/owt-remote-observe-relay/";
 //------------------------------------------------------------------------------
 //共通
 //------------------------------------------------------------------------------
+//処理中表示
+var m_ProgressMsg = function (text) {
+    $.blockUI({
+        message: text,
+        fadeIn: 200,
+        fadeOut: 0,
+        overlayCSS: {
+            backgroundColor: '#aaa',
+            opacity: 0.6,
+            cursor: 'wait'
+        },
+        css: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            padding: '0 0 0 0',
+            margin: 'auto',
+            height: '60px',
+            width: '340px',
+            border: '2px solid #aaa'
+        }
+    });
+};
+
 //QyeryStringを配列化
 function getUrlVars() 
 { 

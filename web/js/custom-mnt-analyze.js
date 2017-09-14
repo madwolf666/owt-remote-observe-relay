@@ -114,6 +114,7 @@ function make_log_analyze_list_mnt_first(h_table){
 
 //一覧表示
 function make_log_analyze_list_mnt(h_pageNo){
+    m_ProgressMsg('処理中...<br><img src="./img/upload.gif" /> ');
     //alert(m_parentURL);
     $.ajax({
         url: m_parentURL + "make_log_analyze_list_mnt.jsp",
@@ -138,12 +139,14 @@ function make_log_analyze_list_mnt(h_pageNo){
             alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
+            $.unblockUI();
        }
     });	
 }
 
 //テーブル情報編集
 function make_log_analyze_edit_mnt(h_act, h_idx){
+    m_ProgressMsg('処理中...<br><img src="./img/upload.gif" /> ');
     //alert("make_log_analyze_edit_mnt");
     $.ajax({
         url: m_parentURL + "make_log_analyze_edit_mnt.jsp",
@@ -176,6 +179,7 @@ function make_log_analyze_edit_mnt(h_act, h_idx){
             //alert(errorThrown.message);
         },
        complete: function (data) {
+            $.unblockUI();
        }
    });	
 }
@@ -184,6 +188,9 @@ function delete_log_analyze_mnt(){
     if (!confirm("削除します。よろしいですか？")){
          return false;
     }
+
+    m_ProgressMsg('処理中...<br><img src="./img/upload.gif" /> ');
+
     var a_idx = $('#edit_idx').val();
     $.ajax({
         url: m_parentURL + "delete_log_analyze_mnt.jsp",
@@ -195,7 +202,7 @@ function delete_log_analyze_mnt(){
         },
         success: function(data, dataType){
             var a_result = data.trim();
-            if (a_resut == ""){
+            if (a_result == ""){
                 alert("削除しました。");
                 make_log_analyze_list_mnt(1);
             }
@@ -204,6 +211,7 @@ function delete_log_analyze_mnt(){
             alert("[" + XMLHttpRequest.status + "][" + textStatus + "][" + errorThrown + "]");
         },
        complete: function (data) {
+            $.unblockUI();
        }
    });	
 }

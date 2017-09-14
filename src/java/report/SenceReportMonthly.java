@@ -25,7 +25,7 @@ import javax.faces.bean.RequestScoped;
 public class SenceReportMonthly{
     private static Environ _Environ = new Environ();
     private static ReportMonthly _ReportMonthly = new ReportMonthly();
-    private static String _realPath = "C:\\Users\\chappy\\Documents\\NetBeansProjects\\owt-remote-observe-relay\\build\\web";
+    private static String _realPath = "C:\\Users\\hal\\Documents\\NetBeansProjects\\owt-remote-observe-relay\\build\\web";
     private static int _period = 0;   //周期
     
     public static void main(String args[]) throws Exception{
