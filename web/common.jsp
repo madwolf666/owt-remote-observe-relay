@@ -773,10 +773,10 @@ String Make_Input_Tag_Mnt_Date(
         if (h_isTime.equals("y")){
             //a_max_len = 10 + 1 + 8;
             if (h_isMain == true){
-                g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i', lang:'ja', step:1});";
+                g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/d H:i', lang:'ja', step:1});";
                 //g_JScript_Program += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
             }else{
-                g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i', lang:'ja', step:1});";
+                g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'Y/m/d H:i', lang:'ja', step:1});";
                 //g_JScript_Program_Plural += "$('#" + a_field + "').datetimepicker({format:'Y/m/s H:i:s', lang:'ja', step:1});";
             }
         }else{

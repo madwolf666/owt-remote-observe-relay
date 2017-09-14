@@ -132,7 +132,7 @@ public class AnalyzeLog implements Serializable {
                 //--------------------------------------------------------------
                 //ログ検索SQLの組み立て
                 //--------------------------------------------------------------
-                a_sql = "SELECT *,(SELECT username FROM newcustomermanage WHERE (usercode=" + a_logname + ".usercode)) AS username";
+                a_sql = "SELECT " + a_logname + ".*, (SELECT username FROM newcustomermanage WHERE (usercode=" + a_logname + ".usercode)) AS username";
                 /*if ((a_logname.equals("mss2operationlog") == true) || (a_logname.equals("operationlog") == true)){
                     a_sql += ",COUNT(DISTINCT(RASCODE)) AS msg_sum";
                 }else if (a_logname.equals("pbxoperationlog") == true){
