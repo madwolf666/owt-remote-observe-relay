@@ -173,10 +173,10 @@
         /*}else if (a_mode.equals("3") == true){
             a_arrayList_src = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");*/
         }
-        if (a_arrayList_src == null){
+        /*if (a_arrayList_src == null){
             response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
             return;
-        }
+        }*/
         
         if (a_seq.equals("-1") == false){
             //更新

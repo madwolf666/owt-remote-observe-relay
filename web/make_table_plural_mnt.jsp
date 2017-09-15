@@ -82,10 +82,10 @@
         /*}else if (a_mode.equals("3") == true){
             a_arrayLists = (ArrayList<String>[])session.getAttribute("Mnt_Data_Machine_Code");*/
         }
-        if (a_arrayLists == null){
+        /*if (a_arrayLists == null){
             response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
             return;
-        }
+        }*/
     }
     
     //一覧データを取得
@@ -108,9 +108,13 @@
             ArrayList<String> a_arrayList = a_arrayLists[a_iCnt];
             out.print("<tr bgcolor='#ffffff'>");
             out.print("<td>");
-            out.print("<a href='#' onclick=\'select_plural_list(\"" + a_mode + "\",\"" + a_is_edit + "\",\"" + a_user_code + "\","+ a_iCnt + ");\'>");
+            if (a_is_edit.equals("1") == true){
+                out.print("<a href='#' onclick=\'select_plural_list(\"" + a_mode + "\",\"" + a_is_edit + "\",\"" + a_user_code + "\","+ a_iCnt + ");\'>");
+            }
             out.print(String.valueOf(a_iCnt + 1));
-            out.print("</a>");
+            if (a_is_edit.equals("1") == true){
+                out.print("</a>");
+            }
             out.print("</td>");
             for (int a_iCnt2=0; a_iCnt2<a_arrayList.size(); a_iCnt2++){
                 String[] a_field = a_coldefs.get(a_iCnt2).split("\t");
@@ -173,6 +177,12 @@
                 }
                 if (a_colName.equals("useripaddr") == true){
                     a_user_ipaddr = a_val;
+                }
+            }else{
+                if (a_colName.equals("usercode") == true){
+                    if (a_user_code.equals("") == false){
+                        a_val = a_user_code;
+                    }
                 }
             }
             out.print("<tr>");

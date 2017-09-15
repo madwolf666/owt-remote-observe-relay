@@ -118,7 +118,7 @@
                 String a_user_code = a_sRets[1];
                 ArrayList<String> a_sub_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_LTIC_TN");
                 ArrayList<String>[] a_sub_post_data = (ArrayList<String>[])session.getAttribute("Mnt_Data_LTIC_TN");
-                if ((a_sub_coldefs == null) || (a_sub_post_data == null)){
+                if (a_sub_coldefs == null){
                     response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
                     return;
                 }
@@ -126,7 +126,7 @@
                 if (a_sRets[0].equals("") == true){
                     a_sub_coldefs = (ArrayList<String>)session.getAttribute("Mnt_Coldefs_User_Machine");
                     a_sub_post_data = (ArrayList<String>[])session.getAttribute("Mnt_Data_User_Machine");
-                    if ((a_sub_coldefs == null) || (a_sub_post_data == null)){
+                    if (a_sub_coldefs == null){
                         response.sendError(HttpServletResponse.SC_SEE_OTHER, "Session Timeout is occured.");
                         return;
                     }

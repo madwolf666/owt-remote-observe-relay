@@ -12,10 +12,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import oracle.jdbc.OraclePreparedStatement;
 
 /**
  *
@@ -105,6 +107,7 @@ public class SetDB implements Serializable {
 
         String[] a_sRet = new String[1];
         Connection a_con = null;
+        OraclePreparedStatement a_ps_oracle = null;
         PreparedStatement a_ps = null;
         ResultSet a_rs = null;
         String a_sql = "";
@@ -379,6 +382,7 @@ public class SetDB implements Serializable {
                         || (a_tableName.equals("pbxoperationlog") == true)
                         || (a_tableName.equals("pbxremotecustomer") == true)
                         || (a_tableName.equals("remotemonitoringcustomer") == true)
+                        || (a_tableName.equals("sioportnumber") == true)
                             ){
                         a_sql += "id,";
                     }
@@ -552,14 +556,28 @@ public class SetDB implements Serializable {
                     //登録の場合
                     if (a_tableName.equals("newcustomermanage") == true){
                         a_sql += " RETURNING usercode";
+                        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                            a_sql += " INTO ?";
+                        }else if (_db_driver.equals("org.postgresql.Driver")){
+                        }
                     /*}else if (a_tableName.equals("remotemonitoringcustomer") == true){
                         a_sql += " RETURNING id";*/
                     }else if (a_tableName.equals("pbxremotecustomer") == true){
                         a_sql += " RETURNING id";
+                        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                            a_sql += " INTO ?";
+                        }else if (_db_driver.equals("org.postgresql.Driver")){
+                        }
                     }
                 }
 
-                a_ps = a_con.prepareStatement(a_sql);
+                if ((h_act.equals("n") == true) &&
+                    (_db_driver.equals("oracle.jdbc.driver.OracleDriver") == true) &&
+                    ((a_tableName.equals("newcustomermanage") == true) || (a_tableName.equals("pbxremotecustomer") == true))){
+                        a_ps_oracle = (OraclePreparedStatement)a_con.prepareStatement(a_sql);
+                }else{
+                    a_ps = a_con.prepareStatement(a_sql);
+                }
 
                 a_sql_t = a_table_sql_t.get(a_iCnt).split("\t");
                 a_sql_v = a_table_sql_v.get(a_iCnt).split("\t");
@@ -602,13 +620,31 @@ public class SetDB implements Serializable {
                             }
                             */
                             if (a_sVal.equals("") == false){
-                                a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
+                                if ((h_act.equals("n") == true) &&
+                                    (_db_driver.equals("oracle.jdbc.driver.OracleDriver") == true) &&
+                                    ((a_tableName.equals("newcustomermanage") == true) || (a_tableName.equals("pbxremotecustomer") == true))){
+                                    a_ps_oracle.setInt(a_idx, Integer.valueOf(a_sVal));
+                                }else{
+                                    a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
+                                }
                             }else{
-                                a_ps.setNull(a_idx, java.sql.Types.NUMERIC);
+                                if ((h_act.equals("n") == true) &&
+                                    (_db_driver.equals("oracle.jdbc.driver.OracleDriver") == true) &&
+                                    ((a_tableName.equals("newcustomermanage") == true) || (a_tableName.equals("pbxremotecustomer") == true))){
+                                    a_ps_oracle.setNull(a_idx, java.sql.Types.NUMERIC);
+                                }else{
+                                    a_ps.setNull(a_idx, java.sql.Types.NUMERIC);
+                                }
                             }
                         }else if (a_sType.indexOf("time") >= 0){
                             //timestamp
-                            a_ps.setString(a_idx, a_sVal);
+                            if ((h_act.equals("n") == true) &&
+                                (_db_driver.equals("oracle.jdbc.driver.OracleDriver") == true) &&
+                                ((a_tableName.equals("newcustomermanage") == true) || (a_tableName.equals("pbxremotecustomer") == true))){
+                                a_ps_oracle.setString(a_idx, a_sVal);
+                            }else{
+                                a_ps.setString(a_idx, a_sVal);
+                            }
                             /*
                             if (a_sVal.equals("") == false){
                                 java.sql.Timestamp a_ts = null;
@@ -638,10 +674,22 @@ public class SetDB implements Serializable {
                                 }
                                 a_ts = new java.sql.Timestamp(a_sdf.parse(a_sVal).getTime());
                                 //a_dt = new java.sql.Date(a_sdf.parse(a_sVal).getTime());
-                                a_ps.setTimestamp(a_idx, a_ts);
+                                if ((h_act.equals("n") == true) &&
+                                    (_db_driver.equals("oracle.jdbc.driver.OracleDriver") == true) &&
+                                    ((a_tableName.equals("newcustomermanage") == true) || (a_tableName.equals("pbxremotecustomer") == true))){
+                                    a_ps_oracle.setTimestamp(a_idx, a_ts);
+                                }else{
+                                    a_ps.setTimestamp(a_idx, a_ts);
+                                }
                                 //a_ps.setDate(a_idx, a_dt);
                             }else{
-                                a_ps.setNull(a_idx, java.sql.Types.DATE);
+                                if ((h_act.equals("n") == true) &&
+                                    (_db_driver.equals("oracle.jdbc.driver.OracleDriver") == true) &&
+                                    ((a_tableName.equals("newcustomermanage") == true) || (a_tableName.equals("pbxremotecustomer") == true))){
+                                    a_ps_oracle.setNull(a_idx, java.sql.Types.DATE);
+                                }else{
+                                    a_ps.setNull(a_idx, java.sql.Types.DATE);
+                                }
                             }
                         }else{
                             boolean a_isInt = false;
@@ -655,7 +703,13 @@ public class SetDB implements Serializable {
                                 if (a_table_split[0].equals("pbxremotecustomer") == true){
                                     if (a_sName.equals("stationid") == true){
                                         a_sVal = "7";
-                                        a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
+                                        if ((h_act.equals("n") == true) &&
+                                            (_db_driver.equals("oracle.jdbc.driver.OracleDriver") == true) &&
+                                            ((a_tableName.equals("newcustomermanage") == true) || (a_tableName.equals("pbxremotecustomer") == true))){
+                                            a_ps_oracle.setInt(a_idx, Integer.valueOf(a_sVal));
+                                        }else{
+                                            a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
+                                        }
                                         a_isInt = true;
                                     }
                                 }
@@ -664,7 +718,13 @@ public class SetDB implements Serializable {
                                 if (a_table_split[0].equals("pbxremotecustomer") == true){
                                     if (a_sName.equals("stationid") == true){
                                         a_sVal = "7";
-                                        a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
+                                        if ((h_act.equals("n") == true) &&
+                                            (_db_driver.equals("oracle.jdbc.driver.OracleDriver") == true) &&
+                                            ((a_tableName.equals("newcustomermanage") == true) || (a_tableName.equals("pbxremotecustomer") == true))){
+                                            a_ps_oracle.setInt(a_idx, Integer.valueOf(a_sVal));
+                                        }else{
+                                            a_ps.setInt(a_idx, Integer.valueOf(a_sVal));
+                                        }
                                         a_isInt = true;
                                     }
                                 }
@@ -682,7 +742,13 @@ public class SetDB implements Serializable {
                                 a_sVal = a_sVal.replace("&#38;", "&");
                                 a_sVal = a_sVal.replace("&#34;", "\"");
                                 a_sVal = a_sVal.replace("&#39;", "'");
-                                a_ps.setString(a_idx, a_sVal);
+                                if ((h_act.equals("n") == true) &&
+                                    (_db_driver.equals("oracle.jdbc.driver.OracleDriver") == true) &&
+                                    ((a_tableName.equals("newcustomermanage") == true) || (a_tableName.equals("pbxremotecustomer") == true))){
+                                    a_ps_oracle.setString(a_idx, a_sVal);
+                                }else{
+                                    a_ps.setString(a_idx, a_sVal);
+                                }
                             }
                         }
                     }
@@ -693,16 +759,26 @@ public class SetDB implements Serializable {
                 if (h_act.equals("n") == true){
                     //登録の場合
                     if (a_tableName.equals("newcustomermanage") == true){
-                        a_rs = a_ps.executeQuery();
-                        while(a_rs.next()){
-                            a_user_code = _Environ.ExistDBString(a_rs, "usercode");
-                            a_user_number = a_user_code.substring(3,6);
-                            if ((a_table_split[0].equals("pbxremotecustomer") == true)
-                             || (a_table_split[0].equals("irmsremotecustomer") == true)
-                               ){
-                                a_sRet[1] = a_user_code;
-                                a_sRet[2] = a_user_number;
+                        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                            a_idx++;
+                            a_ps_oracle.registerReturnParameter(a_idx, Types.VARCHAR);
+                            a_ps_oracle.execute();
+                            a_rs = a_ps_oracle.getReturnResultSet();
+                            while(a_rs.next()){
+                                a_user_code = a_rs.getString(1);
                             }
+                        }else if (_db_driver.equals("org.postgresql.Driver")){
+                            a_rs = a_ps.executeQuery();
+                            while(a_rs.next()){
+                                a_user_code = _Environ.ExistDBString(a_rs, "usercode");
+                            }
+                        }
+                        a_user_number = a_user_code.substring(3,6);
+                        if ((a_table_split[0].equals("pbxremotecustomer") == true)
+                         || (a_table_split[0].equals("irmsremotecustomer") == true)
+                           ){
+                            a_sRet[1] = a_user_code;
+                            a_sRet[2] = a_user_number;
                         }
                         a_rs.close();
                     /*}else if (a_tableName.equals("remotemonitoringcustomer") == true){
@@ -715,12 +791,22 @@ public class SetDB implements Serializable {
                         }
                         a_rs.close();*/
                     }else if (a_tableName.equals("pbxremotecustomer") == true){
-                        a_rs = a_ps.executeQuery();
-                        while(a_rs.next()){
-                            a_pbxremotecustomer_id = _Environ.ExistDBString(a_rs, "id");
-                            if (a_table_split[0].equals("pbxremotecustomer") == true){
-                                a_sRet[3] = a_pbxremotecustomer_id;
+                        if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                            a_idx++;
+                            a_ps_oracle.registerReturnParameter(a_idx, Types.VARCHAR);
+                            a_ps_oracle.execute();
+                            a_rs = a_ps_oracle.getReturnResultSet();
+                            while(a_rs.next()){
+                                a_pbxremotecustomer_id = a_rs.getString(1);
                             }
+                        }else if (_db_driver.equals("org.postgresql.Driver")){
+                            a_rs = a_ps.executeQuery();
+                            while(a_rs.next()){
+                                a_pbxremotecustomer_id = _Environ.ExistDBString(a_rs, "id");
+                            }
+                        }
+                        if (a_table_split[0].equals("pbxremotecustomer") == true){
+                            a_sRet[3] = a_pbxremotecustomer_id;
                         }
                         a_rs.close();
                     }else{
@@ -801,11 +887,6 @@ public class SetDB implements Serializable {
                 a_sql = "DELETE FROM newcustomermanage WHERE (" + h_where + ")";
                 a_ps = a_con.prepareStatement(a_sql);
                 a_i = a_ps.executeUpdate();
-
-                a_sql = "DELETE FROM equipmenttype WHERE (" + h_where + ")";
-                a_ps = a_con.prepareStatement(a_sql);
-                a_i = a_ps.executeUpdate();
-
             }else if (h_table.equals("irmsremotecustomer") == true){
                 a_sql = "DELETE FROM " + h_table + " WHERE (" + h_where + ")";
                 a_ps = a_con.prepareStatement(a_sql);
@@ -816,6 +897,14 @@ public class SetDB implements Serializable {
                 a_i = a_ps.executeUpdate();
 
                 a_sql = "DELETE FROM newcustomermanage WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM trunkandlticinformation WHERE (" + h_where + ")";
+                a_ps = a_con.prepareStatement(a_sql);
+                a_i = a_ps.executeUpdate();
+
+                a_sql = "DELETE FROM usernode WHERE (" + h_where + ")";
                 a_ps = a_con.prepareStatement(a_sql);
                 a_i = a_ps.executeUpdate();
             }else{
@@ -1135,7 +1224,13 @@ public class SetDB implements Serializable {
                 a_sql_tmp += ",s1.maintenancecenter";
                 a_sql_tmp += ",s1.maintenancegroup";
                 a_sql_tmp += ",s1.maintenancedirect";
-                a_sql_tmp += ",s1.\"COMMENT\" AS comment";
+                
+                if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                    a_sql_tmp += ",s1.\"COMMENT\"";
+                }else if (_db_driver.equals("org.postgresql.Driver")){
+                    a_sql_tmp += ",s1.\"COMMENT\" AS comment";
+                }
+                
                 a_sql_tmp += ",s1.notes";
                 a_sql_tmp += ",s4.urgentreportid";
                 a_sql_tmp += ",s1.termcode";
@@ -1754,7 +1849,7 @@ public class SetDB implements Serializable {
 
             //equipmenttype
             ArrayList<String> a_array_equipmenttype = new ArrayList<String>();
-            a_sql = "SELECT *,(SELECT name FROM equipmenttypemaster WHERE (id=equipmenttype.equipmenttypemasterid)) AS equipmenttype_name FROM equipmenttype WHERE (customerid=?) ORDER BY ordernumber";
+            a_sql = "SELECT equipmenttype.*,(SELECT name FROM equipmenttypemaster WHERE (id=equipmenttype.equipmenttypemasterid)) AS equipmenttype_name FROM equipmenttype WHERE (customerid=?) ORDER BY ordernumber";
             a_ps = a_con.prepareStatement(a_sql);
             a_ps.setInt(1, Integer.valueOf(h_monitoring_id));
             a_rs = a_ps.executeQuery();

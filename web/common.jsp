@@ -438,7 +438,7 @@ String Make_Tag_Mnt(
 
                             String a_style_add = "";
                             if (a_now_split[COLUMN_DEF_NAME].equals("id") == true){
-                                a_style_add = "width:20px;";
+                                a_style_add = "width:30px;";
                             }else if (a_now_split[COLUMN_DEF_NAME].equals("keyword") == true){
                                 a_style_add = "width:50px;";
                             }else if (a_now_split[COLUMN_DEF_NAME].equals("equipmenttypemasterid") == true){
