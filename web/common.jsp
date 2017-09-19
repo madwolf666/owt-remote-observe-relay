@@ -1153,7 +1153,7 @@ String Make_Entry_Table_Mnt(String h_act, String h_idx){
     a_sRet += "     success: function(data, dataType){";
     //a_sRet += "alert(data);";
     a_sRet += "         var a_result = data.trim();";
-    //a_sRet += "alert(a_result);";
+    //a_sRet += "alert(\"'\" + a_result + \"'\");";
     a_sRet += "         if (a_result != \"\"){";
     a_sRet += "             $(\"#my-pager\").empty().append(\"<font color='#ff0000'>\" + data + \"</font>\");";
     //if (h_act == "n"){

@@ -1986,12 +1986,17 @@ public class SetDB implements Serializable {
     public String EntryRPTMnt(
         ArrayList<String> h_plurals,
         String h_act,
-        String h_use_code,
+        String h_user_code,
         String h_post_data
         ) throws Exception{
         String a_sRet = "";
         String[] a_sRet2 = null;
         boolean a_isOK = true;
+        boolean a_isFound = false;
+        Connection a_con = null;
+        PreparedStatement a_ps = null;
+        ResultSet a_rs = null;
+        String a_sql = "";
         try{
             //DB更新するテーブルのSQLを組み立てる
             String a_tableName = "";
@@ -2005,6 +2010,34 @@ public class SetDB implements Serializable {
                         break;
                     case 1:
                         a_tableName = "sioportnumber";
+                        a_isFound = false;
+                        //該ユーザのレコードが存在しない場合は、INSERTする
+                        a_sql = "SELECT * FROM sioportnumber WHERE (customerid=(SELECT id FROM remotemonitoringcustomer WHERE (usercode='" + h_user_code + "')))"; 
+                        Class.forName (_db_driver);
+                        // データベースとの接続
+                        a_con = DriverManager.getConnection(_db_url, _db_user, _db_pass);
+                        a_ps = a_con.prepareStatement(a_sql);
+                        a_rs = a_ps.executeQuery();
+                        while(a_rs.next()){
+                            a_isFound = true;
+                        }
+                        a_rs.close();
+                        a_ps.close();
+                        if (a_isFound == false){
+                            a_con.setAutoCommit(false);
+                            a_sql = "INSERT INTO " + a_tableName + " (id,customerid,m0,m1,m2,m3,m4,m5,m6,m7,m8) VALUES(";
+                            if (_db_driver.equals("oracle.jdbc.driver.OracleDriver")){
+                                a_sql += "(SELECT NVL(MAX(ID),0)+1 FROM " + a_tableName + "),";
+                            }else if (_db_driver.equals("org.postgresql.Driver")){
+                                a_sql += "(SELECT COALESCE(MAX(ID),0)+1 FROM " + a_tableName + "),";
+                            }
+                            a_sql += "(SELECT id FROM remotemonitoringcustomer WHERE (usercode='" + h_user_code + "')),";
+                            a_sql += "-1,-1,-1,-1,-1,-1,-1,-1,-1)";
+                            a_ps = a_con.prepareStatement(a_sql);
+                            int a_i = a_ps.executeUpdate();
+                            a_con.commit();
+                        }
+                        a_con.close();
                         break;
                 }
                 //1行目はヘッダ
@@ -2017,7 +2050,7 @@ public class SetDB implements Serializable {
                     String[] a_data = null;
                     ArrayList<String> a_data2 = new ArrayList<String>();
                     boolean a_isNew = true;
-                    boolean a_isFound = false;
+                    a_isFound = false;
                     boolean a_isExec = true;
                     String a_idx = "";
                     for (int a_iCnt2=0; a_iCnt2<a_field.length; a_iCnt2++){
@@ -2086,7 +2119,7 @@ public class SetDB implements Serializable {
                             if (a_isExec == true){
                                 if (a_isNew == true){
                                     //新規
-                                    a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "n", h_use_code, a_data2);
+                                    a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "n", h_user_code, a_data2);
                                 }else{
                                     //更新
                                     a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "e", a_idx, a_data2);
@@ -2107,13 +2140,13 @@ public class SetDB implements Serializable {
                                 }
                             }
                         }else{
-                            if (h_act.equals("n") == true){
-                                //新規
-                                a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "n", h_use_code, a_data2);
-                            }else{
+                            /*if (h_act.equals("n") == true){
+                                //新規⇒新規はなし
+                                a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "n", h_user_code, a_data2);
+                            }else{*/
                                 //更新
-                                a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "e", h_use_code, a_data2);
-                            }
+                                a_sRet2 = EntryMnt(a_tableName + "\tid:n:n:y", a_now_split, "e", h_user_code, a_data2);
+                            /*}*/
                             if (a_sRet2[0].equals("") == false){
                                 a_isOK = false;
                                 a_sRet = a_sRet2[0];
@@ -2131,9 +2164,21 @@ public class SetDB implements Serializable {
             }
             
         } catch (Exception e) {
+            if (a_con != null){
+                a_con.rollback();
+            }
             _Environ._MyLogger.severe("[EntryRPTMnt]" + e.getMessage());
             a_sRet = "[EntryRPTMnt]" + e.getMessage();
         } finally{
+            if (a_rs != null){
+                a_rs.close();
+            }
+            if (a_ps != null){
+                a_ps.close();
+            }
+            if (a_con != null){
+                a_con.close();
+            }
         }
 
         _Environ._MyLogger.info("*** EntryRPTMnt is finished. ***");
