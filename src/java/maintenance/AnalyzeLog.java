@@ -311,13 +311,19 @@ public class AnalyzeLog implements Serializable {
             // SMTP情報の取得
             //------------------------------------------------------------------
             a_props.put("mail.smtp.host", _Environ.GetEnvironValue("mnt_sendmail_smtp_host")); 	//●SMTPサーバ名
-            a_props.put("mail.host", _Environ.GetEnvironValue("mnt_sendmail_mail_host"));      	//●接続するホスト名
+            a_props.put("mail.smtp.localhost", _Environ.GetEnvironValue("mnt_sendmail_mail_host"));      	//●接続するホスト名
+            //a_props.put("mail.host", _Environ.GetEnvironValue("mnt_sendmail_mail_host"));      	//●接続するホスト名
             a_props.put("mail.smtp.port", _Environ.GetEnvironValue("mnt_sendmail_smtp_port"));       		//●SMTPサーバポート
-            a_props.put("mail.smtp.auth", _Environ.GetEnvironValue("mnt_sendmail_smtp_auth"));    		//●smtp auth
-            a_props.put("mail.smtp.starttls.enable", _Environ.GetEnvironValue("mnt_sednmail_smtp_starttls_enable"));	//●STTLS
-
+            if (_Environ.GetEnvironValue("mnt_sendmail_smtp_auth").equals("true") == true){
+                a_props.put("mail.smtp.auth", _Environ.GetEnvironValue("mnt_sendmail_smtp_auth"));    		//●smtp auth
+            }
+            if (_Environ.GetEnvironValue("mnt_sednmail_smtp_starttls_enable").equals("true") == true){
+                a_props.put("mail.smtp.starttls.enable", _Environ.GetEnvironValue("mnt_sednmail_smtp_starttls_enable"));	//●STTLS
+            }
+            
             // セッション
-            Session a_session = Session.getDefaultInstance(a_props);
+            Session a_session = Session.getInstance(a_props, null);
+            //Session a_session = Session.getDefaultInstance(a_props);
             a_session.setDebug(true);
 
             MimeMessage a_msg = new MimeMessage(a_session);
@@ -349,16 +355,22 @@ public class AnalyzeLog implements Serializable {
             //------------------------------------------------------------------
             a_msg.setRecipients(Message.RecipientType.TO, a_toAddress);	//●To
 
-            Multipart a_mixedPart = new MimeMultipart("mixed");
-
             //------------------------------------------------------------------
             // 本文の設定
             //------------------------------------------------------------------
+            a_msg.setText(h_mail_body, "shift-jis", "plain");
+            a_msg.setHeader("Content-Transfer-Encoding", "base64");  
+            
+            //------------------------------------------------------------------
+            // 本文の設定⇒マルチパートの場合
+            //------------------------------------------------------------------
+            /*
+            Multipart a_mixedPart = new MimeMultipart("mixed");
             MimeBodyPart a_textBodyPart = new MimeBodyPart();
-            //[2015.02.19]---↓
             a_textBodyPart.setText(h_mail_body, "shift-jis", "plain");  
             a_textBodyPart.setHeader("Content-Transfer-Encoding", "base64");  
             a_mixedPart.addBodyPart(a_textBodyPart);  
+            */
 
             // attach image 添付ファイルの設定 
             /*
@@ -381,8 +393,10 @@ public class AnalyzeLog implements Serializable {
             */
 
             // set mixed  
+            /*
             a_msg.setContent(a_mixedPart);  
-
+            */
+            
             //------------------------------------------------------------------
             //メールアカウントの設定＆メール送信
             //------------------------------------------------------------------
