@@ -358,7 +358,8 @@ public class AnalyzeLog implements Serializable {
             //------------------------------------------------------------------
             // 本文の設定
             //------------------------------------------------------------------
-            a_msg.setText(h_mail_body, "shift-jis", "plain");
+            //a_msg.setText(h_mail_body, "shift-jis", "plain");
+            a_msg.setText(h_mail_body, "UTF-8");
             a_msg.setHeader("Content-Transfer-Encoding", "base64");  
             
             //------------------------------------------------------------------
