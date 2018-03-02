@@ -6,6 +6,7 @@ var m_parentURL = "//localhost:8080/owt-remote-observe-relay/";
 //------------------------------------------------------------------------------
 //処理中表示
 var m_ProgressMsg = function (text) {
+    return; //[2018.03.02]IE11で動作せず。
     $.blockUI({
         message: text,
         fadeIn: 200,
