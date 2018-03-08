@@ -245,10 +245,25 @@ function input_numOnly(){
   return true;
 }
 
+//[2018.03.08]
+function windowKeyboardEvent(){
+  if(window.event) return window.event.keyCode;
+  var caller = arguments.callee.caller;
+  while(caller){
+    var ob = caller.arguments[0];
+    if(ob && ob.constructor == KeyboardEvent) return ob.which;
+    caller = caller.caller;
+  }
+  return null;
+}
+
 //RPT
 function show_equipmenttype_name(h_id, h_name){
     //alert('show_equipmenttype_name');
-    if (window.event.keyCode == 13){
+    //[2018.03.08]
+    var e = windowKeyboardEvent();
+    if (e == 13){
+    //if (window.event.keyCode == 13){
         //alert("enter押下！");
         //alert($("#" + h_id).val());
         //enter押下
