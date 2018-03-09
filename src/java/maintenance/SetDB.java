@@ -831,6 +831,13 @@ public class SetDB implements Serializable {
             }
             _Environ._MyLogger.severe("[EntryMnt]" + ex.getMessage());
             a_sRet[0] = "[EntryMnt]" + ex.getMessage();
+        } catch (Exception ex) {
+            //[2018.03.09]
+            if (a_con != null){
+                a_con.rollback();
+            }
+            _Environ._MyLogger.severe("[EntryMnt]" + ex.getMessage());
+            a_sRet[0] = "[EntryMnt]" + ex.getMessage();
         } finally{
             if (a_ps != null){
                 a_ps.close();
@@ -926,6 +933,13 @@ public class SetDB implements Serializable {
             }
             _Environ._MyLogger.severe("[DeleteMnt]" + ex.getMessage());
             a_sRet = "[DeleteMnt]" + ex.getMessage();
+        } catch (Exception ex) {
+            //[2018.03.09]
+            if (a_con != null){
+                a_con.rollback();
+            }
+            _Environ._MyLogger.severe("[DeleteMnt]" + ex.getMessage());
+            a_sRet = "[DeleteMnt]" + ex.getMessage();
         } finally{
             if (a_ps != null){
                 a_ps.close();
@@ -1008,6 +1022,9 @@ public class SetDB implements Serializable {
         } catch (SQLException e) {
             _Environ._MyLogger.severe("[MakePagerMnt]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
+            _Environ._MyLogger.severe("[MakePagerMnt]" + ex.getMessage());
+        } catch (Exception ex) {
+            //[2018.03.09]
             _Environ._MyLogger.severe("[MakePagerMnt]" + ex.getMessage());
         } finally{
             if (a_rs != null){
@@ -1131,6 +1148,9 @@ public class SetDB implements Serializable {
         } catch (SQLException e) {
             _Environ._MyLogger.severe("[FindMnt]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
+            _Environ._MyLogger.severe("[FindMnt]" + ex.getMessage());
+        } catch (Exception ex) {
+            //[2018.03.09]
             _Environ._MyLogger.severe("[FindMnt]" + ex.getMessage());
         } finally{
             if (a_ps != null){
@@ -1383,6 +1403,9 @@ public class SetDB implements Serializable {
             _Environ._MyLogger.severe("[GetMnt]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
             _Environ._MyLogger.severe("[GetMnt]" + ex.getMessage());
+        } catch (Exception ex) {
+            //[2018.03.09]
+            _Environ._MyLogger.severe("[GetMnt]" + ex.getMessage());
         } finally{
             if (a_ps != null){
                 a_ps.close();
@@ -1447,6 +1470,9 @@ public class SetDB implements Serializable {
             _Environ._MyLogger.severe("[GetNextUserCode]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
             _Environ._MyLogger.severe("[GetNextUserCode]" + ex.getMessage());
+        } catch (Exception ex) {
+            //[2018.03.09]
+            _Environ._MyLogger.severe("[GetNextUserCode]" + ex.getMessage());
         } finally{
             if (a_ps != null){
                 a_ps.close();
@@ -1509,6 +1535,9 @@ public class SetDB implements Serializable {
         } catch (SQLException e) {
             _Environ._MyLogger.severe("[MakePagerShowList]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
+            _Environ._MyLogger.severe("[MakePagerShowList]" + ex.getMessage());
+        } catch (Exception ex) {
+            //[2018.03.09]
             _Environ._MyLogger.severe("[MakePagerShowList]" + ex.getMessage());
         } finally{
             if (a_rs != null){
@@ -1614,6 +1643,9 @@ public class SetDB implements Serializable {
             _Environ._MyLogger.severe("[FindMnt]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
             _Environ._MyLogger.severe("[FindMnt]" + ex.getMessage());
+        } catch (Exception ex) {
+            //[2018.03.09]
+            _Environ._MyLogger.severe("[FindMnt]" + ex.getMessage());
         } finally{
             if (a_ps != null){
                 a_ps.close();
@@ -1659,6 +1691,9 @@ public class SetDB implements Serializable {
         } catch (SQLException e) {
             _Environ._MyLogger.severe("[GetEquipmentTypeName]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
+            _Environ._MyLogger.severe("[GetEquipmentTypeName]" + ex.getMessage());
+        } catch (Exception ex) {
+            //[2018.03.09]
             _Environ._MyLogger.severe("[GetEquipmentTypeName]" + ex.getMessage());
         } finally{
             if (a_ps != null){
@@ -1807,6 +1842,9 @@ public class SetDB implements Serializable {
             _Environ._MyLogger.severe("[GetPluralMnt]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
             _Environ._MyLogger.severe("[GetPluralMnt]" + ex.getMessage());
+        } catch (Exception ex) {
+            //[2018.03.09]
+            _Environ._MyLogger.severe("[GetPluralMnt]" + ex.getMessage());
         } finally{
             if (a_ps != null){
                 a_ps.close();
@@ -1926,7 +1964,12 @@ public class SetDB implements Serializable {
                         String[] a_data = a_array_equipmenttype.get(a_idx).split("\t");
                         if (a_data[0].equals(a_field) == true){
                             //String a_val = HtmlEncode(request.getParameter(a_field));
-                            String a_val = a_data[1];
+                            //[2018.03.09]↓bug-fixed.
+                            String a_val = "";
+                            if (a_data.length > 1){
+                                a_val = a_data[1];
+                            }
+                            //[2018.03.09]↑bug-fixed.
                             if (a_val.length()>0){
                                 a_plural_data += a_field + "\b" + a_val;
                             }else{
@@ -1941,7 +1984,12 @@ public class SetDB implements Serializable {
                         String[] a_data = a_array_sioportnumber.get(a_idx).split("\t");
                         if (a_data[0].equals(a_field) == true){
                             //String a_val = HtmlEncode(request.getParameter(a_field));
-                            String a_val = a_data[1];
+                            //[2018.03.09]↓bug-fixed.
+                            String a_val = "";
+                            if (a_data.length > 1){
+                                a_val = a_data[1];
+                            }
+                            //[2018.03.09]↑bug-fixed.
                             if (a_val.length()>0){
                                 a_plural_data += a_field + "\b" + a_val;
                             }else{
@@ -1962,6 +2010,9 @@ public class SetDB implements Serializable {
         } catch (SQLException e) {
             _Environ._MyLogger.severe("[GetRPTMnt]" + e.getMessage());
         } catch (ClassNotFoundException ex) {
+            _Environ._MyLogger.severe("[GetRPTMnt]" + ex.getMessage());
+        } catch (Exception ex) {
+            //[2018.03.09]bug-fixed.
             _Environ._MyLogger.severe("[GetRPTMnt]" + ex.getMessage());
         } finally{
             if (a_ps != null){
